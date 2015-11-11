@@ -3,7 +3,8 @@ TEMPLATE = app
 QT += qml quick widgets
 
 SOURCES += main.cpp \
-    layer.cpp
+    layer.cpp \
+    testmodel.cpp
 
 RESOURCES += qml.qrc
 
@@ -14,5 +15,6 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    layer.h
+    layer.h \
+    testmodel.h
 

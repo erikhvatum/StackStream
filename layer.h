@@ -16,7 +16,7 @@ signals:
     void tintChanged();
     void gammaChanged();
 
-private:
+public:
     QColor m_tint;
     qreal m_gamma;
 

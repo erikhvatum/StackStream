@@ -8,6 +8,7 @@ Item {
 
     property alias button1: button1
     property alias button2: button2
+    property alias resetButton: resetButton
 
     RowLayout {
         anchors.centerIn: parent
@@ -20,6 +21,11 @@ Item {
         Button {
             id: button2
             text: qsTr("Press Me 2")
+        }
+
+        Button {
+            id: resetButton
+            text: qsTr("reset tint")
         }
     }
 }
