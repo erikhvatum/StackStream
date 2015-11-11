@@ -18,3 +18,6 @@ HEADERS += \
     layer.h \
     testmodel.h
 
+DISTFILES += \
+    main.py
+

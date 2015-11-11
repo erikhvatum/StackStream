@@ -11,8 +11,9 @@ public:
     TestModel();
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
-    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
-    Qt::ItemFlags flags(const QModelIndex & index) const;
+//    bool setData(const QModelIndex & index, const QVariant & value, int role = Qt::EditRole);
+    Q_INVOKABLE void setProperty(int row, const QVariant& value, const QString& role_name);
+//    Qt::ItemFlags flags(const QModelIndex & index) const;
     QHash<int, QByteArray> roleNames() const;
 
 signals:

@@ -55,9 +55,12 @@ ApplicationWindow {
                     target: loaderEditor.item
                     onAccepted: {
                         if (typeof styleData.value === 'number')
-                            test_model.setData(test_model.index(styleData.row, styleData.role), Number(parseFloat(loaderEditor.item.text).toFixed(0)))
+                        {
+                            print(styleData.role)
+                            test_model.setProperty(styleData.row, Number(parseFloat(loaderEditor.item.text).toFixed(0)), styleData.role);
+                        }
                         else
-                            test_model.setData(test_model.index(styleData.row, styleData.role), loaderEditor.item.text)
+                            test_model.setProperty(styleData.row, loaderEditor.item.text, styleData.role);
                     }
                 }
                 sourceComponent: styleData.selected ? editor : null

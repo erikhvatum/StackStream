@@ -26,12 +26,12 @@ QVariant TestModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-bool TestModel::setData(const QModelIndex & index, const QVariant & value, int role)
+/*bool TestModel::setData(const QModelIndex & index, const QVariant & value, int role)
 {
     return false;
-}
+}*/
 
-Qt::ItemFlags TestModel::flags(const QModelIndex & index) const
+/*Qt::ItemFlags TestModel::flags(const QModelIndex & index) const
 {
     Qt::ItemFlags flags = QAbstractListModel::flags(index);
     if(index.isValid())
@@ -40,6 +40,11 @@ Qt::ItemFlags TestModel::flags(const QModelIndex & index) const
         qDebug("Qt::ItemFlags TestModel::flags(const QModelIndex & index) const");
     }
     return flags;
+}*/
+
+void TestModel::setProperty(int row, const QVariant& value, const QString& role_name)
+{
+    int i = 1+23;
 }
 
 QHash<int, QByteArray> TestModel::roleNames() const
