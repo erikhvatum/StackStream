@@ -1,15 +1,16 @@
-import QtQuick 2.4
+import QtQuick 2.5
 import QtQuick.Controls 1.3
 import QtQuick.Dialogs 1.2
 import StackStream 1.0
 
 ApplicationWindow {
     visible: true
-    width: 640
-    height: 480
+    width: 1024
+    height: 768
     title: qsTr("StackStream")
 
     menuBar: MenuBar {
+        id: foobar
         Menu {
             title: qsTr("File")
             MenuItem {
@@ -19,12 +20,12 @@ ApplicationWindow {
         }
     }
 
-    Layer {
+    /*Layer {
         id : a_layer
         gamma : 0.51
         //tint : Qt.rgba(1,0.5,0.5,1)
         onTintChanged: messageDialog.show(qsTr("tint changed"), tint)
-    }
+    }*/
 
     /*MainForm {
         anchors.fill: parent
@@ -33,7 +34,7 @@ ApplicationWindow {
         resetButton.onClicked: a_layer.tint = undefined
     }*/
 
-    Component {
+    /*Component {
         id: editableDelegate
         Item {
 
@@ -83,13 +84,14 @@ ApplicationWindow {
     }
 
     TableView {
-        anchors.fill: parent
+        //anchors.fill: parent
+        anchors.
         id: test_list_view
         TableViewColumn { title: "gamma"; role: "gamma"; width: 150 }
         TableViewColumn { title: "tint"; role: "tint"; width: 150 }
         model: test_model
         itemDelegate: {return editableDelegate;}
-    }
+    }*/
 
     MessageDialog {
         id: messageDialog

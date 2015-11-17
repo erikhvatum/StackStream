@@ -2,9 +2,12 @@ TEMPLATE = app
 
 QT += qml quick widgets
 
+CONFIG += c++11
+
 SOURCES += main.cpp \
     layer.cpp \
-    testmodel.cpp
+    testmodel.cpp \
+    image.cpp
 
 RESOURCES += qml.qrc
 
@@ -16,7 +19,8 @@ include(deployment.pri)
 
 HEADERS += \
     layer.h \
-    testmodel.h
+    testmodel.h \
+    image.h
 
 DISTFILES += \
     main.py
