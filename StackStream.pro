@@ -4,8 +4,7 @@ QT += qml quick widgets
 
 CONFIG += c++11
 
-SOURCES += main.cpp \
-    image.cpp
+SOURCES += main.cpp
 
 RESOURCES += qml.qrc
 
@@ -15,8 +14,7 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-HEADERS += \
-    image.h
+HEADERS +=
 
 DISTFILES += \
     main.py
