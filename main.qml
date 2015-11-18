@@ -23,16 +23,19 @@ ApplicationWindow {
         }
     }
 
-    Image {
+    DraggableImage {
+        id: imageA
         source: "file:///Users/ehvatum/heic1015a.jpg"
-        Drag.active: dragArea.drag.active
-        Drag.hotSpot.x: 10
-        Drag.hotSpot.y: 10
+        otherImage: imageB
+        //mouseArea.onClicked: print(flaf)
+        flaf: 15
+        width: imageB.x
+        height: imageB.y
+    }
 
-        MouseArea {
-            id: dragArea
-            anchors.fill: parent
-            drag.target: parent
-        }
+    DraggableImage {
+        id: imageB
+        source: "file:///Users/ehvatum/m1_hubble.jpg"
+        otherImage: imageA
     }
 }
