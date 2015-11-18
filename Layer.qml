@@ -1,7 +1,7 @@
-import QtQuick 2.0
+import QtQuick 2.5
 
-ListElement {
-    property real gamma : 1.0
-    property color tint : Qt.rgba(255,255,255,255)
+Item {
+    id: layer
+    //property Image image
 }
 

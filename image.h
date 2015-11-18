@@ -15,6 +15,7 @@ class Image
 public:
     enum ImageType
     {
+        // TODO: change to format Type_float32
         NullImage = 0,
         uint8Image,
         uint12Image,
@@ -31,13 +32,18 @@ public:
     const std::size_t channel_count;
     const std::size_t byte_count;
 
-    Image(QObject* parent=nullptr);
-    explicit Image(ImageType _image_type,
-                   const std::shared_ptr<std::uint8_t>& _data,
-                   const QSize& _size,
-                   std::size_t _channel_count=1,
-                   bool copy_data=true,
-                   QObject* parent=nullptr);
+    explicit Image(QObject* parent=nullptr);
+    Image(ImageType _image_type,
+          const std::uint8_t* _data,
+          const QSize& _size,
+          std::size_t _channel_count=1,
+          QObject* parent=nullptr);
+    Image(ImageType _image_type,
+          const std::shared_ptr<std::uint8_t>& _data,
+          const QSize& _size,
+          std::size_t _channel_count=1,
+          bool copy_data=true,
+          QObject* parent=nullptr);
     // If true is supplied for copy_data, the copy constructor copies contents of rhs.data (and therefore, in this case,
     // does not increase rhs.m_data's reference count).
     Image(const Image& rhs, bool copy_data=false);
@@ -52,4 +58,8 @@ signals:
     void data_changed();
 
 public slots:
+
+protected:
+    void init(const std::shared_ptr<std::uint8_t>& _data,
+              bool copy_data);
 };

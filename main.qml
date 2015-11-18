@@ -4,6 +4,8 @@ import QtQuick.Dialogs 1.2
 import StackStream 1.0
 
 ApplicationWindow {
+    id: stackStream
+    objectName: "stackStream"
     visible: true
     width: 1024
     height: 768
@@ -19,6 +21,22 @@ ApplicationWindow {
             }
         }
     }
+
+    Item {
+        id: poop
+        objectName: "plop"
+        property int faff: 11
+    }
+
+    onClosing:{
+        print(poop.objectName)
+    }
+
+    /*Slayer {
+        id : biff
+        objectName: "slaerfoo"
+        property int faff : 5
+    }*/
 
     /*Layer {
         id : a_layer
@@ -93,7 +111,7 @@ ApplicationWindow {
         itemDelegate: {return editableDelegate;}
     }*/
 
-    MessageDialog {
+    /*MessageDialog {
         id: messageDialog
 
         function show(title, caption) {
@@ -101,6 +119,6 @@ ApplicationWindow {
             messageDialog.title = title;
             messageDialog.open();
         }
-    }
+    }*/
 }
 

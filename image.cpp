@@ -21,6 +21,20 @@ Image::Image(QObject *parent)
 }
 
 Image::Image(ImageType _image_type,
+             const std::uint8_t* _data,
+             const QSize& _size,
+             std::size_t _channel_count,
+             QObject* parent)
+  : QObject(parent),
+    image_type(_image_type),
+    size(_size),
+    channel_count(_channel_count),
+    byte_count(0)
+{
+    init(std::shared_ptr<std::uint8_t>(const_cast<std::uint8_t*>(_data), [](void*){}/*noop deleter*/), true);
+}
+
+Image::Image(ImageType _image_type,
              const std::shared_ptr<std::uint8_t>& _data,
              const QSize& _size,
              std::size_t _channel_count,
@@ -28,23 +42,27 @@ Image::Image(ImageType _image_type,
              QObject* parent)
   : QObject(parent),
     image_type(_image_type),
+    size(_size),
     channel_count(_channel_count),
     byte_count(0)
 {
-    if ( _image_type == NullImage
-      || _size.width() <= 0
-      || _size.height() <= 0
+    init(_data, copy_data);
+}
+
+void Image::init(const std::shared_ptr<std::uint8_t>& _data,
+                 bool copy_data)
+{
+    if ( image_type == NullImage
+      || size.width() <= 0
+      || size.height() <= 0
       || !_data
-      || _channel_count <= 0 )
+      || channel_count <= 0 )
     {
         const_cast<ImageType&>(image_type) = NullImage;
         const_cast<std::size_t&>(channel_count) = 0;
     }
     else
     {
-        const_cast<ImageType&>(image_type) = _image_type;
-        const_cast<QSize&>(size) = _size;
-        const_cast<std::size_t&>(channel_count) = _channel_count;
         const_cast<std::size_t&>(byte_count) = 
             static_cast<std::size_t>(size.width()) *
             static_cast<std::size_t>(size.height()) *

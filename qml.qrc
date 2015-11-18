@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>TestDelegate.qml</file>
         <file>Layer.qml</file>
+        <file>Slayer.qml</file>
     </qresource>
 </RCC>
