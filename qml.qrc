@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>Layer.qml</file>
-        <file>DraggableImage.qml</file>
     </qresource>
 </RCC>

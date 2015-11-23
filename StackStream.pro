@@ -4,7 +4,12 @@ QT += qml quick widgets
 
 CONFIG += c++11
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    testdevcppwidget.cpp \
+    Image.cpp \
+    Layer.cpp
+
+PRECOMPILED_HEADER = common.h
 
 RESOURCES += qml.qrc
 
@@ -14,8 +19,11 @@ QML_IMPORT_PATH =
 # Default rules for deployment.
 include(deployment.pri)
 
-HEADERS +=
+HEADERS += \
+    testdevcppwidget.h \
+    common.h \
+    Image.h \
+    Layer.h
 
-DISTFILES += \
-    main.py
+DISTFILES +=
 
