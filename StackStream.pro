@@ -27,3 +27,5 @@ HEADERS += \
 
 DISTFILES +=
 
+LIBS += -lfreeimage -lfreeimageplus
+

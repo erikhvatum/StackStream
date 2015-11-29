@@ -1,6 +1,7 @@
 #pragma once
-
 #include "common.h"
+
+class NoReconcile;
 
 class Image
   : public QObject
@@ -13,14 +14,17 @@ public:
         uint8Image,
         uint12Image,
         uint16Image,
-        float32Image
+        uint32Image,
+        uint64Image,
+        float32Image,
+        float64Image
     };
     typedef std::shared_ptr<std::uint8_t> RawData;
+    friend class NoReconcile;
 
 private:
     Q_OBJECT
     Q_ENUM(ImageType)
-    Q_PROPERTY(bool isNull READ isNull STORED false NOTIFY isNullChanged FINAL)
     Q_PROPERTY(bool isValid READ isValid STORED false NOTIFY isValidChanged FINAL)
     Q_PROPERTY(ImageType imageType READ imageType WRITE setImageType NOTIFY imageTypeChanged FINAL)
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged FINAL)
@@ -28,7 +32,6 @@ private:
     Q_PROPERTY(std::size_t byteCount READ byteCount STORED false NOTIFY byteCountChanged FINAL)
 
 public:
-    
     static const std::size_t ImageTypeSizes[];
 
     explicit Image(QObject* parent=nullptr);
@@ -68,12 +71,8 @@ public:
     // rhs.m_rawData is copied (IE, the smart pointer itself is copied and not the data it points to) iff rhs is valid
     Image& operator = (const Image& rhs);
 
-    virtual ~Image();
-
     bool operator == (const Image& rhs) const;
     operator bool () const;
-
-    bool isNull() const;
 
     bool isValid() const;
 
@@ -91,7 +90,6 @@ public:
     std::size_t byteCount() const;
 
 signals:
-    void isNullChanged(bool);
     void isValidChanged(bool);
     void imageTypeChanged(ImageType);
     void sizeChanged(QSize);
@@ -100,8 +98,11 @@ signals:
     void dataChanged();
 
 public slots:
+    bool read(const QUrl& furl);
+    bool write(const QUrl& furl) const;
 
 protected:
+    std::uint16_t m_noReconcile;
     bool m_isValid;
     ImageType m_imageType;
     RawData m_rawData;
@@ -109,6 +110,6 @@ protected:
     std::size_t m_channelCount;
     std::size_t m_byteCount;
 
-    void init(std::shared_ptr<std::uint8_t>& rawData, bool copyData);
-    void updateValidity();
+    void init(RawData& rawData, bool copyData);
+    void reconcile();
 };
