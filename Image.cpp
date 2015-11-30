@@ -302,28 +302,57 @@ bool Image::read(const QUrl& furl)
     else
     {
         fipImage fiImage;
-        QString fpath{furl.toLocalFile()};
-        if(fiImage.load(reinterpret_cast<const char*>(fpath.unicode())))
+        QByteArray fpath{furl.toLocalFile().toUtf8()};
+        // TODO: direct support for Ga and RGB images
+        // TODO: direct support for non-uint16 images
+        if(fiImage.load(fpath.data()))
         {
-            BITMAPINFOHEADER* header{fiImage.getInfoHeader()};
-            std::size_t channelCount = 0;
-            switch(header->biPlanes)
+            std::size_t channelCount;
+            switch(fiImage.getImageType())
             {
-            case 1:
-                if(!fiImage.convertToUINT16())
-                    qDebug("Image::read(..): Failed to convert image to uint16 grayscale.");
-                else
-                    channelCount = 1;
-                break;
-            case 3:
-            case 4:
-                if(!fiImage.convertToRGBA16())
-                    qDebug("Image::read(..): Failed to convert image to uint16 RGBA.");
-                else
-                    channelCount = 4;
-                break;
             default:
-                qDebug("Image::read(..): Unsupported channel count.");
+                channelCount = 0;
+                break;
+            case FIT_BITMAP:
+                switch(fiImage.getBitsPerPixel())
+                {
+                default:
+                    channelCount = 1;
+                    break;
+                case 24:
+                case 32:
+                    channelCount = 4;
+                    break;
+                }
+                break;
+            case FIT_UINT16:
+            case FIT_INT16:
+            case FIT_UINT32:
+            case FIT_INT32:
+            case FIT_FLOAT:
+            case FIT_DOUBLE:
+                channelCount = 4;
+                break;
+            }
+            if(channelCount == 0)
+            {
+                qDebug("Image::read(..): Unsupported data type.");
+            }
+            else if(channelCount == 1)
+            {
+                if(!fiImage.convertToUINT16())
+                {
+                    qDebug("Image::read(..): Failed to convert image to uint16 grayscale.");
+                    channelCount = 0;
+                }
+            }
+            else if(channelCount == 4)
+            {
+                if(!fiImage.convertToRGBA16())
+                {
+                    qDebug("Image::read(..): Failed to convert image to uint16 RGBA.");
+                    channelCount = 0;
+                }
             }
             if(channelCount > 0)
             {
@@ -336,10 +365,14 @@ bool Image::read(const QUrl& furl)
                     m_byteCount = m_channelCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_imageType];
                     m_rawData.reset(new std::uint8_t[m_byteCount]);
                     std::memcpy(m_rawData.get(), fiImage.accessPixels(), m_byteCount);
-                    if(m_byteCount != oldByteCount)
-                        byteCountChanged(m_byteCount);
-                    dataChanged();
                 }
+                if(m_byteCount != oldByteCount) byteCountChanged(m_byteCount);
+                if(!m_isValid)
+                {
+                    m_isValid = true;
+                    isValidChanged(m_isValid);
+                }
+                dataChanged();
             }
         }
     }

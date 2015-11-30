@@ -36,6 +36,8 @@ public:
 
 signals:
     void isValidChanged(bool);
+    // imageChanged Indicates that the memory address stored in m_image has changed.  If you are interested in
+    // change signals from m_image itself, connect to its signals (EG layer_instance->image()->dataChanged).
     void imageChanged();
     void minChanged(double);
     void maxChanged(double);
@@ -49,6 +51,4 @@ protected:
     double m_max;
     double m_gamma;
     std::forward_list<QMetaObject::Connection> m_imageSignalConnections;
-
-    void onImageChanged();
 };
