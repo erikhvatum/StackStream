@@ -16,7 +16,6 @@ public:
 protected:
     // When m_layer is not valid, m_fboSize is set to sm_defaultFboSize and m_tex.isCreated() is false.
     Layer m_layer;
-    std::size_t m_layerSerial;
     QSize m_fboSize;
     QOpenGLShaderProgram m_shaderProgram;
     QOpenGLTexture m_tex;

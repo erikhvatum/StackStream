@@ -5,6 +5,7 @@
 Layer::Layer(QQuickItem* parent)
   : QQuickFramebufferObject(parent),
     m_image(nullptr),
+    m_imageSerial(0),
     m_min(0),
     m_max(1),
     m_gamma(1)
@@ -16,6 +17,7 @@ Layer::Layer(QQuickItem* parent)
 Layer::Layer(const Layer& rhs, QQuickItem* parent)
   : QQuickFramebufferObject(parent),
     m_image(nullptr),
+    m_imageSerial(rhs.m_imageSerial),
     m_min(rhs.m_min),
     m_max(rhs.m_max),
     m_gamma(rhs.m_gamma)
@@ -84,15 +86,21 @@ void Layer::setImage(Image* image)
     if(m_image != nullptr)
     {
         m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::isValidChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::onImageChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::dataChanged, this, &Layer::onImageChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::onImageChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::onImageChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::onImageChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::dataChanged, this, &Layer::onImageDataChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::update));
     }
     bool nowValid{isValid()};
+    imageChanged();
     if(wasValid != nowValid) isValidChanged(nowValid);
     update();
+}
+
+const std::size_t& Layer::imageSerial() const
+{
+    return m_imageSerial;
 }
 
 double Layer::min() const
@@ -142,8 +150,9 @@ void Layer::aboutQt() const
     QApplication::aboutQt();
 }
 
-void Layer::onImageChanged()
+void Layer::onImageDataChanged()
 {
-    qDebug() << "onImageChanged";
+    ++m_imageSerial;
+    imageSerialChanged(m_imageSerial);
     update();
 }

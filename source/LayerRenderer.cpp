@@ -31,8 +31,7 @@ const QVector<QVector2D> LayerRenderer::sm_quad;/*{
 };*/
 
 LayerRenderer::LayerRenderer()
-  : m_layerSerial(0),
-    m_fboSize(sm_defaultFboSize),
+  : m_fboSize(sm_defaultFboSize),
     m_tex(QOpenGLTexture::Target2D),
     m_texSerial(0)
 {
@@ -61,6 +60,7 @@ LayerRenderer::LayerRenderer()
         "{\n"
         "    vec2 texCoord = gl_FragCoord.xy / gl_FragCoord.w;\n"
         "    texCoord /= viewportSize;\n"
+        "    texCoord.y = 1.0f - texCoord.y;\n"
         "    gl_FragColor = texture2D(tex, texCoord);\n"
         "}\n";
     fShad->compileSourceCode(fShadSrc);
@@ -104,7 +104,7 @@ void LayerRenderer::render()
             m_texSerial = std::numeric_limits<std::size_t>::max();
         }
         m_tex.bind(0);
-        if(m_texSerial != m_layerSerial)
+        if(m_texSerial != m_layer.imageSerial())
         {
             QOpenGLPixelTransferOptions ptos;
             ptos.setAlignment(1);
@@ -112,7 +112,7 @@ void LayerRenderer::render()
                           sm_componentPixelTypes[image.componentType()],
                           image.rawData().get(),
                           &ptos);
-            m_texSerial = m_layerSerial;
+            m_texSerial = m_layer.imageSerial();
         }
         m_shaderProgram.bind();
         m_shaderProgram.setUniformValue(m_texLoc, 0);
@@ -133,22 +133,20 @@ QOpenGLFramebufferObject* LayerRenderer::createFramebufferObject(const QSize&)
 {
     QOpenGLFramebufferObjectFormat format;
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
+    // Setting sample count here breaks 10-bit color, causing the FBO to be quantized to 8-bit per channel
+    // at some point before being displayed.  TODO: look into what's happening here
 //    format.setSamples(4);
     format.setInternalTextureFormat(GL_RGBA32F);
     QOpenGLFramebufferObject* ret{new QOpenGLFramebufferObject(m_fboSize, format)};
-    qDebug() << "QOpenGLFramebufferObject* createFramebufferObject(const QSize&) override" << m_fboSize;
     return ret;
 }
 
 void LayerRenderer::synchronize(QQuickFramebufferObject *item)
 {
-    Layer* layer{static_cast<Layer*>(item)};
+    Layer* layer{qobject_cast<Layer*>(item)};
     QSize desiredSize{m_fboSize};
-    if(layer->isValid()) qDebug() << layer->image()->size();
-    else qDebug("layer->isValid()");
     if(layer->isValid())
     {
-        if(m_layer.isValid() && m_layer.image() != layer->image()) ++m_layerSerial;
         desiredSize = layer->image()->size();
     }
     else if(m_layer.isValid())
@@ -157,7 +155,6 @@ void LayerRenderer::synchronize(QQuickFramebufferObject *item)
         desiredSize = sm_defaultFboSize;
     }
     m_layer = *layer;
-    qDebug() << "LayerRenderer::synchronize" << m_fboSize << desiredSize;
     if(m_fboSize != desiredSize)
     {
         m_fboSize = desiredSize;
