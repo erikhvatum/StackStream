@@ -52,4 +52,6 @@ protected:
     double m_max;
     double m_gamma;
     std::forward_list<QMetaObject::Connection> m_imageSignalConnections;
+
+    void onImageChanged();
 };

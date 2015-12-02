@@ -9,6 +9,7 @@
 #include <QtWidgets>
 #include <cstdint>
 #include <forward_list>
+#include <limits>
 #include <FreeImagePlus.h>
 #include <memory>
 #include <stdexcept>

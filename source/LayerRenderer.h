@@ -21,7 +21,13 @@ protected:
     QOpenGLShaderProgram m_shaderProgram;
     QOpenGLTexture m_tex;
     std::size_t m_texSerial;
-    int m_vertCoordLoc, m_texLoc;
+    int m_vertCoordLoc, m_texLoc, m_viewportSizeLoc;
     static const QSize sm_defaultFboSize;
     static const QVector<QVector2D> sm_quad;
+    struct ChannelCountFormats {
+        QOpenGLTexture::TextureFormat texFormat;
+        QOpenGLTexture::PixelFormat srcPixelFormat;
+    };
+    static const ChannelCountFormats sm_channelCountFormats[];
+    static const QOpenGLTexture::PixelType sm_componentPixelTypes[];
 };

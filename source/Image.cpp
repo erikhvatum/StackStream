@@ -22,8 +22,7 @@ private:
     Image& m_image;
 };
 
-const std::size_t Image::ImageTypeSizes[] =
-{
+const std::size_t Image::ImageTypeSizes[] = {
     0, // NullImage
     1, // uint8Image
     2, // uint12Image
@@ -36,19 +35,19 @@ const std::size_t Image::ImageTypeSizes[] =
 
 Image::Image(QObject *parent)
   : QObject(parent),
-    m_noReconcile(false),
+    m_noReconcile(0),
     m_isValid(false),
-    m_imageType(NullImage),
+    m_componentType(NullImage),
     m_channelCount(0),
     m_byteCount(0)
 {
 }
 
-Image::Image(ImageType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
+Image::Image(ComponentType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
   : QObject(parent),
-    m_noReconcile(false),
+    m_noReconcile(0),
     m_isValid(false),
-    m_imageType(imageType),
+    m_componentType(imageType),
     m_size(size),
     m_channelCount(channelCount),
     m_byteCount(0)
@@ -56,14 +55,14 @@ Image::Image(ImageType imageType, const QSize& size, std::size_t channelCount, Q
     reconcile();
 }
 
-Image::Image(ImageType imageType,
+Image::Image(ComponentType imageType,
              const std::uint8_t* rawData,
              const QSize& size,
              std::size_t channelCount,
              QObject* parent)
   : QObject(parent),
-    m_noReconcile(false),
-    m_imageType(imageType),
+    m_noReconcile(0),
+    m_componentType(imageType),
     m_size(size),
     m_channelCount(channelCount),
     m_byteCount(0)
@@ -72,16 +71,16 @@ Image::Image(ImageType imageType,
     init(_rawData, true);
 }
 
-Image::Image(ImageType imageType,
+Image::Image(ComponentType imageType,
              std::uint8_t* rawData,
              const QSize& size,
              std::size_t channelCount,
              bool takeOwnership,
              QObject* parent)
   : QObject(parent),
-    m_noReconcile(false),
+    m_noReconcile(0),
     m_isValid(false),
-    m_imageType(imageType),
+    m_componentType(imageType),
     m_size(size),
     m_channelCount(channelCount)
 {
@@ -97,16 +96,16 @@ Image::Image(ImageType imageType,
     }
 }
 
-Image::Image(ImageType imageType,
+Image::Image(ComponentType imageType,
              const RawData& rawData,
              const QSize& size,
              std::size_t channelCount,
              bool copyData,
              QObject* parent)
   : QObject(parent),
-    m_noReconcile(false),
+    m_noReconcile(0),
     m_isValid(false),
-    m_imageType(imageType),
+    m_componentType(imageType),
     m_size(size),
     m_channelCount(channelCount),
     m_byteCount(0)
@@ -116,9 +115,9 @@ Image::Image(ImageType imageType,
 
 Image::Image(const Image &rhs, bool copyData)
   : QObject(rhs.parent()),
-    m_noReconcile(false),
+    m_noReconcile(0),
     m_isValid(false),
-    m_imageType(rhs.m_imageType),
+    m_componentType(rhs.m_componentType),
     m_size(rhs.m_size),
     m_channelCount(rhs.m_channelCount),
     m_byteCount(rhs.m_byteCount)
@@ -136,7 +135,7 @@ void Image::init(RawData& rawData, bool copyData)
         static_cast<std::size_t>(m_size.width()) *
         static_cast<std::size_t>(m_size.height()) *
         m_channelCount *
-        ImageTypeSizes[m_imageType];
+        ImageTypeSizes[m_componentType];
     if(copyData)
     {
         m_rawData.reset(new std::uint8_t[m_byteCount], get_default_deleter());
@@ -155,7 +154,7 @@ Image& Image::operator = (const Image& rhs)
     {
         {
             NoReconcile NR(*this);
-            setImageType(rhs.m_imageType);
+            setComponentType(rhs.m_componentType);
             setSize(rhs.m_size);
             setChannelCount(rhs.m_channelCount);
         }
@@ -189,14 +188,14 @@ bool Image::operator == (const Image& rhs) const
     {
         ret = true;
     }
-    else if ( m_imageType == rhs.m_imageType
+    else if (m_componentType == rhs.m_componentType
            && m_isValid == rhs.m_isValid
            && m_size == rhs.m_size
            && m_channelCount == rhs.m_channelCount )
     {
         if(m_isValid)
         {
-            if(m_imageType == uint12Image)
+            if(m_componentType == uint12Image)
             {
                 // Compare only lower 12 bits
                 // TODO: validate this block 
@@ -216,7 +215,7 @@ bool Image::operator == (const Image& rhs) const
             }
             else
             {
-                ret = std::memcmp(m_rawData.get(), rhs.m_rawData.get(), m_byteCount);
+                ret = std::memcmp(m_rawData.get(), rhs.m_rawData.get(), m_byteCount) == 0;
             }
         }
         else
@@ -237,17 +236,17 @@ bool Image::isValid() const
     return m_isValid;
 }
 
-Image::ImageType Image::imageType() const
+Image::ComponentType Image::componentType() const
 {
-    return m_imageType;
+    return m_componentType;
 }
 
-void Image::setImageType(ImageType imageType)
+void Image::setComponentType(ComponentType componentType)
 {
-    if(imageType != m_imageType)
+    if(componentType != m_componentType)
     {
-        m_imageType = imageType;
-        imageTypeChanged(m_imageType);
+        m_componentType = componentType;
+        imageTypeChanged(m_componentType);
     }
     reconcile();
 }
@@ -359,10 +358,10 @@ bool Image::read(const QUrl& furl)
                 std::size_t oldByteCount{m_byteCount};
                 {
                     NoReconcile NR(*this);
-                    setImageType(uint16Image);
+                    setComponentType(uint16Image);
                     setSize(QSize(static_cast<int>(fiImage.getWidth()), static_cast<int>(fiImage.getHeight())));
                     setChannelCount(channelCount);
-                    m_byteCount = m_channelCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_imageType];
+                    m_byteCount = m_channelCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_componentType];
                     m_rawData.reset(new std::uint8_t[m_byteCount]);
                     std::memcpy(m_rawData.get(), fiImage.accessPixels(), m_byteCount);
                 }
@@ -398,7 +397,7 @@ void Image::reconcile()
     if(m_noReconcile == 0)
     {
         const bool valid {
-            m_imageType != NullImage &&
+                m_componentType != NullImage &&
             m_size.width() >= 1 && m_size.height() >= 1 &&
             m_channelCount >= 1
         };
@@ -410,7 +409,7 @@ void Image::reconcile()
                     static_cast<std::size_t>(m_size.width()) *
                     static_cast<std::size_t>(m_size.height()) *
                     m_channelCount *
-                    ImageTypeSizes[m_imageType];
+                    ImageTypeSizes[m_componentType];
                 if(byteCount != m_byteCount)
                 {
                     m_byteCount = byteCount;

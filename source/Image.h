@@ -7,7 +7,7 @@ class Image
   : public QObject
 {
 public:
-    enum ImageType
+    enum ComponentType
     {
         // TODO: change to format Type_float32
         NullImage = 0,
@@ -24,9 +24,13 @@ public:
 
 private:
     Q_OBJECT
-    Q_ENUM(ImageType)
+    Q_ENUM(ComponentType)
     Q_PROPERTY(bool isValid READ isValid STORED false NOTIFY isValidChanged FINAL)
-    Q_PROPERTY(ImageType imageType READ imageType WRITE setImageType NOTIFY imageTypeChanged FINAL)
+    Q_PROPERTY(ComponentType imageType READ
+                       componentType
+                       WRITE
+                       setComponentType
+                       NOTIFY imageTypeChanged FINAL)
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged FINAL)
     Q_PROPERTY(std::size_t channelCount READ channelCount WRITE setChannelCount NOTIFY channelCountChanged FINAL)
     Q_PROPERTY(std::size_t byteCount READ byteCount STORED false NOTIFY byteCountChanged FINAL)
@@ -36,17 +40,17 @@ public:
 
     explicit Image(QObject* parent=nullptr);
 
-    explicit Image(ImageType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
+    explicit Image(ComponentType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
 
     // Copies contents of rawData to m_rawData; manages m_rawData's buffer
-    Image(ImageType imageType,
+    Image(ComponentType imageType,
           const std::uint8_t* rawData,
           const QSize& size,
           std::size_t channelCount=1,
           QObject* parent=nullptr);
 
     // Makes m_rawData point to the same location as rawData; manages m_rawData's buffer if takeOwnership is true
-    Image(ImageType image_type,
+    Image(ComponentType image_type,
           std::uint8_t* rawData,
           const QSize& size,
           std::size_t channelCount=1,
@@ -56,7 +60,7 @@ public:
     // If copyData is True: copies contents of rawData to m_rawData; manages m_rawData's buffer. 
     // If copyData is False: copies rawData to m_rawData.  Therefore, m_rawData's buffer management is controlled by the 
     // value of rawData.deleter, a function pointer copied to m_rawData.deleter. 
-    Image(ImageType imageType,
+    Image(ComponentType imageType,
           const RawData& rawData,
           const QSize& size,
           std::size_t channelCount=1,
@@ -76,8 +80,8 @@ public:
 
     bool isValid() const;
 
-    ImageType imageType() const;
-    void setImageType(ImageType imageType);
+    ComponentType componentType() const;
+    void setComponentType(ComponentType componentType);
 
     const RawData& rawData() const;
 
@@ -91,7 +95,7 @@ public:
 
 signals:
     void isValidChanged(bool);
-    void imageTypeChanged(ImageType);
+    void imageTypeChanged(ComponentType);
     void sizeChanged(QSize);
     void channelCountChanged(std::size_t);
     void byteCountChanged(std::size_t);
@@ -104,7 +108,7 @@ public slots:
 protected:
     std::uint16_t m_noReconcile;
     bool m_isValid;
-    ImageType m_imageType;
+    ComponentType m_componentType;
     RawData m_rawData;
     QSize m_size;
     std::size_t m_channelCount;

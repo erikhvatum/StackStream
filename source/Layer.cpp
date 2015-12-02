@@ -9,8 +9,8 @@ Layer::Layer(QQuickItem* parent)
     m_max(1),
     m_gamma(1)
 {
-    m_image = new Image(this);
     setTextureFollowsItemSize(false);
+    setImage(new Image(this));
 }
 
 Layer::Layer(const Layer& rhs, QQuickItem* parent)
@@ -84,10 +84,11 @@ void Layer::setImage(Image* image)
     if(m_image != nullptr)
     {
         m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::isValidChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::dataChanged, this, &Layer::update));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::update));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::update));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::onImageChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::dataChanged, this, &Layer::onImageChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::onImageChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::onImageChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::onImageChanged));
     }
     bool nowValid{isValid()};
     if(wasValid != nowValid) isValidChanged(nowValid);
@@ -139,4 +140,10 @@ void Layer::setGamma(double gamma)
 void Layer::aboutQt() const
 {
     QApplication::aboutQt();
+}
+
+void Layer::onImageChanged()
+{
+    qDebug() << "onImageChanged";
+    update();
 }
