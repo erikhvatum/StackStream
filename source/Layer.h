@@ -44,6 +44,7 @@ signals:
     void gammaChanged(double);
 
 public slots:
+    void aboutQt() const;
 
 protected:
     Image* m_image;

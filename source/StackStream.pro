@@ -7,7 +7,8 @@ CONFIG += c++11
 SOURCES += main.cpp \
     testdevcppwidget.cpp \
     Image.cpp \
-    Layer.cpp
+    Layer.cpp \
+    LayerRenderer.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -23,7 +24,8 @@ HEADERS += \
     testdevcppwidget.h \
     common.h \
     Image.h \
-    Layer.h
+    Layer.h \
+    LayerRenderer.h
 
 DISTFILES +=
 

@@ -22,7 +22,14 @@ ApplicationWindow {
 
             MenuItem {
                 text: qsTr("Exit")
-                onTriggered: Qt.quit();
+                onTriggered: Qt.quit()
+            }
+        }
+        Menu {
+            title: qsTr("Help")
+            MenuItem {
+                text: qsTr("About Qt")
+                onTriggered: layer_.aboutQt()
             }
         }
     }
