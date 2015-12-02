@@ -11,4 +11,7 @@ find_package(FreeImagePlus REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Qt5 COMPONENTS Core Gui OpenGL Qml Quick Widgets)
 
+include_directories(SYSTEM ${FREEIMAGE_INCLUDE_PATH})
+include_directories(SYSTEM ${FREEIMAGEPLUS_INCLUDE_PATH})
+
 add_subdirectory(source)

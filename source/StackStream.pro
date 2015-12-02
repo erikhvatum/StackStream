@@ -12,6 +12,8 @@ SOURCES += main.cpp \
 
 PRECOMPILED_HEADER = common.h
 
+INCLUDEPATH += /usr/local/include
+
 RESOURCES += qml.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
