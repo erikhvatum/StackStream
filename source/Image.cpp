@@ -307,6 +307,7 @@ bool Image::read(const QUrl& furl)
         if(fiImage.load(fpath.data()))
         {
             std::size_t channelCount;
+            FREE_IMAGE_TYPE t = fiImage.getImageType();
             switch(fiImage.getImageType())
             {
             default:
@@ -330,6 +331,10 @@ bool Image::read(const QUrl& furl)
             case FIT_INT32:
             case FIT_FLOAT:
             case FIT_DOUBLE:
+            case FIT_RGB16:
+            case FIT_RGBA16:
+            case FIT_RGBF:
+            case FIT_RGBAF:
                 channelCount = 4;
                 break;
             }

@@ -61,7 +61,7 @@ LayerRenderer::LayerRenderer()
         "{\n"
         "    vec2 texCoord = gl_FragCoord.xy / gl_FragCoord.w;\n"
         "    texCoord /= viewportSize;\n"
-        "    gl_FragColor = (texCoord.x > 0.5f || texCoord.y > 0.5f) ? vec4(clamp(texture2D(tex, texCoord).r, 0, 1)*65535, 0.1, 0, 1) : vec4(1,0,0,1);\n"
+        "    gl_FragColor = texture2D(tex, texCoord);\n"
         "}\n";
     fShad->compileSourceCode(fShadSrc);
 
@@ -126,14 +126,15 @@ void LayerRenderer::render()
         m_tex.release(0);
         m_shaderProgram.release();
     }
-    update();
+//    update();
 }
 
 QOpenGLFramebufferObject* LayerRenderer::createFramebufferObject(const QSize&)
 {
     QOpenGLFramebufferObjectFormat format;
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
-    format.setSamples(4);
+//    format.setSamples(4);
+    format.setInternalTextureFormat(GL_RGBA32F);
     QOpenGLFramebufferObject* ret{new QOpenGLFramebufferObject(m_fboSize, format)};
     qDebug() << "QOpenGLFramebufferObject* createFramebufferObject(const QSize&) override" << m_fboSize;
     return ret;

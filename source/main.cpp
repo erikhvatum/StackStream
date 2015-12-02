@@ -1,7 +1,18 @@
 #include "common.h"
 #include "Image.h"
 #include "Layer.h"
-#include "testdevcppwidget.h"
+
+static QSurfaceFormat fmt;
+
+static void onApplicationWindowCreated(QObject* object, const QUrl& url)
+{
+    QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
+    if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
+    {
+        stackStreamMainWindow->setFormat(fmt);
+        stackStreamMainWindow->show();
+    }
+}
 
 int main(int argc, char *argv[])
 {
@@ -13,11 +24,27 @@ int main(int argc, char *argv[])
     qRegisterMetaType<Image::ComponentType>("ComponentType");
     qRegisterMetaType<std::size_t>("std::size_t");
 
-    QQmlApplicationEngine engine;
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    fmt.setRenderableType(QSurfaceFormat::OpenGL);
+    fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
+    fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+    fmt.setSwapInterval(1);
+    fmt.setVersion(4, 5);
+    fmt.setOptions(/*QSurfaceFormat::DebugContext |*/ QSurfaceFormat::DeprecatedFunctions);
+    fmt.setSamples(8);
+    fmt.setRedBufferSize(10);
+    fmt.setGreenBufferSize(10);
+    fmt.setBlueBufferSize(10);
+    fmt.setAlphaBufferSize(2);
+    QSurfaceFormat::setDefaultFormat(fmt);
+    
 
-    //TestDevCppWidget* tdcw{new TestDevCppWidget()};
-    //tdcw->show();
+    QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    
+//    QQuickView view(QUrl(QStringLiteral("qrc:/main.qml")));
+//    view.setFormat(fmt);
+//    view.show();
 
     return app.exec();
 }

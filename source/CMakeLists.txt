@@ -1,6 +1,5 @@
 set(SOURCE_FILES
         main.cpp
-        testdevcppwidget.cpp
         Image.cpp
         Layer.cpp
         LayerRenderer.cpp)
