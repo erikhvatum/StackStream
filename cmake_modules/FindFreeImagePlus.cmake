@@ -10,10 +10,12 @@
 IF (WIN32)
 	FIND_PATH( FREEIMAGEPLUS_INCLUDE_PATH FreeImagePlus.h
 		${PROJECT_SOURCE_DIR}/extern/FreeImage
+        C:/FreeImage/Wrapper/FreeImagePlus/dist/x64
 		DOC "The directory where FreeImagePlus.h resides")
 	FIND_LIBRARY( FREEIMAGEPLUS_LIBRARY
-		NAMES FreeImage freeimage
+		NAMES FreeImagePlus freeimageplus
 		PATHS
+        C:/FreeImage/Wrapper/FreeImagePlus/dist/x64
 		${PROJECT_SOURCE_DIR}/FreeImage
 		DOC "The FreeImage library")
 ELSE (WIN32)

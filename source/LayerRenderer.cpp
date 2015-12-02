@@ -5,6 +5,7 @@
 const QSize LayerRenderer::sm_defaultFboSize(100, 100);
 
 const LayerRenderer::ChannelCountFormats LayerRenderer::sm_channelCountFormats[] = {
+    {QOpenGLTexture::NoFormat, QOpenGLTexture::NoSourceFormat},
     {QOpenGLTexture::R32F, QOpenGLTexture::Red},
     {QOpenGLTexture::RG32F, QOpenGLTexture::RG},
     {QOpenGLTexture::RGB32F, QOpenGLTexture::RGB},
@@ -22,12 +23,12 @@ const QOpenGLTexture::PixelType LayerRenderer::sm_componentPixelTypes[] = {
     QOpenGLTexture::NoPixelType
 };
 
-const QVector<QVector2D> LayerRenderer::sm_quad{
-    {1.1f, -1.1f},
-    {-1.1f, -1.1f},
-    {-1.1f, 1.1f},
-    {1.1f, 1.1f}
-};
+const QVector<QVector2D> LayerRenderer::sm_quad;/*{
+    QVector2D{1.1f, -1.1f},
+    QVector2D{-1.1f, -1.1f},
+    QVector2D{-1.1f, 1.1f},
+    QVector2D{1.1f, 1.1f}
+};*/
 
 LayerRenderer::LayerRenderer()
   : m_layerSerial(0),
@@ -35,6 +36,10 @@ LayerRenderer::LayerRenderer()
     m_tex(QOpenGLTexture::Target2D),
     m_texSerial(0)
 {
+    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{1.1f, -1.1f};
+    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{-1.1f, -1.1f};
+    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{-1.1f, 1.1f};
+    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{1.1f, 1.1f};
     initializeOpenGLFunctions();
 
     QOpenGLShader* vShad{new QOpenGLShader(QOpenGLShader::Vertex, &m_shaderProgram)};
