@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     fmt.setSwapInterval(1);
     fmt.setVersion(4, 5);
     fmt.setOptions(QSurfaceFormat::DebugContext | QSurfaceFormat::DeprecatedFunctions);
+    fmt.setStencilBufferSize(8);
     fmt.setSamples(8);
     // We request 30-bit color; if it's not available, Qt automatically falls back to 24-bit
     fmt.setRedBufferSize(10);
