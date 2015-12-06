@@ -65,7 +65,7 @@ ApplicationWindow {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.bottom: parent.bottom
-        width: (implicitHeight / implicitWidth) * height
+        width: (implicitWidth / implicitHeight) * height
         anchors.margins: 10
     }
 

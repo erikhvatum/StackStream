@@ -52,18 +52,7 @@ LayerRenderer::LayerRenderer()
     vShad->compileSourceCode(vShadSrc);
 
     QOpenGLShader* fShad{new QOpenGLShader(QOpenGLShader::Fragment, &m_shaderProgram)};
-    const char* fShadSrc =
-        "uniform sampler2D tex;\n"
-        "uniform vec2 viewportSize;\n"
-        "\n"
-        "void main()\n"
-        "{\n"
-        "    vec2 texCoord = gl_FragCoord.xy / gl_FragCoord.w;\n"
-        "    texCoord /= viewportSize;\n"
-        "    texCoord.y = 1.0f - texCoord.y;\n"
-        "    gl_FragColor = texture2D(tex, texCoord);\n"
-        "}\n";
-    fShad->compileSourceCode(fShadSrc);
+    fShad->compileSourceFile(":/LayerRenderer.frag");
 
     m_shaderProgram.addShader(vShad);
     m_shaderProgram.addShader(fShad);
@@ -112,7 +101,6 @@ void LayerRenderer::render()
                           sm_componentPixelTypes[image.componentType()],
                           image.rawData().get(),
                           &ptos);
-            qDebug("->");
             m_texSerial = m_layer.imageSerial();
         }
         m_shaderProgram.bind();
@@ -127,7 +115,6 @@ void LayerRenderer::render()
         m_tex->release(0);
         m_shaderProgram.release();
     }
-//    update();
 }
 
 QOpenGLFramebufferObject* LayerRenderer::createFramebufferObject(const QSize&)
