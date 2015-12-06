@@ -4,6 +4,13 @@
 
 #include "Image.h"
 
+volatile std::atomic<std::size_t> Image::sm_nextSerial{0};
+
+std::size_t Image::generateSerial()
+{
+    return sm_nextSerial++;
+}
+
 static void noop_deleter(void*) {}
 using get_default_deleter = std::default_delete<std::uint8_t[]>;
 
@@ -35,6 +42,7 @@ const std::size_t Image::ImageTypeSizes[] = {
 
 Image::Image(QObject *parent)
   : QObject(parent),
+    m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(NullImage),
@@ -45,6 +53,7 @@ Image::Image(QObject *parent)
 
 Image::Image(ComponentType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
   : QObject(parent),
+    m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(imageType),
@@ -61,6 +70,7 @@ Image::Image(ComponentType imageType,
              std::size_t channelCount,
              QObject* parent)
   : QObject(parent),
+    m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_componentType(imageType),
     m_size(size),
@@ -78,6 +88,7 @@ Image::Image(ComponentType imageType,
              bool takeOwnership,
              QObject* parent)
   : QObject(parent),
+    m_serial(generateSerial()),
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(imageType),
@@ -103,6 +114,7 @@ Image::Image(ComponentType imageType,
              bool copyData,
              QObject* parent)
   : QObject(parent),
+    m_serial(generateSerial()),
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(imageType),
@@ -115,6 +127,7 @@ Image::Image(ComponentType imageType,
 
 Image::Image(const Image &rhs, bool copyData)
   : QObject(rhs.parent()),
+    m_serial(rhs.m_serial),
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(rhs.m_componentType),
@@ -171,10 +184,15 @@ Image& Image::operator = (const Image& rhs)
                 m_isValid = true;
                 isValidChanged(true);
             }
-            dataChanged();
+            if(m_serial != rhs.m_serial)
+            {
+                m_serial = rhs.m_serial;
+                serialChanged(m_serial);
+            }
         }
         else
         {
+            m_rawData.reset();
             reconcile();
         }
     }
@@ -229,6 +247,11 @@ bool Image::operator == (const Image& rhs) const
 Image::operator bool () const
 {
     return isValid();
+}
+
+std::size_t Image::serial() const
+{
+    return m_serial;
 }
 
 bool Image::isValid() const
@@ -291,6 +314,12 @@ std::size_t Image::byteCount() const
     return m_byteCount;
 }
 
+void Image::notifyOfDataChange()
+{
+    m_serial = generateSerial();
+    serialChanged(m_serial);
+}
+
 bool Image::read(const QUrl& furl)
 {
     bool ret{false};
@@ -307,7 +336,6 @@ bool Image::read(const QUrl& furl)
         if(fiImage.load(fpath.data()))
         {
             std::size_t channelCount;
-            FREE_IMAGE_TYPE t = fiImage.getImageType();
             switch(fiImage.getImageType())
             {
             default:
@@ -376,7 +404,7 @@ bool Image::read(const QUrl& furl)
                     m_isValid = true;
                     isValidChanged(m_isValid);
                 }
-                dataChanged();
+                notifyOfDataChange();
             }
         }
     }
@@ -402,7 +430,7 @@ void Image::reconcile()
     if(m_noReconcile == 0)
     {
         const bool valid {
-                m_componentType != NullImage &&
+            m_componentType != NullImage &&
             m_size.width() >= 1 && m_size.height() >= 1 &&
             m_channelCount >= 1
         };
@@ -420,7 +448,7 @@ void Image::reconcile()
                     m_byteCount = byteCount;
                     byteCountChanged(m_byteCount);
                     m_rawData.reset(new std::uint8_t[m_byteCount], get_default_deleter());
-                    dataChanged();
+                    notifyOfDataChange();
                 }
             }
             else
@@ -433,7 +461,7 @@ void Image::reconcile()
                 if(m_rawData)
                 {
                     m_rawData.reset();
-                    dataChanged();
+                    notifyOfDataChange();
                 }
             }
             isValidChanged(m_isValid);

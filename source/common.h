@@ -7,6 +7,7 @@
 #include <QtQml>
 #include <QtQuick>
 #include <QtWidgets>
+#include <atomic>
 #include <cstdint>
 #include <forward_list>
 #include <limits>

@@ -3,40 +3,6 @@ import QtQuick.Controls 1.3
 import QtQuick.Dialogs 1.2
 import StackStream 1.0
 
-//SSLayer {
-//    id: layer_
-//    x: 0
-//    y: 0
-//    width: 3000
-//    height: 100
-//    onVisibleChanged: console.log(isVisible)
-//    Drag.active: mouseArea.drag.active
-//    Drag.hotSpot.x: 10
-//    Drag.hotSpot.y: 10
-
-//    MouseArea {
-//            id: mouseArea
-//            anchors.fill: parent
-//            drag.target: parent
-//            onClicked: fileDialog.open()
-//        }
-//    //onIsValidChanged: console.log(isValid)
-
-//    FileDialog {
-//            id: fileDialog
-//            visible: false
-//            modality: Qt.WindowModal
-//            sidebarVisible: true
-//            selectMultiple: false
-//            onAccepted: {
-//                /*if(layer_.image == null) {
-//                    layer_.image = Qt.createQmlObject('import StackStream 1.0; SSImage {}', layer_, 'apath')
-//                }*/
-//                layer_.image.read(fileUrls[0]);
-//            }
-//        }
-//}
-
 ApplicationWindow {
     id: stackStreamMainWindow
     objectName: "stackStreamMainWindow"
@@ -98,7 +64,6 @@ ApplicationWindow {
         id: layer_
         anchors.fill: parent
         anchors.margins: 10
-        onIsValidChanged: console.log(isValid)
     }
 
     FileDialog {

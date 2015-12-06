@@ -5,14 +5,11 @@ QT += qml quick widgets
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    testdevcppwidget.cpp \
     Image.cpp \
     Layer.cpp \
     LayerRenderer.cpp
 
 PRECOMPILED_HEADER = common.h
-
-INCLUDEPATH += /usr/local/include
 
 RESOURCES += qml.qrc
 
@@ -23,7 +20,6 @@ QML_IMPORT_PATH =
 include(deployment.pri)
 
 HEADERS += \
-    testdevcppwidget.h \
     common.h \
     Image.h \
     Layer.h \

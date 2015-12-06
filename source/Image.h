@@ -25,6 +25,7 @@ public:
 private:
     Q_OBJECT
     Q_ENUM(ComponentType)
+    Q_PROPERTY(std::size_t serial READ serial STORED false NOTIFY serialChanged)
     Q_PROPERTY(bool isValid READ isValid STORED false NOTIFY isValidChanged FINAL)
     Q_PROPERTY(ComponentType imageType READ
                        componentType
@@ -78,6 +79,8 @@ public:
     bool operator == (const Image& rhs) const;
     operator bool () const;
 
+    std::size_t serial() const;
+
     bool isValid() const;
 
     ComponentType componentType() const;
@@ -93,19 +96,28 @@ public:
 
     std::size_t byteCount() const;
 
+    // If you modify the memory backing an Image instance (IE, the memory pointed to by m_rawData) and want users of 
+    // that Image instance to be informed, manually call the Image::notifyOfDataChange method.  Doing so will cause 
+    // the Image instance's serial to update and the serialChanged signal to be emitted. 
+    Q_INVOKABLE void notifyOfDataChange();
+
 signals:
+    void serialChanged(std::size_t);
     void isValidChanged(bool);
     void imageTypeChanged(ComponentType);
     void sizeChanged(QSize);
     void channelCountChanged(std::size_t);
     void byteCountChanged(std::size_t);
-    void dataChanged();
 
 public slots:
     bool read(const QUrl& furl);
     bool write(const QUrl& furl) const;
 
 protected:
+    static volatile std::atomic<std::size_t> sm_nextSerial;
+    static std::size_t generateSerial();
+
+    std::size_t m_serial;
     std::uint16_t m_noReconcile;
     bool m_isValid;
     ComponentType m_componentType;
