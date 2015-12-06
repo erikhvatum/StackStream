@@ -86,7 +86,12 @@ void Layer::setImage(Image* image)
         if(m_image->parent() == this) m_image->deleteLater();
     }
     m_image = image;
-    if(m_image != nullptr)
+    if(m_image == nullptr)
+    {
+        setImplicitSize(LayerRenderer::sm_defaultFboSize.width(),
+                        LayerRenderer::sm_defaultFboSize.height());
+    }
+    else
     {
         m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::isValidChanged));
         m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::update));
@@ -94,6 +99,7 @@ void Layer::setImage(Image* image)
         m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::update));
         m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::update));
         m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::update));
+        setImplicitSize(m_image->size().width(), m_image->size().height());
     }
     imageSerialChanged(imageSerial());
     bool nowValid{isValid()};
@@ -155,6 +161,12 @@ void Layer::aboutQt() const
 
 void Layer::onSerialChanged(std::size_t serial)
 {
+    if(m_image == nullptr || !m_image->isValid())
+        setImplicitSize(LayerRenderer::sm_defaultFboSize.width(),
+                        LayerRenderer::sm_defaultFboSize.height());
+    else
+        setImplicitSize(m_image->size().width(), m_image->size().height());
+
     imageSerialChanged(serial);
     update();
 }

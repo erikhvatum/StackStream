@@ -62,7 +62,10 @@ ApplicationWindow {
 
     SSLayer {
         id: layer_
-        anchors.fill: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: (implicitHeight / implicitWidth) * height
         anchors.margins: 10
     }
 

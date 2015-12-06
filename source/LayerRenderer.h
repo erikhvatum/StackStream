@@ -8,6 +8,8 @@ class LayerRenderer
     protected QOpenGLFunctions
 {
 public:
+    static const QSize sm_defaultFboSize;
+
     LayerRenderer();
     void render() override;
     QOpenGLFramebufferObject* createFramebufferObject(const QSize&) override;
@@ -21,7 +23,6 @@ protected:
     QOpenGLTexture* m_tex;
     std::size_t m_texSerial;
     int m_vertCoordLoc, m_texLoc, m_viewportSizeLoc;
-    static const QSize sm_defaultFboSize;
     static const QVector<QVector2D> sm_quad;
     struct ChannelCountFormats {
         QOpenGLTexture::TextureFormat texFormat;
