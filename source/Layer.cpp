@@ -122,7 +122,10 @@ void Layer::setMin(float min)
     {
         m_min = min;
         minChanged(m_min);
-        if(isValid()) update();
+        if(m_min > m_max)
+            setMax(m_min);
+        else if(isValid())
+            update();
     }
 }
 
@@ -142,7 +145,10 @@ void Layer::setMax(float max)
     {
         m_max = max;
         maxChanged(m_max);
-        if(isValid()) update();
+        if(m_max < m_min)
+            setMin(m_max);
+        else if(isValid())
+            update();
     }
 }
 

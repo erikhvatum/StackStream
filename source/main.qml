@@ -98,33 +98,62 @@ ApplicationWindow {
                 columns: 3
                 flow: GridLayout.LeftToRight
                 anchors.fill: parent
+                property bool _setting: false
 
                 Label { text: "Min: " }
                 Slider {
                     id: minSlider
                     Layout.fillWidth: true
                     minimumValue: 0
-                    maximumValue: maxSlider.value
-                    value: 0
+                    maximumValue: 1
+                    value: layer_.min
+                    onValueChanged: {
+                        if(!parent._setting) {
+                            parent._setting = true;
+                            layer_.min = value;
+                            parent._setting = false;
+                        }
+                    }
                 }
                 SpinBox {
                     id: minSpinBox
                     decimals: 3
-                    value: minSlider.value
+                    value: layer_.min
+                    onValueChanged: {
+                        if(!parent._setting) {
+                            parent._setting = true;
+                            layer_.min = value;
+                            parent._setting = false;
+                        }
+                    }
                 }
 
                 Label { text: "Max: " }
                 Slider {
                     id: maxSlider
                     Layout.fillWidth: true
-                    minimumValue: minSlider.value
+                    minimumValue: 0
                     maximumValue: 1
-                    value: 1
+                    value: layer_.max
+                    onValueChanged: {
+                        if(!parent._setting) {
+                            parent._setting = true;
+                            layer_.max = value;
+                            parent._setting = false;
+                        }
+                    }
                 }
                 SpinBox {
                     id: maxSpinBox
                     decimals: 3
-                    value: maxSlider.value
+                    value: layer_.max
+                    onValueChanged: {
+                        if(!parent._setting) {
+                            parent._setting = true;
+                            layer_.max = value;
+                            parent._setting = false;
+                        }
+                    }
                 }
 
                 Item {
