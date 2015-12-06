@@ -76,9 +76,9 @@ ApplicationWindow {
         sidebarVisible: true
         selectMultiple: false
         onAccepted: {
-            /*if(layer_.image == null) {
+            if(layer_.image == null) {
                 layer_.image = Qt.createQmlObject('import StackStream 1.0; SSImage {}', layer_, 'apath')
-            }*/
+            }
             layer_.image.read(fileUrls[0]);
         }
     }

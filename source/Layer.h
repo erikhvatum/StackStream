@@ -9,9 +9,9 @@ class Layer
     Q_PROPERTY(bool isValid READ isValid NOTIFY isValidChanged)
     Q_PROPERTY(Image* image READ image WRITE setImage)
     Q_PROPERTY(std::size_t imageSerial READ imageSerial NOTIFY imageSerialChanged)
-    Q_PROPERTY(double min READ min WRITE setMin NOTIFY minChanged)
-    Q_PROPERTY(double max READ max WRITE setMax NOTIFY maxChanged)
-    Q_PROPERTY(double gamma READ gamma WRITE setGamma NOTIFY gammaChanged)
+    Q_PROPERTY(float min READ min WRITE setMin RESET resetMin NOTIFY minChanged)
+    Q_PROPERTY(float max READ max WRITE setMax RESET resetMax NOTIFY maxChanged)
+    Q_PROPERTY(float gamma READ gamma WRITE setGamma RESET resetGamma NOTIFY gammaChanged)
 public:
     explicit Layer(QQuickItem* parent=nullptr);
     explicit Layer(const Layer& rhs, QQuickItem* parent=nullptr);
@@ -29,30 +29,33 @@ public:
 
     std::size_t imageSerial() const;
 
-    double min() const;
-    void setMin(double min);
+    float min() const;
+    void setMin(float min);
+    void resetMin();
 
-    double max() const;
-    void setMax(double max);
+    float max() const;
+    void setMax(float max);
+    void resetMax();
 
-    double gamma() const;
-    void setGamma(double gamma);
+    float gamma() const;
+    void setGamma(float gamma);
+    void resetGamma();
 
 signals:
     void isValidChanged(bool);
     void imageSerialChanged(std::size_t);
-    void minChanged(double);
-    void maxChanged(double);
-    void gammaChanged(double);
+    void minChanged(float);
+    void maxChanged(float);
+    void gammaChanged(float);
 
 public slots:
     void aboutQt() const;
 
 protected:
     Image* m_image;
-    double m_min;
-    double m_max;
-    double m_gamma;
+    float m_min;
+    float m_max;
+    float m_gamma;
     std::forward_list<QMetaObject::Connection> m_imageSignalConnections;
 
     void onSerialChanged(std::size_t serial);

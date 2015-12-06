@@ -10,7 +10,6 @@ Layer::Layer(QQuickItem* parent)
     m_gamma(1)
 {
     setTextureFollowsItemSize(false);
-    setImage(new Image(this));
 }
 
 Layer::Layer(const Layer& rhs, QQuickItem* parent)
@@ -112,46 +111,64 @@ std::size_t Layer::imageSerial() const
     return m_image ? m_image->serial() : std::numeric_limits<std::size_t>::max();
 }
 
-double Layer::min() const
+float Layer::min() const
 {
     return m_min;
 }
 
-void Layer::setMin(double min)
+void Layer::setMin(float min)
 {
     if(m_min != min)
     {
         m_min = min;
         minChanged(m_min);
+        if(isValid()) update();
     }
 }
 
-double Layer::max() const
+void Layer::resetMin()
+{
+    setMin(0.0f);
+}
+
+float Layer::max() const
 {
     return m_max;
 }
 
-void Layer::setMax(double max)
+void Layer::setMax(float max)
 {
     if(m_max != max)
     {
         m_max = max;
         maxChanged(m_max);
+        if(isValid()) update();
     }
 }
 
-double Layer::gamma() const
+void Layer::resetMax()
+{
+    setMax(1.0f);
+}
+
+float Layer::gamma() const
 {
     return m_gamma;
 }
 
-void Layer::setGamma(double gamma)
+void Layer::setGamma(float gamma)
 {
     if(m_gamma != gamma)
     {
         m_gamma = gamma;
         gammaChanged(m_gamma);
+        if(isValid()) update();
     }
+}
+
+void Layer::resetGamma()
+{
+    setGamma(1.0f);
 }
 
 void Layer::aboutQt() const
