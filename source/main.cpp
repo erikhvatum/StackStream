@@ -10,8 +10,8 @@ static void onApplicationWindowCreated(QObject* object, const QUrl&)
     if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
     {
         stackStreamMainWindow->setFormat(fmt);
-        stackStreamMainWindow->setPersistentOpenGLContext(true);
-        stackStreamMainWindow->setPersistentSceneGraph(true);
+//        stackStreamMainWindow->setPersistentOpenGLContext(true);
+//        stackStreamMainWindow->setPersistentSceneGraph(true);
         stackStreamMainWindow->show();
     }
 }
