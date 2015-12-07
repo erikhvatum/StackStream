@@ -1,6 +1,7 @@
 #include "common.h"
 #include "Image.h"
 #include "Layer.h"
+#include "View.h"
 
 static QSurfaceFormat fmt;
 
@@ -23,6 +24,7 @@ int main(int argc, char *argv[])
     const int ver[] = {1, 0};
     qmlRegisterType<Image>(ss, ver[0], ver[1], "SSImage");
     qmlRegisterType<Layer>(ss, ver[0], ver[1], "SSLayer");
+    qmlRegisterType<View>(ss, ver[0], ver[1], "View");
     qRegisterMetaType<Image::ComponentType>("ComponentType");
     qRegisterMetaType<std::size_t>("std::size_t");
 

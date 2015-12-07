@@ -40,14 +40,14 @@ ApplicationWindow {
     RowLayout {
         anchors.fill: parent
 
-        Item {
+        View {
             id: mainView
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: parent.width - layerPropertiesGroupBox.width - 20
             z: -1
-//            layer.enabled: true
+            layer.enabled: true
 
             ShaderEffect {
                 id: tileBackground
@@ -82,6 +82,13 @@ ApplicationWindow {
                 anchors.bottom: parent.bottom
                 width: (implicitWidth / implicitHeight) * height
                 anchors.margins: 10
+//                Rectangle {
+//                    x: 10
+//                    y: 10
+//                    color: Qt.rgba(1,0,0,1)
+//                    width: 100
+//                    height: 100
+//                }
             }
         }
 

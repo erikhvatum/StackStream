@@ -7,7 +7,8 @@ CONFIG += c++11
 SOURCES += main.cpp \
     Image.cpp \
     Layer.cpp \
-    LayerRenderer.cpp
+    LayerRenderer.cpp \
+    View.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -23,7 +24,8 @@ HEADERS += \
     common.h \
     Image.h \
     Layer.h \
-    LayerRenderer.h
+    LayerRenderer.h \
+    View.h
 
 DISTFILES +=
 
