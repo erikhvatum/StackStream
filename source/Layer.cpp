@@ -7,7 +7,8 @@ Layer::Layer(QQuickItem* parent)
     m_image(nullptr),
     m_min(0),
     m_max(1),
-    m_gamma(1)
+    m_gamma(1),
+    m_tint(Qt::white)
 {
     setTextureFollowsItemSize(false);
 }
@@ -17,7 +18,8 @@ Layer::Layer(const Layer& rhs, QQuickItem* parent)
     m_image(nullptr),
     m_min(rhs.m_min),
     m_max(rhs.m_max),
-    m_gamma(rhs.m_gamma)
+    m_gamma(rhs.m_gamma),
+    m_tint(rhs.m_tint)
 {
     setTextureFollowsItemSize(false);
     setImage(const_cast<Layer&>(rhs).m_image);
@@ -29,6 +31,7 @@ Layer& Layer::operator = (const Layer& rhs)
     setMin(rhs.m_min);
     setMax(rhs.m_max);
     setGamma(rhs.m_gamma);
+    setTint(rhs.m_tint);
     return *this;
 }
 
@@ -37,7 +40,8 @@ bool Layer::operator == (const Layer& rhs) const
     bool ret{false};
     if ( rhs.m_min == m_min
       && rhs.m_max == m_max
-      && rhs.m_gamma == m_gamma )
+      && rhs.m_gamma == m_gamma
+      && rhs.m_tint == m_tint )
     {
         if(rhs.m_image == m_image)
             ret = true;
@@ -175,6 +179,26 @@ void Layer::setGamma(float gamma)
 void Layer::resetGamma()
 {
     setGamma(1.0f);
+}
+
+const QColor& Layer::tint() const
+{
+    return m_tint;
+}
+
+void Layer::setTint(const QColor& tint)
+{
+    if(tint != m_tint)
+    {
+        m_tint = tint;
+        tintChanged(m_tint);
+        if(isValid()) update();
+    }
+}
+
+void Layer::resetTint()
+{
+    setTint(QColor(Qt::white));
 }
 
 void Layer::aboutQt() const

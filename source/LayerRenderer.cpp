@@ -58,9 +58,13 @@ LayerRenderer::LayerRenderer()
     m_shaderProgram.addShader(fShad);
     m_shaderProgram.link();
 
-    m_vertCoordLoc = m_shaderProgram.attributeLocation("vertCoord");
-    m_texLoc = m_shaderProgram.uniformLocation("tex");
+    m_vertCoordLoc    = m_shaderProgram.attributeLocation("vertCoord");
+    m_texLoc          = m_shaderProgram.uniformLocation("tex");
     m_viewportSizeLoc = m_shaderProgram.uniformLocation("viewportSize");
+    m_rescaleMinLoc   = m_shaderProgram.uniformLocation("rescaleMin");
+    m_rescaleRangeLoc = m_shaderProgram.uniformLocation("rescaleRange");
+    m_gammaLoc        = m_shaderProgram.uniformLocation("gamma");
+    m_tintLoc         = m_shaderProgram.uniformLocation("tint");
 
     m_tex->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
     m_tex->setMipLevels(1);
@@ -92,15 +96,15 @@ void LayerRenderer::render()
             m_tex->allocateStorage();
             m_texSerial = std::numeric_limits<std::size_t>::max();
         }
-        m_tex->bind(0);
+        m_tex->bind(0, QOpenGLTexture::ResetTextureUnit);
         if(m_texSerial != m_layer.imageSerial())
         {
             QOpenGLPixelTransferOptions ptos;
             ptos.setAlignment(1);
             m_tex->setData(formats.srcPixelFormat,
-                          sm_componentPixelTypes[image.componentType()],
-                          image.rawData().get(),
-                          &ptos);
+                           sm_componentPixelTypes[image.componentType()],
+                           image.rawData().get(),
+                           &ptos);
             m_texSerial = m_layer.imageSerial();
         }
         m_shaderProgram.bind();
@@ -110,6 +114,11 @@ void LayerRenderer::render()
         m_shaderProgram.setUniformValue(m_viewportSizeLoc, viewportRect[2], viewportRect[3]);
         m_shaderProgram.enableAttributeArray(m_vertCoordLoc);
         m_shaderProgram.setAttributeArray(m_vertCoordLoc, sm_quad.constData());
+        m_shaderProgram.setUniformValue(m_rescaleMinLoc, m_layer.min());
+        m_shaderProgram.setUniformValue(m_rescaleRangeLoc, m_layer.max()-m_layer.min());
+        m_shaderProgram.setUniformValue(m_gammaLoc, m_layer.gamma());
+        const QColor& tint{m_layer.tint()};
+        m_shaderProgram.setUniformValue(m_tintLoc, tint.redF(), tint.greenF(), tint.blueF(), tint.alphaF());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         m_shaderProgram.disableAttributeArray(m_vertCoordLoc);
         m_tex->release(0);

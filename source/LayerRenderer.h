@@ -23,6 +23,7 @@ protected:
     QOpenGLTexture* m_tex;
     std::size_t m_texSerial;
     int m_vertCoordLoc, m_texLoc, m_viewportSizeLoc;
+    int m_rescaleMinLoc, m_rescaleRangeLoc, m_gammaLoc, m_tintLoc;
     static const QVector<QVector2D> sm_quad;
     struct ChannelCountFormats {
         QOpenGLTexture::TextureFormat texFormat;

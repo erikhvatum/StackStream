@@ -47,7 +47,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             width: parent.width - layerPropertiesGroupBox.width - 20
             z: -1
-            layer.enabled: true
+//            layer.enabled: true
 
             ShaderEffect {
                 id: tileBackground
@@ -100,6 +100,28 @@ ApplicationWindow {
                 anchors.fill: parent
                 property bool _setting: false
 
+                function _setMin(min_) {
+                    if(!_setting) {
+                        _setting = true;
+                        layer_.min = min_;
+                        _setting = false;
+                    }
+                }
+                function _setMax(max_) {
+                    if(!_setting) {
+                        _setting = true;
+                        layer_.max = max_;
+                        _setting = false;
+                    }
+                }
+                function _setGamma(gamma_) {
+                    if(!_setting) {
+                        _setting = true;
+                        layer_.gamma = gamma_;
+                        _setting = false;
+                    }
+                }
+
                 Label { text: "Min: " }
                 Slider {
                     id: minSlider
@@ -107,27 +129,14 @@ ApplicationWindow {
                     minimumValue: 0
                     maximumValue: 1
                     value: layer_.min
-                    onValueChanged: {
-                        if(!parent._setting) {
-                            parent._setting = true;
-                            layer_.min = value;
-                            parent._setting = false;
-                        }
-                    }
+                    onValueChanged: { parent._setMin(value) }
                 }
                 SpinBox {
                     id: minSpinBox
                     decimals: 3
                     value: layer_.min
-                    onValueChanged: {
-                        if(!parent._setting) {
-                            parent._setting = true;
-                            layer_.min = value;
-                            parent._setting = false;
-                        }
-                    }
+                    onValueChanged: { parent._setMin(value) }
                 }
-
                 Label { text: "Max: " }
                 Slider {
                     id: maxSlider
@@ -135,25 +144,30 @@ ApplicationWindow {
                     minimumValue: 0
                     maximumValue: 1
                     value: layer_.max
-                    onValueChanged: {
-                        if(!parent._setting) {
-                            parent._setting = true;
-                            layer_.max = value;
-                            parent._setting = false;
-                        }
-                    }
+                    onValueChanged: { parent._setMax(value) }
                 }
                 SpinBox {
                     id: maxSpinBox
                     decimals: 3
                     value: layer_.max
-                    onValueChanged: {
-                        if(!parent._setting) {
-                            parent._setting = true;
-                            layer_.max = value;
-                            parent._setting = false;
-                        }
-                    }
+                    onValueChanged: { parent._setMax(value) }
+                }
+                Label { text: "γ: " }
+                Slider {
+                    id: gammaSlider
+                    Layout.fillWidth: true
+                    minimumValue: 0.01
+                    maximumValue: 10
+                    value: layer_.gamma
+                    onValueChanged: { parent._setGamma(value) }
+                }
+                SpinBox {
+                    id: gammaSpinBox
+                    decimals: 3
+                    minimumValue: 0.01
+                    maximumValue: 10
+                    value: layer_.gamma
+                    onValueChanged: { parent._setGamma(value) }
                 }
 
                 Item {
