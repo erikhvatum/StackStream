@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     Image.cpp \
     Layer.cpp \
     LayerRenderer.cpp \
-    View.cpp
+    View.cpp \
+    ThirtyBitImageItem.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -25,7 +26,8 @@ HEADERS += \
     Image.h \
     Layer.h \
     LayerRenderer.h \
-    View.h
+    View.h \
+    ThirtyBitImageItem.h
 
 DISTFILES +=
 

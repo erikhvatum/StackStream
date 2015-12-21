@@ -2,18 +2,29 @@
 #include "Image.h"
 #include "Layer.h"
 #include "View.h"
+#include "ThirtyBitImageItem.h"
 
 static QSurfaceFormat fmt;
 
+//static void onApplicationWindowCreated(QObject* object, const QUrl&)
+//{
+//    QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
+//    if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
+//    {
+//        stackStreamMainWindow->setFormat(fmt);
+////        stackStreamMainWindow->setPersistentOpenGLContext(true);
+////        stackStreamMainWindow->setPersistentSceneGraph(true);
+//        stackStreamMainWindow->show();
+//    }
+//}
+
 static void onApplicationWindowCreated(QObject* object, const QUrl&)
 {
-    QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
-    if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
+    QQuickWindow* thirtyBitImageItemMainWindow{qobject_cast<QQuickWindow*>(object)};
+    if(thirtyBitImageItemMainWindow && thirtyBitImageItemMainWindow->objectName() == "thirtyBitImageItemMainWindow")
     {
-        stackStreamMainWindow->setFormat(fmt);
-//        stackStreamMainWindow->setPersistentOpenGLContext(true);
-//        stackStreamMainWindow->setPersistentSceneGraph(true);
-        stackStreamMainWindow->show();
+        thirtyBitImageItemMainWindow->setFormat(fmt);
+        thirtyBitImageItemMainWindow->show();
     }
 }
 
@@ -25,6 +36,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Image>(ss, ver[0], ver[1], "SSImage");
     qmlRegisterType<Layer>(ss, ver[0], ver[1], "SSLayer");
     qmlRegisterType<View>(ss, ver[0], ver[1], "View");
+    qmlRegisterType<ThirtyBitImageItem>(ss, ver[0], ver[1], "ThirtyBitImageItem");
     qRegisterMetaType<Image::ComponentType>("ComponentType");
     qRegisterMetaType<std::size_t>("std::size_t");
 
@@ -44,10 +56,10 @@ int main(int argc, char *argv[])
 //    fmt.setAlphaBufferSize(2);
     QSurfaceFormat::setDefaultFormat(fmt);
     
-
     QQmlApplicationEngine engine;
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/main_30bitimageitem.qml")));
     
 //    QQuickView view(QUrl(QStringLiteral("qrc:/main.qml")));
 //    view.setFormat(fmt);

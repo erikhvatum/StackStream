@@ -46,6 +46,8 @@ public:
     void setTint(const QColor& tint);
     void resetTint();
 
+    QSGTextureProvider* textureProvider() const override;
+
 signals:
     void isValidChanged(bool);
     void imageSerialChanged(std::size_t);
@@ -66,4 +68,5 @@ protected:
     std::forward_list<QMetaObject::Connection> m_imageSignalConnections;
 
     void onSerialChanged(std::size_t serial);
+    void onImageSizeChanged(QSize size);
 };

@@ -3,6 +3,6 @@
 
 View::View()
 {
-
+    setFlag(QQuickItem::ItemClipsChildrenToShape);
 }
 

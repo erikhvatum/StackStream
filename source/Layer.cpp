@@ -99,7 +99,7 @@ void Layer::setImage(Image* image)
         m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::isValidChanged));
         m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::update));
         m_imageSignalConnections.push_front(connect(m_image, &Image::serialChanged, this, &Layer::onSerialChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::onImageSizeChanged));
         m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::update));
         m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::update));
         setImplicitSize(m_image->size().width(), m_image->size().height());
@@ -201,6 +201,12 @@ void Layer::resetTint()
     setTint(QColor(Qt::white));
 }
 
+QSGTextureProvider* Layer::textureProvider() const
+{
+    qDebug() << "QSGTextureProvider* Layer::textureProvider() const";
+    return QQuickFramebufferObject::textureProvider();
+}
+
 void Layer::aboutQt() const
 {
     QApplication::aboutQt();
@@ -216,4 +222,9 @@ void Layer::onSerialChanged(std::size_t serial)
 
     imageSerialChanged(serial);
     update();
+}
+
+void Layer::onImageSizeChanged(QSize size)
+{
+    setImplicitSize(size.width(), size.height());
 }

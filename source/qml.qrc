@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>LayerRenderer.frag</file>
+        <file>main_30bitimageitem.qml</file>
     </qresource>
 </RCC>
