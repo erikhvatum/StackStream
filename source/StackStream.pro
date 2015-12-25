@@ -9,7 +9,9 @@ SOURCES += main.cpp \
     Layer.cpp \
     LayerRenderer.cpp \
     View.cpp \
-    ThirtyBitImageItem.cpp
+    ThirtyBitImageItem.cpp \
+    ThirtyBitSGTexture.cpp \
+    ThirtyBitSGSimpleTextureNode.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -27,7 +29,9 @@ HEADERS += \
     Layer.h \
     LayerRenderer.h \
     View.h \
-    ThirtyBitImageItem.h
+    ThirtyBitImageItem.h \
+    ThirtyBitSGTexture.h \
+    ThirtyBitSGSimpleTextureNode.h
 
 DISTFILES +=
 
