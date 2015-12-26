@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets
+QT += qml quick widgets quick-private qml-private core-private gui-private
 
 CONFIG += c++11
 
