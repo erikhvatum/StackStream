@@ -249,6 +249,102 @@ Image::operator bool () const
     return isValid();
 }
 
+QImage* Image::as10BpcQImage() const
+{
+    if(!m_isValid) return nullptr;
+    struct QiPixel
+    {
+        uint8_t a : 2;
+        uint16_t r : 10;
+        uint16_t g : 10;
+        uint16_t b : 10;
+    };
+    const uint8_t* fiPixIt{reinterpret_cast<const uint8_t*>(m_rawData.get())};
+    const uint8_t* const fiPixEndIt{fiPixIt + m_byteCount};
+    uint8_t* qiPixIt;
+    QImage* ret;
+    switch(m_channelCount)
+    {
+    default:
+        ret = nullptr;
+        qWarning("m_channelCount must be in the interval [0, 4].");
+        break;
+    case 4:
+    {
+        struct FiPixel
+        {
+            uint16_t r : 16;
+            uint16_t g : 16;
+            uint16_t b : 16;
+            uint16_t a : 16;
+        };
+        ret = new QImage(m_size, QImage::Format_A2RGB30_Premultiplied);
+        qiPixIt = ret->bits();
+        uint16_t a;
+        for(;;)
+        {
+            const FiPixel& fiPix = *reinterpret_cast<const FiPixel*>(fiPixIt);
+            QiPixel& qiPix = *reinterpret_cast<QiPixel*>(qiPixIt);
+            qiPix.a = a = fiPix.a >> 14;
+            qiPix.r = a * (fiPix.r >> 6);
+            qiPix.g = a * (fiPix.g >> 6);
+            qiPix.b = a * (fiPix.b >> 6);
+            fiPixIt += 8;
+            if(fiPixIt >= fiPixEndIt) break;
+            qiPixIt += 4;
+        }
+        break;
+    }
+    case 3:
+    {
+        // TODO: verify this block
+        struct FiPixel
+        {
+            uint16_t r : 16;
+            uint16_t g : 16;
+            uint16_t b : 16;
+        };
+        ret = new QImage(m_size, QImage::QImage::Format_RGB30);
+        qiPixIt = ret->bits();
+        for(;;)
+        {
+            const FiPixel& fiPix = *reinterpret_cast<const FiPixel*>(fiPixIt);
+            QiPixel& qiPix = *reinterpret_cast<QiPixel*>(qiPixIt);
+            qiPix.r = fiPix.r >> 6;
+            qiPix.g = fiPix.g >> 6;
+            qiPix.b = fiPix.b >> 6;
+            fiPixIt += 6;
+            if(fiPixIt >= fiPixEndIt) break;
+            qiPixIt += 4;
+        }
+        break;
+    }
+    case 2:
+    {
+        // TODO
+        ret = nullptr;
+        qWarning("Support for m_channelCount of 2 is not yet implemented.");
+        break;
+    }
+    case 1:
+    {
+        // Note: QImage does not offer a 10-bit grayscale format
+        ret = new QImage(m_size, QImage::QImage::Format_RGB30);
+        qiPixIt = ret->bits();
+        for(;;)
+        {
+            const uint16_t& fiPix = *reinterpret_cast<const uint16_t*>(fiPixIt);
+            QiPixel& qiPix = *reinterpret_cast<QiPixel*>(qiPixIt);
+            qiPix.b = qiPix.g = qiPix.r = fiPix >> 6;
+            fiPixIt += 2;
+            if(fiPixIt >= fiPixEndIt) break;
+            qiPixIt += 4;
+        }
+        break;
+    }}
+    return ret;
+}
+
 std::size_t Image::serial() const
 {
     return m_serial;

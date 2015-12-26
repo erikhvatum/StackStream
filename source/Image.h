@@ -79,6 +79,8 @@ public:
     bool operator == (const Image& rhs) const;
     operator bool () const;
 
+    QImage* as10BpcQImage() const;
+
     std::size_t serial() const;
 
     bool isValid() const;
