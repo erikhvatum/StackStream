@@ -80,6 +80,6 @@ ApplicationWindow {
         width: (implicitWidth / implicitHeight) * height
         anchors.margins: 10
 
-        layer.enabled: true
+//        layer.enabled: true
     }
 }

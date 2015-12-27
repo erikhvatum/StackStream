@@ -32,17 +32,6 @@ ThirtyBitSGTexture::~ThirtyBitSGTexture()
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
 }
 
-void qsg_swizzleBGRAToRGBA(QImage *image)
-{
-    const int width = image->width();
-    const int height = image->height();
-    for (int i = 0; i < height; ++i) {
-        uint *p = (uint *) image->scanLine(i);
-        for (int x = 0; x < width; ++x)
-            p[x] = ((p[x] << 16) & 0xff0000) | ((p[x] >> 16) & 0xff) | (p[x] & 0xff00ff00);
-    }
-}
-
 void ThirtyBitSGTexture::setImage(const QImage &image)
 {
     m_image = image;
@@ -113,81 +102,16 @@ void ThirtyBitSGTexture::bind()
         funcs->glGenTextures(1, &m_texture_id);
     funcs->glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-    // ### TODO: check for out-of-memory situations...
-
-    QImage tmp = (m_image.format() == QImage::Format_RGB32 || m_image.format() == QImage::Format_ARGB32_Premultiplied)
-                 ? m_image
-                 : m_image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-
-    // Downscale the texture to fit inside the max texture limit if it is too big.
-    // It would be better if the image was already downscaled to the right size,
-    // but this information is not always available at that time, so as a last
-    // resort we can do it here. Texture coordinates are normalized, so it
-    // won't cause any problems and actual texture sizes will be written
-    // based on QSGTexture::textureSize which is updated after this, so that
-    // should be ok.
-    int max;
-    if (QSGRenderContext *rc = QSGRenderContext::from(context))
-        max = rc->maxTextureSize();
-    else
-        funcs->glGetIntegerv(GL_MAX_TEXTURE_SIZE, &max);
-    if (tmp.width() > max || tmp.height() > max) {
-        tmp = tmp.scaled(qMin(max, tmp.width()), qMin(max, tmp.height()), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        m_texture_size = tmp.size();
-    }
-
-    // Scale to a power of two size if mipmapping is requested and the
-    // texture is npot and npot textures are not properly supported.
-    if (mipmapFiltering() != QSGTexture::None
-        && (!isPowerOfTwo(m_texture_size.width()) || !isPowerOfTwo(m_texture_size.height()))
-        && !funcs->hasOpenGLFeature(QOpenGLFunctions::NPOTTextures)) {
-        tmp = tmp.scaled(qNextPowerOfTwo(m_texture_size.width()), qNextPowerOfTwo(m_texture_size.height()),
-                         Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-        m_texture_size = tmp.size();
-    }
+    QImage tmp = (m_image.format() == QImage::Format_RGB30 || m_image.format() == QImage::Format_A2RGB30_Premultiplied)
+                ? m_image
+                : m_image.convertToFormat(QImage::Format_A2RGB30_Premultiplied);
 
     if (tmp.width() * 4 != tmp.bytesPerLine())
         tmp = tmp.copy();
 
     updateBindOptions(m_dirty_bind_options);
 
-    GLenum externalFormat = GL_RGBA;
-    GLenum internalFormat = GL_RGBA;
-
-#if defined(Q_OS_ANDROID) && !defined(Q_OS_ANDROID_NO_SDK)
-    QString *deviceName =
-            static_cast<QString *>(QGuiApplication::platformNativeInterface()->nativeResourceForIntegration("AndroidDeviceName"));
-    static bool wrongfullyReportsBgra8888Support = deviceName != 0
-                                                    && (deviceName->compare(QStringLiteral("samsung SM-T211"), Qt::CaseInsensitive) == 0
-                                                        || deviceName->compare(QStringLiteral("samsung SM-T210"), Qt::CaseInsensitive) == 0
-                                                        || deviceName->compare(QStringLiteral("samsung SM-T215"), Qt::CaseInsensitive) == 0);
-#else
-    static bool wrongfullyReportsBgra8888Support = false;
-#endif
-
-    if (context->hasExtension(QByteArrayLiteral("GL_EXT_bgra"))) {
-        externalFormat = GL_BGRA;
-#ifdef QT_OPENGL_ES
-        internalFormat = GL_BGRA;
-#else
-        if (context->isOpenGLES())
-            internalFormat = GL_BGRA;
-#endif // QT_OPENGL_ES
-    } else if (!wrongfullyReportsBgra8888Support
-               && (context->hasExtension(QByteArrayLiteral("GL_EXT_texture_format_BGRA8888"))
-                   || context->hasExtension(QByteArrayLiteral("GL_IMG_texture_format_BGRA8888")))) {
-        externalFormat = GL_BGRA;
-        internalFormat = GL_BGRA;
-#ifdef Q_OS_IOS
-    } else if (context->hasExtension(QByteArrayLiteral("GL_APPLE_texture_format_BGRA8888"))) {
-        externalFormat = GL_BGRA;
-        internalFormat = GL_RGBA;
-#endif
-    } else {
-        qsg_swizzleBGRAToRGBA(&tmp);
-    }
-
-    funcs->glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_texture_size.width(), m_texture_size.height(), 0, externalFormat, GL_UNSIGNED_BYTE, tmp.constBits());
+    funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, m_texture_size.width(), m_texture_size.height(), 0, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV, tmp.constBits());
 
     if (mipmapFiltering() != QSGTexture::None) {
         funcs->glGenerateMipmap(GL_TEXTURE_2D);

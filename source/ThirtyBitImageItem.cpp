@@ -1,5 +1,6 @@
 #include "common.h"
 #include "ThirtyBitImageItem.h"
+#include "ThirtyBitSGTexture.h"
 
 ThirtyBitImageItem::ThirtyBitImageItem(QQuickItem* parent)
   : QQuickItem(parent),
@@ -46,15 +47,33 @@ void ThirtyBitImageItem::setImage(Image* image)
     update();
 }
 
-QSGNode* ThirtyBitImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData)
+QSGNode* ThirtyBitImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
 {
     qDebug() << "QSGNode* ThirtyBitImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData)";
-    QSGSimpleRectNode *n = static_cast<QSGSimpleRectNode *>(oldNode);
-    if (!n) {
-        n = new QSGSimpleRectNode();
-        n->setColor(Qt::red);
+    QSGSimpleTextureNode* n{static_cast<QSGSimpleTextureNode*>(oldNode)};
+    if(m_image && m_image->isValid())
+    {
+        if(!n)
+        {
+            ThirtyBitSGTexture* t = ThirtyBitSGTexture::fromImage(m_image->as10BpcQImage() /*QImage("/home/ehvatum/heic1015a.jpg")*/ );
+            if(t)
+            {
+                n = new QSGSimpleTextureNode();
+                n->setTexture(t);
+                n->setOwnsTexture(true);
+                n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
+                n->setRect(boundingRect());
+            }
+        }
+        else
+        {
+            n->setRect(boundingRect());
+        }
     }
-    n->setRect(boundingRect());
+    else
+    {
+        n = nullptr;
+    }
     return n;
 }
 
