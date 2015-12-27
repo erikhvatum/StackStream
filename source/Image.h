@@ -7,27 +7,26 @@ class Image
   : public QObject
 {
 public:
-    enum ComponentType
+    enum DType
     {
-        // TODO: change to format Type_float32
-        NullImage = 0,
-        uint8Image,
-        uint12Image,
-        uint16Image,
-        uint32Image,
-        uint64Image,
-        float32Image,
-        float64Image
+        NullDT = 0,
+        UInt8DT,
+        UInt12DT,
+        UInt16DT,
+        UInt32DT,
+        UInt64DT,
+        Float32DT,
+        Float64DT
     };
     typedef std::shared_ptr<std::uint8_t> RawData;
     friend class NoReconcile;
 
 private:
     Q_OBJECT
-    Q_ENUM(ComponentType)
+    Q_ENUM(DType)
     Q_PROPERTY(std::size_t serial READ serial STORED false NOTIFY serialChanged)
     Q_PROPERTY(bool isValid READ isValid STORED false NOTIFY isValidChanged FINAL)
-    Q_PROPERTY(ComponentType imageType READ
+    Q_PROPERTY(DType imageType READ
                        componentType
                        WRITE
                        setComponentType
@@ -41,17 +40,17 @@ public:
 
     explicit Image(QObject* parent=nullptr);
 
-    explicit Image(ComponentType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
+    explicit Image(DType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
 
     // Copies contents of rawData to m_rawData; manages m_rawData's buffer
-    Image(ComponentType imageType,
+    Image(DType imageType,
           const std::uint8_t* rawData,
           const QSize& size,
           std::size_t channelCount=1,
           QObject* parent=nullptr);
 
     // Makes m_rawData point to the same location as rawData; manages m_rawData's buffer if takeOwnership is true
-    Image(ComponentType image_type,
+    Image(DType image_type,
           std::uint8_t* rawData,
           const QSize& size,
           std::size_t channelCount=1,
@@ -61,7 +60,7 @@ public:
     // If copyData is True: copies contents of rawData to m_rawData; manages m_rawData's buffer. 
     // If copyData is False: copies rawData to m_rawData.  Therefore, m_rawData's buffer management is controlled by the 
     // value of rawData.deleter, a function pointer copied to m_rawData.deleter. 
-    Image(ComponentType imageType,
+    Image(DType imageType,
           const RawData& rawData,
           const QSize& size,
           std::size_t channelCount=1,
@@ -85,8 +84,8 @@ public:
 
     bool isValid() const;
 
-    ComponentType componentType() const;
-    void setComponentType(ComponentType componentType);
+    DType componentType() const;
+    void setComponentType(DType componentType);
 
     const RawData& rawData() const;
 
@@ -106,7 +105,7 @@ public:
 signals:
     void serialChanged(std::size_t);
     void isValidChanged(bool);
-    void imageTypeChanged(ComponentType);
+    void imageTypeChanged(DType);
     void sizeChanged(QSize);
     void channelCountChanged(std::size_t);
     void byteCountChanged(std::size_t);
@@ -122,7 +121,7 @@ protected:
     std::size_t m_serial;
     std::uint16_t m_noReconcile;
     bool m_isValid;
-    ComponentType m_componentType;
+    DType m_componentType;
     RawData m_rawData;
     QSize m_size;
     std::size_t m_channelCount;

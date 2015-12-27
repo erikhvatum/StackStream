@@ -30,14 +30,14 @@ private:
 };
 
 const std::size_t Image::ImageTypeSizes[] = {
-    0, // NullImage
-    1, // uint8Image
-    2, // uint12Image
-    2, // uint16Image
-    4, // uint32Image
-    8, // uint64Image
-    4, // float32Image
-    8, // float64Image
+    0, // NullDT
+    1, // UInt8DT
+    2, // UInt12DT
+    2, // UInt16DT
+    4, // UInt32DT
+    8, // UInt64DT
+    4, // Float32DT
+    8, // Float64DT
 };
 
 Image::Image(QObject *parent)
@@ -45,13 +45,13 @@ Image::Image(QObject *parent)
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(NullImage),
+    m_componentType(NullDT),
     m_channelCount(0),
     m_byteCount(0)
 {
 }
 
-Image::Image(ComponentType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
+Image::Image(DType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
@@ -64,7 +64,7 @@ Image::Image(ComponentType imageType, const QSize& size, std::size_t channelCoun
     reconcile();
 }
 
-Image::Image(ComponentType imageType,
+Image::Image(DType imageType,
              const std::uint8_t* rawData,
              const QSize& size,
              std::size_t channelCount,
@@ -81,7 +81,7 @@ Image::Image(ComponentType imageType,
     init(_rawData, true);
 }
 
-Image::Image(ComponentType imageType,
+Image::Image(DType imageType,
              std::uint8_t* rawData,
              const QSize& size,
              std::size_t channelCount,
@@ -107,7 +107,7 @@ Image::Image(ComponentType imageType,
     }
 }
 
-Image::Image(ComponentType imageType,
+Image::Image(DType imageType,
              const RawData& rawData,
              const QSize& size,
              std::size_t channelCount,
@@ -213,7 +213,7 @@ bool Image::operator == (const Image& rhs) const
     {
         if(m_isValid)
         {
-            if(m_componentType == uint12Image)
+            if(m_componentType == UInt12DT)
             {
                 // Compare only lower 12 bits
                 // TODO: validate this block 
@@ -355,12 +355,12 @@ bool Image::isValid() const
     return m_isValid;
 }
 
-Image::ComponentType Image::componentType() const
+Image::DType Image::componentType() const
 {
     return m_componentType;
 }
 
-void Image::setComponentType(ComponentType componentType)
+void Image::setComponentType(DType componentType)
 {
     if(componentType != m_componentType)
     {
@@ -487,7 +487,7 @@ bool Image::read(const QUrl& furl)
                 std::size_t oldByteCount{m_byteCount};
                 {
                     NoReconcile NR(*this);
-                    setComponentType(uint16Image);
+                    setComponentType(UInt16DT);
                     setSize(QSize(static_cast<int>(fiImage.getWidth()), static_cast<int>(fiImage.getHeight())));
                     setChannelCount(channelCount);
                     m_byteCount = m_channelCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_componentType];
@@ -526,7 +526,7 @@ void Image::reconcile()
     if(m_noReconcile == 0)
     {
         const bool valid {
-            m_componentType != NullImage &&
+            m_componentType != NullDT &&
             m_size.width() >= 1 && m_size.height() >= 1 &&
             m_channelCount >= 1
         };

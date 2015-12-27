@@ -3,7 +3,5 @@
         <file>main.qml</file>
         <file>LayerRenderer.frag</file>
         <file>main_30bitimageitem.qml</file>
-        <file>Asdfg.qml</file>
-        <file>AsdfgForm.ui.qml</file>
     </qresource>
 </RCC>

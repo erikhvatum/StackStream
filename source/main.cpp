@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Layer>(ss, ver[0], ver[1], "SSLayer");
     qmlRegisterType<View>(ss, ver[0], ver[1], "View");
     qmlRegisterType<ThirtyBitImageItem>(ss, ver[0], ver[1], "ThirtyBitImageItem");
-    qRegisterMetaType<Image::ComponentType>("ComponentType");
+    qRegisterMetaType<Image::DType>("DType");
     qRegisterMetaType<std::size_t>("std::size_t");
 
     fmt.setRenderableType(QSurfaceFormat::OpenGL);
