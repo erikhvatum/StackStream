@@ -20,6 +20,7 @@ public slots:
 
 protected:
     Image* m_image;
+    std::size_t m_texSerial;
     std::forward_list<QMetaObject::Connection> m_imageSignalConnections;
 
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData) override;

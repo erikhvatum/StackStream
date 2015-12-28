@@ -55,15 +55,21 @@ QSGNode* ThirtyBitImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeDa
     {
         if(!n)
         {
+            n = new QSGSimpleTextureNode();
+            n->setOwnsTexture(true);
+            n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
+            m_texSerial = std::numeric_limits<std::size_t>::max();
+        }
+        if(m_texSerial != m_image->serial())
+        {
             ThirtyBitSGTexture* t = ThirtyBitSGTexture::fromImage(m_image->as10BpcQImage() /*QImage("/home/ehvatum/heic1015a.jpg")*/ );
             if(t)
             {
-                n = new QSGSimpleTextureNode();
                 n->setTexture(t);
-                n->setOwnsTexture(true);
-                n->setTextureCoordinatesTransform(QSGSimpleTextureNode::MirrorVertically);
                 n->setRect(boundingRect());
+                m_texSerial = m_image->serial();
             }
+            else n = nullptr;
         }
         else
         {
