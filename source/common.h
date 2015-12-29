@@ -4,6 +4,7 @@
 #include <QSharedDataPointer>
 #include <QtCore>
 #include <QtGui>
+#include <QtPlugin>
 #include <QtQml>
 #include <QtQuick>
 #include <QtWidgets>

@@ -31,6 +31,19 @@ static void onApplicationWindowCreated(QObject* object, const QUrl&)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+//    HelloWorldInterface* helloWorldPluginInterface{nullptr};
+//    {
+//        QPluginLoader pluginLoader("/usr/local/debug/plugins/generic/libTestPlugin.so");
+//        QObject* plugin{pluginLoader.instance()};
+//        if(plugin)
+//        {
+//            helloWorldPluginInterface = qobject_cast<HelloWorldInterface*>(plugin);
+//        }
+//    }
+
+//    qDebug() << helloWorldPluginInterface->helloWorld();
+
     const char ss[] = "StackStream";
     const int ver[] = {1, 0};
     qmlRegisterType<Image>(ss, ver[0], ver[1], "SSImage");
