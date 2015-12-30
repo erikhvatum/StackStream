@@ -1,18 +1,25 @@
-#ifndef THIRTYBITSGCONTEXTPLUGIN_H
-#define THIRTYBITSGCONTEXTPLUGIN_H
+#pragma once
 
-#include <QGenericPlugin>
+#include <QtCore/qplugin.h>
+#include <QtQuick/private/qsgcontext_p.h>
+#include <QtQuick/private/qsgcontextplugin_p.h>
+#include <QObject>
 
+class QSGContextFactoryInterface;
 
-class ThirtyBitSGContextPlugin : public QGenericPlugin
+class ThirtyBitSGContextPlugin
+  : public QObject,
+    public QSGContextFactoryInterface
 {
     Q_OBJECT
-#if QT_VERSION >= 0x050000
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QGenericPluginFactoryInterface" FILE "ThirtyBitSGContextPlugin.json")
-#endif // QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QSGContextFactoryInterface" FILE "ThirtyBitSGContextPlugin.json")
+    Q_INTERFACES(QSGContextFactoryInterface:QFactoryInterface)
 
 public:
     ThirtyBitSGContextPlugin(QObject *parent = 0);
-};
 
-#endif // THIRTYBITSGCONTEXTPLUGIN_H
+    QSGContext* create(const QString& key) const override;
+    QStringList keys() const override;
+    virtual QQuickTextureFactory *createTextureFactoryFromImage(const QImage &) override { return 0; }
+    virtual QSGRenderLoop *createWindowManager() override { return 0; }
+};

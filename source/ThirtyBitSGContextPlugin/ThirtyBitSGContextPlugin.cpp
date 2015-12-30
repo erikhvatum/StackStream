@@ -1,11 +1,21 @@
 #include "ThirtyBitSGContextPlugin.h"
-
+#include "ThirtyBitSGContext.h"
 
 ThirtyBitSGContextPlugin::ThirtyBitSGContextPlugin(QObject *parent) :
-    QGenericPlugin(parent)
+    QObject(parent)
 {
 }
 
-#if QT_VERSION < 0x050000
-Q_EXPORT_PLUGIN2(ThirtyBitSGContextPlugin, ThirtyBitSGContextPlugin)
-#endif // QT_VERSION < 0x050000
+QStringList ThirtyBitSGContextPlugin::keys() const
+{
+    qDebug() << "QStringList ThirtyBitSGContextPlugin::keys() const";
+    QStringList ret;
+    ret << "ThirtyBitSGContextPlugin";
+    return ret;
+}
+
+QSGContext* ThirtyBitSGContextPlugin::create(const QString& key) const
+{
+    qDebug() << "QSGContext* ThirtyBitSGContextPlugin::create(const QString& key) const: " << key;
+    return new ThirtyBitSGContext();
+}
