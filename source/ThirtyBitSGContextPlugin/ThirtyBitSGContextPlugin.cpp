@@ -1,14 +1,15 @@
 #include "ThirtyBitSGContextPlugin.h"
 #include "ThirtyBitSGContext.h"
 
-ThirtyBitSGContextPlugin::ThirtyBitSGContextPlugin(QObject *parent) :
-    QObject(parent)
+ThirtyBitSGContextPlugin::ThirtyBitSGContextPlugin(QObject *parent) 
+  : QObject(parent)
 {
 }
 
 QStringList ThirtyBitSGContextPlugin::keys() const
 {
-    qDebug() << "QStringList ThirtyBitSGContextPlugin::keys() const";
+    // This never seems to be invoked.  Perhaps it is vestigial?  It does appear to be
+    // redundant, given that the json metadata file contains a "Keys" entry.
     QStringList ret;
     ret << "ThirtyBitSGContextPlugin";
     return ret;
@@ -16,6 +17,5 @@ QStringList ThirtyBitSGContextPlugin::keys() const
 
 QSGContext* ThirtyBitSGContextPlugin::create(const QString& key) const
 {
-    qDebug() << "QSGContext* ThirtyBitSGContextPlugin::create(const QString& key) const: " << key;
     return new ThirtyBitSGContext();
 }

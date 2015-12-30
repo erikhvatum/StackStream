@@ -6,44 +6,31 @@
 
 static QSurfaceFormat fmt;
 
-//static void onApplicationWindowCreated(QObject* object, const QUrl&)
-//{
-//    QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
-//    if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
-//    {
-//        stackStreamMainWindow->setFormat(fmt);
-////        stackStreamMainWindow->setPersistentOpenGLContext(true);
-////        stackStreamMainWindow->setPersistentSceneGraph(true);
-//        stackStreamMainWindow->show();
-//    }
-//}
-
 static void onApplicationWindowCreated(QObject* object, const QUrl&)
 {
-    QQuickWindow* thirtyBitImageItemMainWindow{qobject_cast<QQuickWindow*>(object)};
-    if(thirtyBitImageItemMainWindow && thirtyBitImageItemMainWindow->objectName() == "thirtyBitImageItemMainWindow")
+    QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
+    if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
     {
-        thirtyBitImageItemMainWindow->setFormat(fmt);
-        thirtyBitImageItemMainWindow->show();
+        stackStreamMainWindow->setFormat(fmt);
+//        stackStreamMainWindow->setPersistentOpenGLContext(true);
+//        stackStreamMainWindow->setPersistentSceneGraph(true);
+        stackStreamMainWindow->show();
     }
 }
+
+// static void onApplicationWindowCreated(QObject* object, const QUrl&)
+// {
+//     QQuickWindow* thirtyBitImageItemMainWindow{qobject_cast<QQuickWindow*>(object)};
+//     if(thirtyBitImageItemMainWindow && thirtyBitImageItemMainWindow->objectName() == "thirtyBitImageItemMainWindow")
+//     {
+//         thirtyBitImageItemMainWindow->setFormat(fmt);
+//         thirtyBitImageItemMainWindow->show();
+//     }
+// }
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
-//    HelloWorldInterface* helloWorldPluginInterface{nullptr};
-//    {
-//        QPluginLoader pluginLoader("/usr/local/debug/plugins/generic/libTestPlugin.so");
-//        QObject* plugin{pluginLoader.instance()};
-//        if(plugin)
-//        {
-//            helloWorldPluginInterface = qobject_cast<HelloWorldInterface*>(plugin);
-//        }
-//    }
-
-//    qDebug() << helloWorldPluginInterface->helloWorld();
-
     const char ss[] = "StackStream";
     const int ver[] = {1, 0};
     qmlRegisterType<Image>(ss, ver[0], ver[1], "SSImage");
@@ -71,8 +58,8 @@ int main(int argc, char *argv[])
     
     QQmlApplicationEngine engine;
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-//    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/main_30bitimageitem.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+//  engine.load(QUrl(QStringLiteral("qrc:/main_30bitimageitem.qml")));
     
 //    QQuickView view(QUrl(QStringLiteral("qrc:/main.qml")));
 //    view.setFormat(fmt);

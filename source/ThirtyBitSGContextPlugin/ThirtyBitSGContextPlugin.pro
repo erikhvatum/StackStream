@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui quick quick-private qml-private core-private gui-private
+QT       += core gui widgets quick quick-private qml-private core-private gui-private
 
 CONFIG += c++11
 
@@ -15,10 +15,14 @@ CONFIG += plugin
 DESTDIR = $$[QT_INSTALL_PLUGINS]/scenegraph
 
 SOURCES += ThirtyBitSGContextPlugin.cpp \
-    ThirtyBitSGContext.cpp
+    ThirtyBitSGContext.cpp \
+    ../ThirtyBitSGTexture.cpp \
+    ThirtyBitSGLayer.cpp
 
 HEADERS += ThirtyBitSGContextPlugin.h \
-    ThirtyBitSGContext.h
+    ThirtyBitSGContext.h \
+    ../ThirtyBitSGTexture.h \
+    ThirtyBitSGLayer.h
 DISTFILES += ThirtyBitSGContextPlugin.json
 
 unix {

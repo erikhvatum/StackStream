@@ -1,8 +1,15 @@
 #include <QtQuick/private/qsgcontext_p.h>
+#include <QtQuick/private/qsgdefaultlayer_p.h>
 #include "ThirtyBitSGContext.h"
+#include "ThirtyBitSGLayer.h"
 
 ThirtyBitSGContext::ThirtyBitSGContext(QObject* parent)
   : QSGContext(parent)
 {
-    qDebug() << "ThirtyBitSGContext::ThirtyBitSGContext(QObject* parent)";
+}
+
+QSGLayer* ThirtyBitSGContext::createLayer(QSGRenderContext* renderContext)
+{
+    qDebug() << "QSGLayer* createLayer(QSGRenderContext* renderContext)";
+    return new ThirtyBitSGLayer(renderContext);
 }
