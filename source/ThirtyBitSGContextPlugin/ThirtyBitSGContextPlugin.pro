@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets quick quick-private qml-private core-private gui-private
+#QT       += core gui widgets quick quick-private qml-private core-private gui-private
+QT += core gui qml quick widgets quick-private qml-private core-private gui-private
 
 CONFIG += c++11
 

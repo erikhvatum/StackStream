@@ -133,7 +133,7 @@ QOpenGLFramebufferObject* LayerRenderer::createFramebufferObject(const QSize&)
     // Setting sample count here breaks 10-bit color, causing the FBO to be quantized to 8-bit per channel
     // at some point before being displayed.  TODO: look into what's happening here
 //    format.setSamples(4);
-    format.setInternalTextureFormat(GL_RGBA32F);
+    format.setInternalTextureFormat(GL_RGB10_A2);
     QOpenGLFramebufferObject* ret{new QOpenGLFramebufferObject(m_fboSize, format)};
     return ret;
 }

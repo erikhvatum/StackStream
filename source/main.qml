@@ -82,7 +82,7 @@ ApplicationWindow {
                 anchors.bottom: parent.bottom
                 width: (implicitWidth / implicitHeight) * height
                 anchors.margins: 10
-                layer.enabled: true
+//                layer.enabled: true
 //                Rectangle {
 //                    x: 10
 //                    y: 10
