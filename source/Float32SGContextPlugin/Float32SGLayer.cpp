@@ -1,6 +1,6 @@
 #include <QtQuick/private/qsgdefaultlayer_p.h>
 #include <QOpenGLFramebufferObject>
-#include "ThirtyBitSGLayer.h"
+#include "Float32SGLayer.h"
 
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qsgrenderer_p.h>
@@ -45,11 +45,11 @@ namespace
     }
 }
 
-ThirtyBitSGLayer::ThirtyBitSGLayer(QSGRenderContext *context)
+Float32SGLayer::Float32SGLayer(QSGRenderContext *context)
     : QSGLayer()
     , m_item(0)
     , m_device_pixel_ratio(1)
-    , m_format(GL_RGB10_A2)
+    , m_format(GL_RGBA32F)
     , m_renderer(0)
     , m_fbo(0)
     , m_secondaryFbo(0)
@@ -70,12 +70,12 @@ ThirtyBitSGLayer::ThirtyBitSGLayer(QSGRenderContext *context)
 {
 }
 
-ThirtyBitSGLayer::~ThirtyBitSGLayer()
+Float32SGLayer::~Float32SGLayer()
 {
     invalidated();
 }
 
-void ThirtyBitSGLayer::invalidated()
+void Float32SGLayer::invalidated()
 {
     delete m_renderer;
     m_renderer = 0;
@@ -92,47 +92,35 @@ void ThirtyBitSGLayer::invalidated()
     }
 }
 
-int ThirtyBitSGLayer::textureId() const
+int Float32SGLayer::textureId() const
 {
     return m_fbo ? m_fbo->texture() : 0;
 }
 
-bool ThirtyBitSGLayer::hasAlphaChannel() const
+bool Float32SGLayer::hasAlphaChannel() const
 {
-    switch(m_format)
-    {
-    case GL_RGB:
-    case GL_RGB10:
-    case GL_RGB12:
-    case GL_RGB16:
-    case GL_RGB16F:
-    case GL_RGB32F:
-    case GL_R11F_G11F_B10F:
-        return false;
-    default:
-        return true;
-    }
+    return true;
 }
 
-bool ThirtyBitSGLayer::hasMipmaps() const
+bool Float32SGLayer::hasMipmaps() const
 {
     return m_mipmap;
 }
 
 
-void ThirtyBitSGLayer::bind()
+void Float32SGLayer::bind()
 {
 #ifndef QT_NO_DEBUG
     if (!m_recursive && m_fbo && ((m_multisampling && m_secondaryFbo->isBound()) || m_fbo->isBound()))
         qWarning("ShaderEffectSource: \'recursive\' must be set to true when rendering recursively.");
 #endif
     QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
-    if (!m_fbo && m_format == GL_RGB10_A2) {
+    if (!m_fbo && m_format == GL_RGBA32F) {
         if (m_transparentTexture == 0) {
             funcs->glGenTextures(1, &m_transparentTexture);
             funcs->glBindTexture(GL_TEXTURE_2D, m_transparentTexture);
-            const uint zero = 0;
-            funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &zero);
+            const float zero[4] = {0, 0, 0, 0};
+            funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 1, 1, 0, GL_RGBA, GL_FLOAT, zero);
         } else {
             funcs->glBindTexture(GL_TEXTURE_2D, m_transparentTexture);
         }
@@ -142,7 +130,7 @@ void ThirtyBitSGLayer::bind()
     }
 }
 
-bool ThirtyBitSGLayer::updateTexture()
+bool Float32SGLayer::updateTexture()
 {
     bool doGrab = (m_live || m_grab) && m_dirtyTexture;
     if (doGrab)
@@ -153,7 +141,7 @@ bool ThirtyBitSGLayer::updateTexture()
     return doGrab;
 }
 
-void ThirtyBitSGLayer::setHasMipmaps(bool mipmap)
+void Float32SGLayer::setHasMipmaps(bool mipmap)
 {
     if (mipmap == m_mipmap)
         return;
@@ -163,7 +151,7 @@ void ThirtyBitSGLayer::setHasMipmaps(bool mipmap)
 }
 
 
-void ThirtyBitSGLayer::setItem(QSGNode *item)
+void Float32SGLayer::setItem(QSGNode *item)
 {
     if (item == m_item)
         return;
@@ -179,7 +167,7 @@ void ThirtyBitSGLayer::setItem(QSGNode *item)
     markDirtyTexture();
 }
 
-void ThirtyBitSGLayer::setRect(const QRectF &rect)
+void Float32SGLayer::setRect(const QRectF &rect)
 {
     if (rect == m_rect)
         return;
@@ -187,7 +175,7 @@ void ThirtyBitSGLayer::setRect(const QRectF &rect)
     markDirtyTexture();
 }
 
-void ThirtyBitSGLayer::setSize(const QSize &size)
+void Float32SGLayer::setSize(const QSize &size)
 {
     if (size == m_size)
         return;
@@ -203,13 +191,12 @@ void ThirtyBitSGLayer::setSize(const QSize &size)
     markDirtyTexture();
 }
 
-void ThirtyBitSGLayer::setFormat(GLenum)
+void Float32SGLayer::setFormat(GLenum)
 {
-    // NOPE!  We're keeping 30-bit fidelity.
-    //
+    // NOPE!  We're always GL_RGBA32F!
 }
 
-void ThirtyBitSGLayer::setLive(bool live)
+void Float32SGLayer::setLive(bool live)
 {
     if (live == m_live)
         return;
@@ -225,7 +212,7 @@ void ThirtyBitSGLayer::setLive(bool live)
     markDirtyTexture();
 }
 
-void ThirtyBitSGLayer::scheduleUpdate()
+void Float32SGLayer::scheduleUpdate()
 {
     if (m_grab)
         return;
@@ -234,29 +221,29 @@ void ThirtyBitSGLayer::scheduleUpdate()
         emit updateRequested();
 }
 
-void ThirtyBitSGLayer::setRecursive(bool recursive)
+void Float32SGLayer::setRecursive(bool recursive)
 {
     m_recursive = recursive;
 }
 
-void ThirtyBitSGLayer::setMirrorHorizontal(bool mirror)
+void Float32SGLayer::setMirrorHorizontal(bool mirror)
 {
     m_mirrorHorizontal = mirror;
 }
 
-void ThirtyBitSGLayer::setMirrorVertical(bool mirror)
+void Float32SGLayer::setMirrorVertical(bool mirror)
 {
     m_mirrorVertical = mirror;
 }
 
-void ThirtyBitSGLayer::markDirtyTexture()
+void Float32SGLayer::markDirtyTexture()
 {
     m_dirtyTexture = true;
     if (m_live || m_grab)
         emit updateRequested();
 }
 
-void ThirtyBitSGLayer::grab()
+void Float32SGLayer::grab()
 {
     if (!m_item || m_size.isNull()) {
         delete m_fbo;
@@ -414,7 +401,7 @@ void ThirtyBitSGLayer::grab()
         markDirtyTexture(); // Continuously update if 'live' and 'recursive'.
 }
 
-QImage ThirtyBitSGLayer::toImage() const
+QImage Float32SGLayer::toImage() const
 {
     if (m_fbo)
         return m_fbo->toImage();
@@ -422,7 +409,7 @@ QImage ThirtyBitSGLayer::toImage() const
     return QImage();
 }
 
-QRectF ThirtyBitSGLayer::normalizedTextureSubRect() const
+QRectF Float32SGLayer::normalizedTextureSubRect() const
 {
     return QRectF(m_mirrorHorizontal ? 1 : 0,
                   m_mirrorVertical ? 0 : 1,

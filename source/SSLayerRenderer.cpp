@@ -20,7 +20,7 @@ const QOpenGLTexture::PixelType SSLayerRenderer::sm_componentPixelTypes[] = {
     QOpenGLTexture::UInt32,
     QOpenGLTexture::NoPixelType, // TODO: add support; may require abandoning QOpenGLTexture
     QOpenGLTexture::Float32,
-    QOpenGLTexture::NoPixelType
+    QOpenGLTexture::NoPixelType  // TODO: add support; may require abandoning QOpenGLTexture
 };
 
 const QVector<QVector2D> SSLayerRenderer::sm_quad{
@@ -133,7 +133,7 @@ QOpenGLFramebufferObject* SSLayerRenderer::createFramebufferObject(const QSize&)
     // Setting sample count here breaks 10-bit color, causing the FBO to be quantized to 8-bit per channel
     // at some point before being displayed.  TODO: look into what's happening here
 //    format.setSamples(4);
-    format.setInternalTextureFormat(GL_RGB10_A2);
+    format.setInternalTextureFormat(GL_RGBA32F);
     QOpenGLFramebufferObject* ret{new QOpenGLFramebufferObject(m_fboSize, format)};
     return ret;
 }

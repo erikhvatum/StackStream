@@ -7,16 +7,16 @@
 
 class QSGContextFactoryInterface;
 
-class ThirtyBitSGContextPlugin
+class Float32SGContextPlugin
   : public QObject,
     public QSGContextFactoryInterface
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QSGContextFactoryInterface" FILE "ThirtyBitSGContextPlugin.json")
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QSGContextFactoryInterface" FILE "Float32SGContextPlugin.json")
     Q_INTERFACES(QSGContextFactoryInterface:QFactoryInterface)
 
 public:
-    ThirtyBitSGContextPlugin(QObject *parent = 0);
+    Float32SGContextPlugin(QObject *parent = 0);
 
     QSGContext* create(const QString& key) const override;
     QStringList keys() const override;

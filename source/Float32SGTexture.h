@@ -1,13 +1,13 @@
 #pragma once
 #include "common.h"
 
-class ThirtyBitSGTexture
+class Float32SGTexture
   : public QSGTexture
 {
     Q_OBJECT
 public:
-    ThirtyBitSGTexture();
-    virtual ~ThirtyBitSGTexture();
+    Float32SGTexture();
+    virtual ~Float32SGTexture();
 
     void setOwnsTexture(bool owns) { m_owns_texture = owns; }
     bool ownsTexture() const { return m_owns_texture; }
@@ -27,8 +27,8 @@ public:
 
     virtual void bind();
 
-    static ThirtyBitSGTexture *fromImage(const QImage &image) {
-        ThirtyBitSGTexture *t = new ThirtyBitSGTexture();
+    static Float32SGTexture *fromImage(const QImage &image) {
+        Float32SGTexture *t = new Float32SGTexture();
         t->setImage(image);
         return t;
     }

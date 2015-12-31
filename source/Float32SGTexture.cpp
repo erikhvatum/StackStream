@@ -1,19 +1,12 @@
 #include "common.h"
-#include "ThirtyBitSGTexture.h"
+#include "Float32SGTexture.h"
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qquickprofiler_p.h>
 #include <QtQuick/private/qsgcontext_p.h>
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>
 
-
-inline static bool isPowerOfTwo(int x)
-{
-    // Assumption: x >= 1
-    return x == (x & -x);
-}
-
-ThirtyBitSGTexture::ThirtyBitSGTexture()
+Float32SGTexture::Float32SGTexture()
     : QSGTexture()
     , m_texture_id(0)
     , m_has_alpha(false)
@@ -25,40 +18,40 @@ ThirtyBitSGTexture::ThirtyBitSGTexture()
 {
 }
 
-
-ThirtyBitSGTexture::~ThirtyBitSGTexture()
+Float32SGTexture::~Float32SGTexture()
 {
     if (m_texture_id && m_owns_texture && QOpenGLContext::currentContext())
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
 }
 
-void ThirtyBitSGTexture::setImage(const QImage &image)
+void Float32SGTexture::setImage(const QImage &image)
 {
+    qDebug() << "Float32SGTexture::setImage(const QImage &image)";
     m_image = image;
     m_texture_size = image.size();
     m_has_alpha = image.hasAlphaChannel();
     m_dirty_texture = true;
     m_dirty_bind_options = true;
     m_mipmaps_generated = false;
- }
+}
 
-int ThirtyBitSGTexture::textureId() const
+int Float32SGTexture::textureId() const
 {
     if (m_dirty_texture) {
         if (m_image.isNull()) {
             // The actual texture and id will be updated/deleted in a later bind()
-            // or ~ThirtyBitSGTexture so just keep it minimal here.
+            // or ~Float32SGTexture so just keep it minimal here.
             return 0;
         } else if (m_texture_id == 0){
             // Generate a texture id for use later and return it.
-            QOpenGLContext::currentContext()->functions()->glGenTextures(1, &const_cast<ThirtyBitSGTexture *>(this)->m_texture_id);
+            QOpenGLContext::currentContext()->functions()->glGenTextures(1, &const_cast<Float32SGTexture *>(this)->m_texture_id);
             return m_texture_id;
         }
     }
     return m_texture_id;
 }
 
-void ThirtyBitSGTexture::setTextureId(int id)
+void Float32SGTexture::setTextureId(int id)
 {
     if (m_texture_id && m_owns_texture)
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
@@ -70,8 +63,9 @@ void ThirtyBitSGTexture::setTextureId(int id)
     m_mipmaps_generated = false;
 }
 
-void ThirtyBitSGTexture::bind()
+void Float32SGTexture::bind()
 {
+    qDebug() << "Float32SGTexture::bind()";
     QOpenGLContext *context = QOpenGLContext::currentContext();
     QOpenGLFunctions *funcs = context->functions();
     if (!m_dirty_texture) {
@@ -111,7 +105,7 @@ void ThirtyBitSGTexture::bind()
 
     updateBindOptions(m_dirty_bind_options);
 
-    funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB10_A2, m_texture_size.width(), m_texture_size.height(), 0, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV, tmp.constBits());
+    funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_texture_size.width(), m_texture_size.height(), 0, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV, tmp.constBits());
 
     if (mipmapFiltering() != QSGTexture::None) {
         funcs->glGenerateMipmap(GL_TEXTURE_2D);

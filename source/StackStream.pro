@@ -5,7 +5,7 @@ QT += qml quick widgets quick-private qml-private core-private gui-private
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    ThirtyBitSGTexture.cpp \
+    Float32SGTexture.cpp \
     SSLayer.cpp \
     SSImage.cpp \
     SSLayerRenderer.cpp \
@@ -23,7 +23,7 @@ include(deployment.pri)
 
 HEADERS += \
     common.h \
-    ThirtyBitSGTexture.h \
+    Float32SGTexture.h \
     SSLayer.h \
     SSImage.h \
     SSLayerRenderer.h \
