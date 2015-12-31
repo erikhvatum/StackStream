@@ -5,12 +5,11 @@ QT += qml quick widgets quick-private qml-private core-private gui-private
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    Image.cpp \
-    Layer.cpp \
-    LayerRenderer.cpp \
-    View.cpp \
-    ThirtyBitImageItem.cpp \
-    ThirtyBitSGTexture.cpp
+    ThirtyBitSGTexture.cpp \
+    SSLayer.cpp \
+    SSImage.cpp \
+    SSLayerRenderer.cpp \
+    SSView.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -24,12 +23,11 @@ include(deployment.pri)
 
 HEADERS += \
     common.h \
-    Image.h \
-    Layer.h \
-    LayerRenderer.h \
-    View.h \
-    ThirtyBitImageItem.h \
-    ThirtyBitSGTexture.h
+    ThirtyBitSGTexture.h \
+    SSLayer.h \
+    SSImage.h \
+    SSLayerRenderer.h \
+    SSView.h
 
 DISTFILES +=
 

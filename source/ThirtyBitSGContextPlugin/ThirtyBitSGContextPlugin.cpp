@@ -17,5 +17,5 @@ QStringList ThirtyBitSGContextPlugin::keys() const
 
 QSGContext* ThirtyBitSGContextPlugin::create(const QString& key) const
 {
-    return new ThirtyBitSGContext();
+    return (key == "ThirtyBitSGContextPlugin") ? new ThirtyBitSGContext() : nullptr;
 }

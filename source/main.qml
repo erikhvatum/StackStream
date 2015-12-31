@@ -32,7 +32,7 @@ ApplicationWindow {
             title: qsTr("Help")
             MenuItem {
                 text: qsTr("About Qt")
-                onTriggered: layer_.aboutQt()
+                onTriggered: sslayer.aboutQt()
             }
         }
     }
@@ -40,14 +40,14 @@ ApplicationWindow {
     RowLayout {
         anchors.fill: parent
 
-        View {
+        SSView {
             id: mainView
             anchors.left: parent.left
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             width: parent.width - layerPropertiesGroupBox.width - 20
             z: -1
-//            layer.enabled: true
+            layer.enabled: true
 
             ShaderEffect {
                 id: tileBackground
@@ -76,13 +76,13 @@ ApplicationWindow {
             }
 
             SSLayer {
-                id: layer_
+                id: sslayer
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
                 anchors.bottom: parent.bottom
                 width: (implicitWidth / implicitHeight) * height
                 anchors.margins: 10
-//                layer.enabled: true
+                layer.enabled: true
 //                Rectangle {
 //                    x: 10
 //                    y: 10
@@ -111,21 +111,21 @@ ApplicationWindow {
                 function _setMin(min_) {
                     if(!_setting) {
                         _setting = true;
-                        layer_.min = min_;
+                        sslayer.min = min_;
                         _setting = false;
                     }
                 }
                 function _setMax(max_) {
                     if(!_setting) {
                         _setting = true;
-                        layer_.max = max_;
+                        sslayer.max = max_;
                         _setting = false;
                     }
                 }
                 function _setGamma(gamma_) {
                     if(!_setting) {
                         _setting = true;
-                        layer_.gamma = gamma_;
+                        sslayer.gamma = gamma_;
                         _setting = false;
                     }
                 }
@@ -136,13 +136,13 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     minimumValue: 0
                     maximumValue: 1
-                    value: layer_.min
+                    value: sslayer.min
                     onValueChanged: { parent._setMin(value) }
                 }
                 SpinBox {
                     id: minSpinBox
                     decimals: 3
-                    value: layer_.min
+                    value: sslayer.min
                     onValueChanged: { parent._setMin(value) }
                 }
                 Label { text: "Max: " }
@@ -151,13 +151,13 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     minimumValue: 0
                     maximumValue: 1
-                    value: layer_.max
+                    value: sslayer.max
                     onValueChanged: { parent._setMax(value) }
                 }
                 SpinBox {
                     id: maxSpinBox
                     decimals: 3
-                    value: layer_.max
+                    value: sslayer.max
                     onValueChanged: { parent._setMax(value) }
                 }
                 Label { text: "γ: " }
@@ -166,7 +166,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     minimumValue: 0.01
                     maximumValue: 10
-                    value: layer_.gamma
+                    value: sslayer.gamma
                     onValueChanged: { parent._setGamma(value) }
                 }
                 SpinBox {
@@ -174,7 +174,7 @@ ApplicationWindow {
                     decimals: 3
                     minimumValue: 0.01
                     maximumValue: 10
-                    value: layer_.gamma
+                    value: sslayer.gamma
                     onValueChanged: { parent._setGamma(value) }
                 }
 
@@ -193,10 +193,10 @@ ApplicationWindow {
         sidebarVisible: true
         selectMultiple: false
         onAccepted: {
-            if(layer_.image == null) {
-                layer_.image = Qt.createQmlObject('import StackStream 1.0; SSImage {}', layer_, 'apath')
+            if(sslayer.image == null) {
+                sslayer.image = Qt.createQmlObject('import StackStream 1.0; SSImage {}', sslayer, 'apath')
             }
-            layer_.image.read(fileUrls[0]);
+            sslayer.image.read(fileUrls[0]);
         }
     }
 }

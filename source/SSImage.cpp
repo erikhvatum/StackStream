@@ -2,11 +2,11 @@
 #include <exception>
 #include <cstring>
 
-#include "Image.h"
+#include "SSImage.h"
 
-volatile std::atomic<std::size_t> Image::sm_nextSerial{0};
+volatile std::atomic<std::size_t> SSImage::sm_nextSerial{0};
 
-std::size_t Image::generateSerial()
+std::size_t SSImage::generateSerial()
 {
     return sm_nextSerial++;
 }
@@ -17,7 +17,7 @@ using get_default_deleter = std::default_delete<std::uint8_t[]>;
 class NoReconcile
 {
 public:
-    explicit NoReconcile(Image& image) : m_image(image)
+    explicit NoReconcile(SSImage& image) : m_image(image)
     {
         ++m_image.m_noReconcile;
     }
@@ -26,10 +26,10 @@ public:
         --m_image.m_noReconcile;
     }
 private:
-    Image& m_image;
+    SSImage& m_image;
 };
 
-const std::size_t Image::ImageTypeSizes[] = {
+const std::size_t SSImage::ImageTypeSizes[] = {
     0, // NullDT
     1, // UInt8DT
     2, // UInt12DT
@@ -40,7 +40,7 @@ const std::size_t Image::ImageTypeSizes[] = {
     8, // Float64DT
 };
 
-Image::Image(QObject *parent)
+SSImage::SSImage(QObject *parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
@@ -51,7 +51,7 @@ Image::Image(QObject *parent)
 {
 }
 
-Image::Image(DType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
+SSImage::SSImage(DType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
@@ -64,11 +64,11 @@ Image::Image(DType imageType, const QSize& size, std::size_t channelCount, QObje
     reconcile();
 }
 
-Image::Image(DType imageType,
-             const std::uint8_t* rawData,
-             const QSize& size,
-             std::size_t channelCount,
-             QObject* parent)
+SSImage::SSImage(DType imageType,
+                 const std::uint8_t* rawData,
+                 const QSize& size,
+                 std::size_t channelCount,
+                 QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
@@ -81,12 +81,12 @@ Image::Image(DType imageType,
     init(_rawData, true);
 }
 
-Image::Image(DType imageType,
-             std::uint8_t* rawData,
-             const QSize& size,
-             std::size_t channelCount,
-             bool takeOwnership,
-             QObject* parent)
+SSImage::SSImage(DType imageType,
+                 std::uint8_t* rawData,
+                 const QSize& size,
+                 std::size_t channelCount,
+                 bool takeOwnership,
+                 QObject* parent)
   : QObject(parent),
     m_serial(generateSerial()),
     m_noReconcile(0),
@@ -107,12 +107,12 @@ Image::Image(DType imageType,
     }
 }
 
-Image::Image(DType imageType,
-             const RawData& rawData,
-             const QSize& size,
-             std::size_t channelCount,
-             bool copyData,
-             QObject* parent)
+SSImage::SSImage(DType imageType,
+                 const RawData& rawData,
+                 const QSize& size,
+                 std::size_t channelCount,
+                 bool copyData,
+                 QObject* parent)
   : QObject(parent),
     m_serial(generateSerial()),
     m_noReconcile(0),
@@ -125,7 +125,7 @@ Image::Image(DType imageType,
     init(const_cast<RawData&>(rawData), copyData);
 }
 
-Image::Image(const Image &rhs, bool copyData)
+SSImage::SSImage(const SSImage &rhs, bool copyData)
   : QObject(rhs.parent()),
     m_serial(rhs.m_serial),
     m_noReconcile(0),
@@ -138,7 +138,11 @@ Image::Image(const Image &rhs, bool copyData)
     init(const_cast<RawData&>(rhs.m_rawData), copyData);
 }
 
-void Image::init(RawData& rawData, bool copyData)
+SSImage::~SSImage()
+{
+}
+
+void SSImage::init(RawData& rawData, bool copyData)
 {
     if(m_channelCount <= 0)
         throw std::invalid_argument("The value supplied to full constructor for channelCount must be >= 1.");
@@ -161,7 +165,7 @@ void Image::init(RawData& rawData, bool copyData)
     m_isValid = true;
 }
 
-Image& Image::operator = (const Image& rhs)
+SSImage& SSImage::operator = (const SSImage& rhs)
 {
     if(this != &rhs)
     {
@@ -199,7 +203,7 @@ Image& Image::operator = (const Image& rhs)
     return *this;
 }
 
-bool Image::operator == (const Image& rhs) const
+bool SSImage::operator == (const SSImage& rhs) const
 {
     bool ret{false};
     if(this == &rhs)
@@ -244,12 +248,12 @@ bool Image::operator == (const Image& rhs) const
     return ret;
 }
 
-Image::operator bool () const
+SSImage::operator bool () const
 {
     return isValid();
 }
 
-QImage Image::as10BpcQImage() const
+QImage SSImage::as10BpcQImage() const
 {
     if(!m_isValid) return QImage();
     const std::uint8_t* fiPixIt{reinterpret_cast<const std::uint8_t*>(m_rawData.get())};
@@ -331,22 +335,22 @@ QImage Image::as10BpcQImage() const
     return ret;
 }
 
-std::size_t Image::serial() const
+std::size_t SSImage::serial() const
 {
     return m_serial;
 }
 
-bool Image::isValid() const
+bool SSImage::isValid() const
 {
     return m_isValid;
 }
 
-Image::DType Image::componentType() const
+SSImage::DType SSImage::componentType() const
 {
     return m_componentType;
 }
 
-void Image::setComponentType(DType componentType)
+void SSImage::setComponentType(DType componentType)
 {
     if(componentType != m_componentType)
     {
@@ -356,17 +360,17 @@ void Image::setComponentType(DType componentType)
     reconcile();
 }
 
-const Image::RawData& Image::rawData() const
+const SSImage::RawData& SSImage::rawData() const
 {
     return m_rawData;
 }
 
-const QSize& Image::size() const
+const QSize& SSImage::size() const
 {
     return m_size;
 }
 
-void Image::setSize(const QSize& size)
+void SSImage::setSize(const QSize& size)
 {
     if(size != m_size)
     {
@@ -376,12 +380,12 @@ void Image::setSize(const QSize& size)
     reconcile();
 }
 
-std::size_t Image::channelCount() const
+std::size_t SSImage::channelCount() const
 {
     return m_channelCount;
 }
 
-void Image::setChannelCount(std::size_t channelCount)
+void SSImage::setChannelCount(std::size_t channelCount)
 {
     if(channelCount != m_channelCount)
     {
@@ -391,18 +395,18 @@ void Image::setChannelCount(std::size_t channelCount)
     reconcile();
 }
 
-std::size_t Image::byteCount() const
+std::size_t SSImage::byteCount() const
 {
     return m_byteCount;
 }
 
-void Image::notifyOfDataChange()
+void SSImage::notifyOfDataChange()
 {
     m_serial = generateSerial();
     serialChanged(m_serial);
 }
 
-bool Image::read(const QUrl& furl)
+bool SSImage::read(const QUrl& furl)
 {
     bool ret{false};
     if(!furl.isLocalFile())
@@ -493,7 +497,7 @@ bool Image::read(const QUrl& furl)
     return ret;
 }
 
-bool Image::write(const QUrl& furl) const
+bool SSImage::write(const QUrl& furl) const
 {
     bool ret{false};
     if(!furl.isLocalFile())
@@ -507,7 +511,7 @@ bool Image::write(const QUrl& furl) const
     return ret;
 }
 
-void Image::reconcile()
+void SSImage::reconcile()
 {
     if(m_noReconcile == 0)
     {

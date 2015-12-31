@@ -10,6 +10,5 @@ ThirtyBitSGContext::ThirtyBitSGContext(QObject* parent)
 
 QSGLayer* ThirtyBitSGContext::createLayer(QSGRenderContext* renderContext)
 {
-    qDebug() << "QSGLayer* createLayer(QSGRenderContext* renderContext)";
     return new ThirtyBitSGLayer(renderContext);
 }

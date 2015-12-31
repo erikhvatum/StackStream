@@ -3,7 +3,7 @@
 
 class NoReconcile;
 
-class Image
+class SSImage
   : public QObject
 {
 public:
@@ -26,11 +26,10 @@ private:
     Q_ENUM(DType)
     Q_PROPERTY(std::size_t serial READ serial STORED false NOTIFY serialChanged)
     Q_PROPERTY(bool isValid READ isValid STORED false NOTIFY isValidChanged FINAL)
-    Q_PROPERTY(DType imageType READ
-                       componentType
-                       WRITE
-                       setComponentType
-                       NOTIFY imageTypeChanged FINAL)
+    Q_PROPERTY(DType imageType
+               READ componentType
+               WRITE setComponentType
+               NOTIFY imageTypeChanged FINAL)
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged FINAL)
     Q_PROPERTY(std::size_t channelCount READ channelCount WRITE setChannelCount NOTIFY channelCountChanged FINAL)
     Q_PROPERTY(std::size_t byteCount READ byteCount STORED false NOTIFY byteCountChanged FINAL)
@@ -38,44 +37,45 @@ private:
 public:
     static const std::size_t ImageTypeSizes[];
 
-    explicit Image(QObject* parent=nullptr);
-
-    explicit Image(DType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
+    explicit SSImage(QObject* parent=nullptr);
+    explicit SSImage(DType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
 
     // Copies contents of rawData to m_rawData; manages m_rawData's buffer
-    Image(DType imageType,
-          const std::uint8_t* rawData,
-          const QSize& size,
-          std::size_t channelCount=1,
-          QObject* parent=nullptr);
+    SSImage(DType imageType,
+            const std::uint8_t* rawData,
+            const QSize& size,
+            std::size_t channelCount=1,
+            QObject* parent=nullptr);
 
     // Makes m_rawData point to the same location as rawData; manages m_rawData's buffer if takeOwnership is true
-    Image(DType image_type,
-          std::uint8_t* rawData,
-          const QSize& size,
-          std::size_t channelCount=1,
-          bool takeOwnership=false,
-          QObject* parent=nullptr);
+    SSImage(DType image_type,
+            std::uint8_t* rawData,
+            const QSize& size,
+            std::size_t channelCount=1,
+            bool takeOwnership=false,
+            QObject* parent=nullptr);
 
     // If copyData is True: copies contents of rawData to m_rawData; manages m_rawData's buffer. 
     // If copyData is False: copies rawData to m_rawData.  Therefore, m_rawData's buffer management is controlled by the 
     // value of rawData.deleter, a function pointer copied to m_rawData.deleter. 
-    Image(DType imageType,
-          const RawData& rawData,
-          const QSize& size,
-          std::size_t channelCount=1,
-          bool copyData=true,
-          QObject* parent=nullptr);
+    SSImage(DType imageType,
+            const RawData& rawData,
+            const QSize& size,
+            std::size_t channelCount=1,
+            bool copyData=true,
+            QObject* parent=nullptr);
 
     // If copyData is True: copies contents of rhs.m_rawData to m_rawData; manages m_rawData's buffer. 
     // If copyData is false: copies rhs.m_rawData to m_rawData.  Therefore, m_rawData's buffer management is controlled 
     // by the value of rhs.m_rawData.deleter, a function pointer copied to m_rawData.deleter.
-    Image(const Image& rhs, bool copyData=false);
+    SSImage(const SSImage& rhs, bool copyData=false);
+
+    virtual ~SSImage();
 
     // rhs.m_rawData is copied (IE, the smart pointer itself is copied and not the data it points to) iff rhs is valid
-    Image& operator = (const Image& rhs);
+    SSImage& operator = (const SSImage& rhs);
 
-    bool operator == (const Image& rhs) const;
+    bool operator == (const SSImage& rhs) const;
     operator bool () const;
 
     QImage as10BpcQImage() const;

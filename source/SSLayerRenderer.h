@@ -1,23 +1,23 @@
 #pragma once
 #include "common.h"
 
-class Layer;
+class SSLayer;
 
-class LayerRenderer
+class SSLayerRenderer
   : public QQuickFramebufferObject::Renderer,
     protected QOpenGLFunctions
 {
 public:
     static const QSize sm_defaultFboSize;
 
-    LayerRenderer();
+    SSLayerRenderer();
     void render() override;
     QOpenGLFramebufferObject* createFramebufferObject(const QSize&) override;
     void synchronize(QQuickFramebufferObject *item) override;
 
 protected:
     // When m_layer is not valid, m_fboSize is set to sm_defaultFboSize and m_tex.isCreated() is false.
-    Layer m_layer;
+    SSLayer m_layer;
     QSize m_fboSize;
     QOpenGLShaderProgram m_shaderProgram;
     QOpenGLTexture* m_tex;

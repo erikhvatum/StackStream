@@ -1,10 +1,10 @@
 #include "common.h"
-#include "Layer.h"
-#include "LayerRenderer.h"
+#include "SSLayer.h"
+#include "SSLayerRenderer.h"
 
-const QSize LayerRenderer::sm_defaultFboSize(100, 100);
+const QSize SSLayerRenderer::sm_defaultFboSize(100, 100);
 
-const LayerRenderer::ChannelCountFormats LayerRenderer::sm_channelCountFormats[] = {
+const SSLayerRenderer::ChannelCountFormats SSLayerRenderer::sm_channelCountFormats[] = {
     {QOpenGLTexture::NoFormat, QOpenGLTexture::NoSourceFormat},
     {QOpenGLTexture::R32F, QOpenGLTexture::Red},
     {QOpenGLTexture::RG32F, QOpenGLTexture::RG},
@@ -12,7 +12,7 @@ const LayerRenderer::ChannelCountFormats LayerRenderer::sm_channelCountFormats[]
     {QOpenGLTexture::RGBA32F, QOpenGLTexture::RGBA}
 };
 
-const QOpenGLTexture::PixelType LayerRenderer::sm_componentPixelTypes[] = {
+const QOpenGLTexture::PixelType SSLayerRenderer::sm_componentPixelTypes[] = {
     QOpenGLTexture::NoPixelType,
     QOpenGLTexture::UInt8,
     QOpenGLTexture::UInt16,
@@ -23,14 +23,14 @@ const QOpenGLTexture::PixelType LayerRenderer::sm_componentPixelTypes[] = {
     QOpenGLTexture::NoPixelType
 };
 
-const QVector<QVector2D> LayerRenderer::sm_quad{
+const QVector<QVector2D> SSLayerRenderer::sm_quad{
     QVector2D{1.1f, -1.1f},
     QVector2D{-1.1f, -1.1f},
     QVector2D{-1.1f, 1.1f},
     QVector2D{1.1f, 1.1f}
 };
 
-LayerRenderer::LayerRenderer()
+SSLayerRenderer::SSLayerRenderer()
   : m_fboSize(sm_defaultFboSize),
     m_tex(new QOpenGLTexture(QOpenGLTexture::Target2D)),
     m_texSerial(0)
@@ -52,7 +52,7 @@ LayerRenderer::LayerRenderer()
     vShad->compileSourceCode(vShadSrc);
 
     QOpenGLShader* fShad{new QOpenGLShader(QOpenGLShader::Fragment, &m_shaderProgram)};
-    fShad->compileSourceFile(":/LayerRenderer.frag");
+    fShad->compileSourceFile(":/SSLayerRenderer.frag");
 
     m_shaderProgram.addShader(vShad);
     m_shaderProgram.addShader(fShad);
@@ -72,14 +72,14 @@ LayerRenderer::LayerRenderer()
     m_tex->setWrapMode(QOpenGLTexture::ClampToEdge);
 }
 
-void LayerRenderer::render()
+void SSLayerRenderer::render()
 {
     glClearColor(0, 0, 0, 1);
     glClearDepth(1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     if(m_layer.isValid())
     {
-        Image& image = *m_layer.image();
+        SSImage& image = *m_layer.image();
         const ChannelCountFormats& formats = sm_channelCountFormats[image.channelCount()];
         if ( m_tex->isCreated()
           && ( m_tex->width() != image.size().width()
@@ -126,7 +126,7 @@ void LayerRenderer::render()
     }
 }
 
-QOpenGLFramebufferObject* LayerRenderer::createFramebufferObject(const QSize&)
+QOpenGLFramebufferObject* SSLayerRenderer::createFramebufferObject(const QSize&)
 {
     QOpenGLFramebufferObjectFormat format;
     format.setAttachment(QOpenGLFramebufferObject::CombinedDepthStencil);
@@ -138,9 +138,9 @@ QOpenGLFramebufferObject* LayerRenderer::createFramebufferObject(const QSize&)
     return ret;
 }
 
-void LayerRenderer::synchronize(QQuickFramebufferObject *item)
+void SSLayerRenderer::synchronize(QQuickFramebufferObject *item)
 {
-    Layer* layer{qobject_cast<Layer*>(item)};
+    SSLayer* layer{qobject_cast<SSLayer*>(item)};
     QSize desiredSize{m_fboSize};
     if(layer->isValid())
     {

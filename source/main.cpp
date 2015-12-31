@@ -1,30 +1,17 @@
 #include "common.h"
-#include "Image.h"
-#include "Layer.h"
-#include "View.h"
-#include "ThirtyBitImageItem.h"
+#include "SSImage.h"
+#include "SSLayer.h"
+#include "SSView.h"
 
 static QSurfaceFormat fmt;
 
-// static void onApplicationWindowCreated(QObject* object, const QUrl&)
-// {
-//     QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
-//     if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
-//     {
-//         stackStreamMainWindow->setFormat(fmt);
-// //        stackStreamMainWindow->setPersistentOpenGLContext(true);
-// //        stackStreamMainWindow->setPersistentSceneGraph(true);
-//         stackStreamMainWindow->show();
-//     }
-// }
-
 static void onApplicationWindowCreated(QObject* object, const QUrl&)
 {
-    QQuickWindow* thirtyBitImageItemMainWindow{qobject_cast<QQuickWindow*>(object)};
-    if(thirtyBitImageItemMainWindow && thirtyBitImageItemMainWindow->objectName() == "thirtyBitImageItemMainWindow")
+    QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
+    if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
     {
-        thirtyBitImageItemMainWindow->setFormat(fmt);
-        thirtyBitImageItemMainWindow->show();
+        stackStreamMainWindow->setFormat(fmt);
+        stackStreamMainWindow->show();
     }
 }
 
@@ -33,11 +20,10 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     const char ss[] = "StackStream";
     const int ver[] = {1, 0};
-    qmlRegisterType<Image>(ss, ver[0], ver[1], "SSImage");
-    qmlRegisterType<Layer>(ss, ver[0], ver[1], "SSLayer");
-    qmlRegisterType<View>(ss, ver[0], ver[1], "View");
-    qmlRegisterType<ThirtyBitImageItem>(ss, ver[0], ver[1], "ThirtyBitImageItem");
-    qRegisterMetaType<Image::DType>("DType");
+    qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImage");
+    qmlRegisterType<SSLayer>(ss, ver[0], ver[1], "SSLayer");
+    qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
+    qRegisterMetaType<SSImage::DType>("DType");
     qRegisterMetaType<std::size_t>("std::size_t");
 
     fmt.setRenderableType(QSurfaceFormat::OpenGL);
@@ -58,12 +44,7 @@ int main(int argc, char *argv[])
     
     QQmlApplicationEngine engine;
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-//  engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
-    engine.load(QUrl(QStringLiteral("qrc:/main_30bitimageitem.qml")));
-    
-//    QQuickView view(QUrl(QStringLiteral("qrc:/main.qml")));
-//    view.setFormat(fmt);
-//    view.show();
+    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     return app.exec();
 }

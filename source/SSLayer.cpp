@@ -1,8 +1,8 @@
 #include "common.h"
-#include "Layer.h"
-#include "LayerRenderer.h"
+#include "SSLayer.h"
+#include "SSLayerRenderer.h"
 
-Layer::Layer(QQuickItem* parent)
+SSLayer::SSLayer(QQuickItem* parent)
   : QQuickFramebufferObject(parent),
     m_image(nullptr),
     m_min(0),
@@ -13,7 +13,7 @@ Layer::Layer(QQuickItem* parent)
     setTextureFollowsItemSize(false);
 }
 
-Layer::Layer(const Layer& rhs, QQuickItem* parent)
+SSLayer::SSLayer(const SSLayer& rhs, QQuickItem* parent)
   : QQuickFramebufferObject(parent),
     m_image(nullptr),
     m_min(rhs.m_min),
@@ -22,12 +22,16 @@ Layer::Layer(const Layer& rhs, QQuickItem* parent)
     m_tint(rhs.m_tint)
 {
     setTextureFollowsItemSize(false);
-    setImage(const_cast<Layer&>(rhs).m_image);
+    setImage(const_cast<SSLayer&>(rhs).m_image);
 }
 
-Layer& Layer::operator = (const Layer& rhs)
+SSLayer::~SSLayer()
 {
-    setImage(const_cast<Layer&>(rhs).m_image);
+}
+
+SSLayer& SSLayer::operator = (const SSLayer& rhs)
+{
+    setImage(const_cast<SSLayer&>(rhs).m_image);
     setMin(rhs.m_min);
     setMax(rhs.m_max);
     setGamma(rhs.m_gamma);
@@ -35,7 +39,7 @@ Layer& Layer::operator = (const Layer& rhs)
     return *this;
 }
 
-bool Layer::operator == (const Layer& rhs) const
+bool SSLayer::operator == (const SSLayer& rhs) const
 {
     bool ret{false};
     if ( rhs.m_min == m_min
@@ -51,32 +55,32 @@ bool Layer::operator == (const Layer& rhs) const
     return ret;
 }
 
-bool Layer::operator != (const Layer& rhs) const
+bool SSLayer::operator != (const SSLayer& rhs) const
 {
     return !(*this == rhs);
 }
 
-QQuickFramebufferObject::Renderer* Layer::createRenderer() const
+QQuickFramebufferObject::Renderer* SSLayer::createRenderer() const
 {
-    return new LayerRenderer();
+    return new SSLayerRenderer();
 }
 
-bool Layer::isValid() const
+bool SSLayer::isValid() const
 {
     return m_image && m_image->isValid();
 }
 
-Image* Layer::image()
+SSImage* SSLayer::image()
 {
     return m_image;
 }
 
-const Image* Layer::image() const
+const SSImage* SSLayer::image() const
 {
     return m_image;
 }
 
-void Layer::setImage(Image* image)
+void SSLayer::setImage(SSImage* image)
 {
     bool wasValid{isValid()};
     if(m_image != nullptr)
@@ -91,17 +95,17 @@ void Layer::setImage(Image* image)
     m_image = image;
     if(m_image == nullptr)
     {
-        setImplicitSize(LayerRenderer::sm_defaultFboSize.width(),
-                        LayerRenderer::sm_defaultFboSize.height());
+        setImplicitSize(SSLayerRenderer::sm_defaultFboSize.width(),
+                        SSLayerRenderer::sm_defaultFboSize.height());
     }
     else
     {
-        m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::isValidChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::isValidChanged, this, &Layer::update));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::serialChanged, this, &Layer::onSerialChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::sizeChanged, this, &Layer::onImageSizeChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::imageTypeChanged, this, &Layer::update));
-        m_imageSignalConnections.push_front(connect(m_image, &Image::channelCountChanged, this, &Layer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::isValidChanged, this, &SSLayer::isValidChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::isValidChanged, this, &SSLayer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::serialChanged, this, &SSLayer::onSerialChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::sizeChanged, this, &SSLayer::onImageSizeChanged));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::imageTypeChanged, this, &SSLayer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::channelCountChanged, this, &SSLayer::update));
         setImplicitSize(m_image->size().width(), m_image->size().height());
     }
     imageSerialChanged(imageSerial());
@@ -110,17 +114,17 @@ void Layer::setImage(Image* image)
     update();
 }
 
-std::size_t Layer::imageSerial() const
+std::size_t SSLayer::imageSerial() const
 {
     return m_image ? m_image->serial() : std::numeric_limits<std::size_t>::max();
 }
 
-float Layer::min() const
+float SSLayer::min() const
 {
     return m_min;
 }
 
-void Layer::setMin(float min)
+void SSLayer::setMin(float min)
 {
     if(m_min != min)
     {
@@ -133,17 +137,17 @@ void Layer::setMin(float min)
     }
 }
 
-void Layer::resetMin()
+void SSLayer::resetMin()
 {
     setMin(0.0f);
 }
 
-float Layer::max() const
+float SSLayer::max() const
 {
     return m_max;
 }
 
-void Layer::setMax(float max)
+void SSLayer::setMax(float max)
 {
     if(m_max != max)
     {
@@ -156,17 +160,17 @@ void Layer::setMax(float max)
     }
 }
 
-void Layer::resetMax()
+void SSLayer::resetMax()
 {
     setMax(1.0f);
 }
 
-float Layer::gamma() const
+float SSLayer::gamma() const
 {
     return m_gamma;
 }
 
-void Layer::setGamma(float gamma)
+void SSLayer::setGamma(float gamma)
 {
     if(m_gamma != gamma)
     {
@@ -176,17 +180,17 @@ void Layer::setGamma(float gamma)
     }
 }
 
-void Layer::resetGamma()
+void SSLayer::resetGamma()
 {
     setGamma(1.0f);
 }
 
-const QColor& Layer::tint() const
+const QColor& SSLayer::tint() const
 {
     return m_tint;
 }
 
-void Layer::setTint(const QColor& tint)
+void SSLayer::setTint(const QColor& tint)
 {
     if(tint != m_tint)
     {
@@ -196,27 +200,26 @@ void Layer::setTint(const QColor& tint)
     }
 }
 
-void Layer::resetTint()
+void SSLayer::resetTint()
 {
     setTint(QColor(Qt::white));
 }
 
-QSGTextureProvider* Layer::textureProvider() const
+QSGTextureProvider* SSLayer::textureProvider() const
 {
-    qDebug() << "QSGTextureProvider* Layer::textureProvider() const";
     return QQuickFramebufferObject::textureProvider();
 }
 
-void Layer::aboutQt() const
+void SSLayer::aboutQt() const
 {
     QApplication::aboutQt();
 }
 
-void Layer::onSerialChanged(std::size_t serial)
+void SSLayer::onSerialChanged(std::size_t serial)
 {
     if(m_image == nullptr || !m_image->isValid())
-        setImplicitSize(LayerRenderer::sm_defaultFboSize.width(),
-                        LayerRenderer::sm_defaultFboSize.height());
+        setImplicitSize(SSLayerRenderer::sm_defaultFboSize.width(),
+                        SSLayerRenderer::sm_defaultFboSize.height());
     else
         setImplicitSize(m_image->size().width(), m_image->size().height());
 
@@ -224,7 +227,7 @@ void Layer::onSerialChanged(std::size_t serial)
     update();
 }
 
-void Layer::onImageSizeChanged(QSize size)
+void SSLayer::onImageSizeChanged(QSize size)
 {
     setImplicitSize(size.width(), size.height());
 }

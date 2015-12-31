@@ -1,12 +1,12 @@
 #pragma once
 #include "common.h"
 
-class View
+class SSView
   : public QQuickItem
 {
     Q_OBJECT
 public:
-    View();
+    SSView();
     // TODO: custom transform node
     // TODO: custom textureProvider node that preserves RGBAF texture data, avoiding 24-bit RGB888
     // quantization step

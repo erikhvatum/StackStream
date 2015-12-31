@@ -1,7 +1,7 @@
 #include "common.h"
-#include "View.h"
+#include "SSView.h"
 
-View::View()
+SSView::SSView()
 {
     setFlag(QQuickItem::ItemClipsChildrenToShape);
 }
