@@ -3,11 +3,11 @@
 class QSGContext;
 class QSGLayer;
 
-class Float32SGContext
+class SSGContext
   : public QSGContext
 {
 public:
-    explicit Float32SGContext(QObject* parent=nullptr);
+    explicit SSGContext(QObject* parent=nullptr);
 
     QSGLayer* createLayer(QSGRenderContext* renderContext) override;
 };

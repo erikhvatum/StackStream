@@ -8,22 +8,24 @@ QT += core gui qml quick widgets quick-private qml-private core-private gui-priv
 
 CONFIG += c++11
 
-TARGET = Float32SGContextPlugin
+TARGET = SSGContextPlugin
 TEMPLATE = lib
 CONFIG += plugin
 
 DESTDIR = $$[QT_INSTALL_PLUGINS]/scenegraph
 
-SOURCES += Float32SGContextPlugin.cpp \
-    Float32SGContext.cpp \
-    ../Float32SGTexture.cpp \
-    Float32SGLayer.cpp
+SOURCES += \
+    ../SSGTexture.cpp \
+    SSGLayer.cpp \
+    SSGContextPlugin.cpp \
+    SSGContext.cpp
 
-HEADERS += Float32SGContextPlugin.h \
-    Float32SGContext.h \
-    ../Float32SGTexture.h \
-    Float32SGLayer.h
-DISTFILES += Float32SGContextPlugin.json
+HEADERS += \
+    ../SSGTexture.h \
+    SSGLayer.h \
+    SSGContextPlugin.h \
+    SSGContext.h
+DISTFILES += SSGContextPlugin.json
 
 unix {
     target.path = /usr/lib

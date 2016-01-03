@@ -1,6 +1,6 @@
 #include <QtQuick/private/qsgdefaultlayer_p.h>
 #include <QOpenGLFramebufferObject>
-#include "Float32SGLayer.h"
+#include "SSGLayer.h"
 
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qsgrenderer_p.h>
@@ -45,7 +45,7 @@ namespace
     }
 }
 
-Float32SGLayer::Float32SGLayer(QSGRenderContext *context)
+SSGLayer::SSGLayer(QSGRenderContext *context)
     : QSGLayer()
     , m_item(0)
     , m_device_pixel_ratio(1)
@@ -70,12 +70,12 @@ Float32SGLayer::Float32SGLayer(QSGRenderContext *context)
 {
 }
 
-Float32SGLayer::~Float32SGLayer()
+SSGLayer::~SSGLayer()
 {
     invalidated();
 }
 
-void Float32SGLayer::invalidated()
+void SSGLayer::invalidated()
 {
     delete m_renderer;
     m_renderer = 0;
@@ -92,23 +92,23 @@ void Float32SGLayer::invalidated()
     }
 }
 
-int Float32SGLayer::textureId() const
+int SSGLayer::textureId() const
 {
     return m_fbo ? m_fbo->texture() : 0;
 }
 
-bool Float32SGLayer::hasAlphaChannel() const
+bool SSGLayer::hasAlphaChannel() const
 {
     return true;
 }
 
-bool Float32SGLayer::hasMipmaps() const
+bool SSGLayer::hasMipmaps() const
 {
     return m_mipmap;
 }
 
 
-void Float32SGLayer::bind()
+void SSGLayer::bind()
 {
 #ifndef QT_NO_DEBUG
     if (!m_recursive && m_fbo && ((m_multisampling && m_secondaryFbo->isBound()) || m_fbo->isBound()))
@@ -130,7 +130,7 @@ void Float32SGLayer::bind()
     }
 }
 
-bool Float32SGLayer::updateTexture()
+bool SSGLayer::updateTexture()
 {
     bool doGrab = (m_live || m_grab) && m_dirtyTexture;
     if (doGrab)
@@ -141,7 +141,7 @@ bool Float32SGLayer::updateTexture()
     return doGrab;
 }
 
-void Float32SGLayer::setHasMipmaps(bool mipmap)
+void SSGLayer::setHasMipmaps(bool mipmap)
 {
     if (mipmap == m_mipmap)
         return;
@@ -151,7 +151,7 @@ void Float32SGLayer::setHasMipmaps(bool mipmap)
 }
 
 
-void Float32SGLayer::setItem(QSGNode *item)
+void SSGLayer::setItem(QSGNode *item)
 {
     if (item == m_item)
         return;
@@ -167,7 +167,7 @@ void Float32SGLayer::setItem(QSGNode *item)
     markDirtyTexture();
 }
 
-void Float32SGLayer::setRect(const QRectF &rect)
+void SSGLayer::setRect(const QRectF &rect)
 {
     if (rect == m_rect)
         return;
@@ -175,7 +175,7 @@ void Float32SGLayer::setRect(const QRectF &rect)
     markDirtyTexture();
 }
 
-void Float32SGLayer::setSize(const QSize &size)
+void SSGLayer::setSize(const QSize &size)
 {
     if (size == m_size)
         return;
@@ -191,12 +191,12 @@ void Float32SGLayer::setSize(const QSize &size)
     markDirtyTexture();
 }
 
-void Float32SGLayer::setFormat(GLenum)
+void SSGLayer::setFormat(GLenum)
 {
     // NOPE!  We're always GL_RGBA32F!
 }
 
-void Float32SGLayer::setLive(bool live)
+void SSGLayer::setLive(bool live)
 {
     if (live == m_live)
         return;
@@ -212,7 +212,7 @@ void Float32SGLayer::setLive(bool live)
     markDirtyTexture();
 }
 
-void Float32SGLayer::scheduleUpdate()
+void SSGLayer::scheduleUpdate()
 {
     if (m_grab)
         return;
@@ -221,29 +221,29 @@ void Float32SGLayer::scheduleUpdate()
         emit updateRequested();
 }
 
-void Float32SGLayer::setRecursive(bool recursive)
+void SSGLayer::setRecursive(bool recursive)
 {
     m_recursive = recursive;
 }
 
-void Float32SGLayer::setMirrorHorizontal(bool mirror)
+void SSGLayer::setMirrorHorizontal(bool mirror)
 {
     m_mirrorHorizontal = mirror;
 }
 
-void Float32SGLayer::setMirrorVertical(bool mirror)
+void SSGLayer::setMirrorVertical(bool mirror)
 {
     m_mirrorVertical = mirror;
 }
 
-void Float32SGLayer::markDirtyTexture()
+void SSGLayer::markDirtyTexture()
 {
     m_dirtyTexture = true;
     if (m_live || m_grab)
         emit updateRequested();
 }
 
-void Float32SGLayer::grab()
+void SSGLayer::grab()
 {
     if (!m_item || m_size.isNull()) {
         delete m_fbo;
@@ -401,7 +401,7 @@ void Float32SGLayer::grab()
         markDirtyTexture(); // Continuously update if 'live' and 'recursive'.
 }
 
-QImage Float32SGLayer::toImage() const
+QImage SSGLayer::toImage() const
 {
     if (m_fbo)
         return m_fbo->toImage();
@@ -409,7 +409,7 @@ QImage Float32SGLayer::toImage() const
     return QImage();
 }
 
-QRectF Float32SGLayer::normalizedTextureSubRect() const
+QRectF SSGLayer::normalizedTextureSubRect() const
 {
     return QRectF(m_mirrorHorizontal ? 1 : 0,
                   m_mirrorVertical ? 0 : 1,

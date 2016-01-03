@@ -6,12 +6,12 @@
 
 #define QSG_DEBUG_FBO_OVERLAY
 
-class Float32SGLayer : public QSGLayer
+class SSGLayer : public QSGLayer
 {
     Q_OBJECT
 public:
-    Float32SGLayer(QSGRenderContext *context);
-    ~Float32SGLayer();
+    SSGLayer(QSGRenderContext *context);
+    ~SSGLayer();
 
     bool updateTexture() Q_DECL_OVERRIDE;
 

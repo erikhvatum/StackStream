@@ -1,12 +1,12 @@
 #include "common.h"
-#include "Float32SGTexture.h"
+#include "SSGTexture.h"
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qquickprofiler_p.h>
 #include <QtQuick/private/qsgcontext_p.h>
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>
 
-Float32SGTexture::Float32SGTexture()
+SSGTexture::SSGTexture()
     : QSGTexture()
     , m_texture_id(0)
     , m_has_alpha(false)
@@ -18,15 +18,15 @@ Float32SGTexture::Float32SGTexture()
 {
 }
 
-Float32SGTexture::~Float32SGTexture()
+SSGTexture::~SSGTexture()
 {
     if (m_texture_id && m_owns_texture && QOpenGLContext::currentContext())
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
 }
 
-void Float32SGTexture::setImage(const QImage &image)
+void SSGTexture::setImage(const QImage &image)
 {
-    qDebug() << "Float32SGTexture::setImage(const QImage &image)";
+    qDebug() << "SSGTexture::setImage(const QImage &image)";
     m_image = image;
     m_texture_size = image.size();
     m_has_alpha = image.hasAlphaChannel();
@@ -35,23 +35,23 @@ void Float32SGTexture::setImage(const QImage &image)
     m_mipmaps_generated = false;
 }
 
-int Float32SGTexture::textureId() const
+int SSGTexture::textureId() const
 {
     if (m_dirty_texture) {
         if (m_image.isNull()) {
             // The actual texture and id will be updated/deleted in a later bind()
-            // or ~Float32SGTexture so just keep it minimal here.
+            // or ~SSGTexture so just keep it minimal here.
             return 0;
         } else if (m_texture_id == 0){
             // Generate a texture id for use later and return it.
-            QOpenGLContext::currentContext()->functions()->glGenTextures(1, &const_cast<Float32SGTexture *>(this)->m_texture_id);
+            QOpenGLContext::currentContext()->functions()->glGenTextures(1, &const_cast<SSGTexture *>(this)->m_texture_id);
             return m_texture_id;
         }
     }
     return m_texture_id;
 }
 
-void Float32SGTexture::setTextureId(int id)
+void SSGTexture::setTextureId(int id)
 {
     if (m_texture_id && m_owns_texture)
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
@@ -63,9 +63,9 @@ void Float32SGTexture::setTextureId(int id)
     m_mipmaps_generated = false;
 }
 
-void Float32SGTexture::bind()
+void SSGTexture::bind()
 {
-    qDebug() << "Float32SGTexture::bind()";
+    qDebug() << "SSGTexture::bind()";
     QOpenGLContext *context = QOpenGLContext::currentContext();
     QOpenGLFunctions *funcs = context->functions();
     if (!m_dirty_texture) {

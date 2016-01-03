@@ -1,13 +1,17 @@
 #pragma once
 #include "common.h"
 
-class Float32SGTexture
+class SSGTexture
   : public QSGTexture
 {
     Q_OBJECT
 public:
-    Float32SGTexture();
-    virtual ~Float32SGTexture();
+    SSGTexture();
+    virtual ~SSGTexture();
+
+//  void setChannelCount(std::size_t channel_count);
+//  const std::size_t& channelCount() const;
+
 
     void setOwnsTexture(bool owns) { m_owns_texture = owns; }
     bool ownsTexture() const { return m_owns_texture; }
@@ -27,14 +31,15 @@ public:
 
     virtual void bind();
 
-    static Float32SGTexture *fromImage(const QImage &image) {
-        Float32SGTexture *t = new Float32SGTexture();
+    static SSGTexture *fromImage(const QImage &image) {
+        SSGTexture *t = new SSGTexture();
         t->setImage(image);
         return t;
     }
 
 protected:
     QImage m_image;
+
 
     GLuint m_texture_id;
     QSize m_texture_size;
