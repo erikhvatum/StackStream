@@ -104,7 +104,7 @@ void SSLayer::setImage(SSImage* image)
         m_imageSignalConnections.push_front(connect(m_image, &SSImage::isValidChanged, this, &SSLayer::update));
         m_imageSignalConnections.push_front(connect(m_image, &SSImage::serialChanged, this, &SSLayer::onSerialChanged));
         m_imageSignalConnections.push_front(connect(m_image, &SSImage::sizeChanged, this, &SSLayer::onImageSizeChanged));
-        m_imageSignalConnections.push_front(connect(m_image, &SSImage::imageTypeChanged, this, &SSLayer::update));
+        m_imageSignalConnections.push_front(connect(m_image, &SSImage::componentDTypeChanged, this, &SSLayer::update));
         m_imageSignalConnections.push_front(connect(m_image, &SSImage::componentCountChanged, this, &SSLayer::update));
         setImplicitSize(m_image->size().width(), m_image->size().height());
     }

@@ -20,35 +20,35 @@ public:
     };
     typedef std::shared_ptr<std::uint8_t> RawData;
     friend class NoReconcile;
+    static const std::size_t DTypeSizes[];
 
 private:
     Q_OBJECT
     Q_ENUM(DType)
     Q_PROPERTY(std::size_t serial READ serial STORED false NOTIFY serialChanged)
     Q_PROPERTY(bool isValid READ isValid STORED false NOTIFY isValidChanged FINAL)
-    Q_PROPERTY(DType imageType
-               READ componentType
-               WRITE setComponentType
-               NOTIFY imageTypeChanged FINAL)
+    Q_PROPERTY(DType componentDType
+               READ componentDType
+               WRITE setcomponentDType
+               NOTIFY componentDTypeChanged FINAL)
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged FINAL)
-    Q_PROPERTY(std::size_t componentCount READ componentCount WRITE setChannelCount NOTIFY componentCountChanged FINAL)
+    Q_PROPERTY(std::size_t componentCount READ componentCount WRITE setcomponentCount NOTIFY componentCountChanged FINAL)
     Q_PROPERTY(std::size_t byteCount READ byteCount STORED false NOTIFY byteCountChanged FINAL)
 
 public:
-    static const std::size_t ImageTypeSizes[];
 
     explicit SSImage(QObject* parent=nullptr);
-    explicit SSImage(DType imageType, const QSize& size, std::size_t componentCount=1, QObject* parent=nullptr);
+    explicit SSImage(DType componentDType, const QSize& size, std::size_t componentCount=1, QObject* parent=nullptr);
 
     // Copies contents of rawData to m_rawData; manages m_rawData's buffer
-    SSImage(DType imageType,
+    SSImage(DType componentDType,
             const std::uint8_t* rawData,
             const QSize& size,
             std::size_t componentCount=1,
             QObject* parent=nullptr);
 
     // Makes m_rawData point to the same location as rawData; manages m_rawData's buffer if takeOwnership is true
-    SSImage(DType image_type,
+    SSImage(DType componentDType,
             std::uint8_t* rawData,
             const QSize& size,
             std::size_t componentCount=1,
@@ -58,7 +58,7 @@ public:
     // If copyData is True: copies contents of rawData to m_rawData; manages m_rawData's buffer. 
     // If copyData is False: copies rawData to m_rawData.  Therefore, m_rawData's buffer management is controlled by the 
     // value of rawData.deleter, a function pointer copied to m_rawData.deleter. 
-    SSImage(DType imageType,
+    SSImage(DType componentDType,
             const RawData& rawData,
             const QSize& size,
             std::size_t componentCount=1,
@@ -84,8 +84,8 @@ public:
 
     bool isValid() const;
 
-    DType componentType() const;
-    void setComponentType(DType componentType);
+    DType componentDType() const;
+    void setcomponentDType(DType componentDType);
 
     const RawData& rawData() const;
 
@@ -93,7 +93,7 @@ public:
     void setSize(const QSize& size);
 
     std::size_t componentCount() const;
-    void setChannelCount(std::size_t componentCount);
+    void setcomponentCount(std::size_t componentCount);
 
     std::size_t byteCount() const;
 
@@ -105,7 +105,7 @@ public:
 signals:
     void serialChanged(std::size_t);
     void isValidChanged(bool);
-    void imageTypeChanged(DType);
+    void componentDTypeChanged(DType);
     void sizeChanged(QSize);
     void componentCountChanged(std::size_t);
     void byteCountChanged(std::size_t);
@@ -126,6 +126,7 @@ protected:
     QSize m_size;
     std::size_t m_componentCount;
     std::size_t m_byteCount;
+
 
     void init(RawData& rawData, bool copyData);
     void reconcile();

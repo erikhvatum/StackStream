@@ -9,7 +9,7 @@ public:
     SSGTexture();
     virtual ~SSGTexture();
 
-//  void setChannelCount(std::size_t channel_count);
+//  void setcomponentCount(std::size_t channel_count);
 //  const std::size_t& componentCount() const;
 
 

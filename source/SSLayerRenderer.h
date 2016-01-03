@@ -25,10 +25,10 @@ protected:
     int m_vertCoordLoc, m_texLoc, m_viewportSizeLoc;
     int m_rescaleMinLoc, m_rescaleRangeLoc, m_gammaLoc, m_tintLoc;
     static const QVector<QVector2D> sm_quad;
-    struct ChannelCountFormats {
+    struct componentCountFormats {
         QOpenGLTexture::TextureFormat texFormat;
         QOpenGLTexture::PixelFormat srcPixelFormat;
     };
-    static const ChannelCountFormats sm_componentCountFormats[];
+    static const componentCountFormats sm_componentCountFormats[];
     static const QOpenGLTexture::PixelType sm_componentPixelTypes[];
 };

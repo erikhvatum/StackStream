@@ -29,7 +29,7 @@ private:
     SSImage& m_image;
 };
 
-const std::size_t SSImage::ImageTypeSizes[] = {
+const std::size_t SSImage::DTypeSizes[] = {
     0, // NullDT
     1, // UInt8DT
     2, // UInt12DT
@@ -51,12 +51,12 @@ SSImage::SSImage(QObject *parent)
 {
 }
 
-SSImage::SSImage(DType imageType, const QSize& size, std::size_t componentCount, QObject* parent)
+SSImage::SSImage(DType componentDType, const QSize& size, std::size_t componentCount, QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(imageType),
+    m_componentType(componentDType),
     m_size(size),
     m_componentCount(componentCount),
     m_byteCount(0)
@@ -64,7 +64,7 @@ SSImage::SSImage(DType imageType, const QSize& size, std::size_t componentCount,
     reconcile();
 }
 
-SSImage::SSImage(DType imageType,
+SSImage::SSImage(DType componentDType,
                  const std::uint8_t* rawData,
                  const QSize& size,
                  std::size_t componentCount,
@@ -72,7 +72,7 @@ SSImage::SSImage(DType imageType,
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
-    m_componentType(imageType),
+    m_componentType(componentDType),
     m_size(size),
     m_componentCount(componentCount),
     m_byteCount(0)
@@ -81,7 +81,7 @@ SSImage::SSImage(DType imageType,
     init(_rawData, true);
 }
 
-SSImage::SSImage(DType imageType,
+SSImage::SSImage(DType componentDType,
                  std::uint8_t* rawData,
                  const QSize& size,
                  std::size_t componentCount,
@@ -91,7 +91,7 @@ SSImage::SSImage(DType imageType,
     m_serial(generateSerial()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(imageType),
+    m_componentType(componentDType),
     m_size(size),
     m_componentCount(componentCount)
 {
@@ -107,7 +107,7 @@ SSImage::SSImage(DType imageType,
     }
 }
 
-SSImage::SSImage(DType imageType,
+SSImage::SSImage(DType componentDType,
                  const RawData& rawData,
                  const QSize& size,
                  std::size_t componentCount,
@@ -117,7 +117,7 @@ SSImage::SSImage(DType imageType,
     m_serial(generateSerial()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(imageType),
+    m_componentType(componentDType),
     m_size(size),
     m_componentCount(componentCount),
     m_byteCount(0)
@@ -152,7 +152,7 @@ void SSImage::init(RawData& rawData, bool copyData)
         static_cast<std::size_t>(m_size.width()) *
         static_cast<std::size_t>(m_size.height()) *
         m_componentCount *
-        ImageTypeSizes[m_componentType];
+        DTypeSizes[m_componentType];
     if(copyData)
     {
         m_rawData.reset(new std::uint8_t[m_byteCount], get_default_deleter());
@@ -171,9 +171,9 @@ SSImage& SSImage::operator = (const SSImage& rhs)
     {
         {
             NoReconcile NR(*this);
-            setComponentType(rhs.m_componentType);
+            setcomponentDType(rhs.m_componentType);
             setSize(rhs.m_size);
-            setChannelCount(rhs.m_componentCount);
+            setcomponentCount(rhs.m_componentCount);
         }
         if(rhs.m_isValid)
         {
@@ -345,17 +345,17 @@ bool SSImage::isValid() const
     return m_isValid;
 }
 
-SSImage::DType SSImage::componentType() const
+SSImage::DType SSImage::componentDType() const
 {
     return m_componentType;
 }
 
-void SSImage::setComponentType(DType componentType)
+void SSImage::setcomponentDType(DType componentDType)
 {
-    if(componentType != m_componentType)
+    if(componentDType != m_componentType)
     {
-        m_componentType = componentType;
-        imageTypeChanged(m_componentType);
+        m_componentType = componentDType;
+        componentDTypeChanged(m_componentType);
     }
     reconcile();
 }
@@ -385,7 +385,7 @@ std::size_t SSImage::componentCount() const
     return m_componentCount;
 }
 
-void SSImage::setChannelCount(std::size_t componentCount)
+void SSImage::setcomponentCount(std::size_t componentCount)
 {
     if(componentCount != m_componentCount)
     {
@@ -477,10 +477,10 @@ bool SSImage::read(const QUrl& furl)
                 std::size_t oldByteCount{m_byteCount};
                 {
                     NoReconcile NR(*this);
-                    setComponentType(UInt16DT);
+                    setcomponentDType(UInt16DT);
                     setSize(QSize(static_cast<int>(fiImage.getWidth()), static_cast<int>(fiImage.getHeight())));
-                    setChannelCount(componentCount);
-                    m_byteCount = m_componentCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_componentType];
+                    setcomponentCount(componentCount);
+                    m_byteCount = m_componentCount * fiImage.getWidth() * fiImage.getHeight() * DTypeSizes[m_componentType];
                     m_rawData.reset(new std::uint8_t[m_byteCount]);
                     std::memcpy(m_rawData.get(), fiImage.accessPixels(), m_byteCount);
                 }
@@ -528,7 +528,7 @@ void SSImage::reconcile()
                     static_cast<std::size_t>(m_size.width()) *
                     static_cast<std::size_t>(m_size.height()) *
                     m_componentCount *
-                    ImageTypeSizes[m_componentType];
+                    DTypeSizes[m_componentType];
                 if(byteCount != m_byteCount)
                 {
                     m_byteCount = byteCount;
