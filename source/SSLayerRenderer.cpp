@@ -4,7 +4,7 @@
 
 const QSize SSLayerRenderer::sm_defaultFboSize(100, 100);
 
-const SSLayerRenderer::ChannelCountFormats SSLayerRenderer::sm_channelCountFormats[] = {
+const SSLayerRenderer::ChannelCountFormats SSLayerRenderer::sm_componentCountFormats[] = {
     {QOpenGLTexture::NoFormat, QOpenGLTexture::NoSourceFormat},
     {QOpenGLTexture::R32F, QOpenGLTexture::Red},
     {QOpenGLTexture::RG32F, QOpenGLTexture::RG},
@@ -80,7 +80,7 @@ void SSLayerRenderer::render()
     if(m_layer.isValid())
     {
         SSImage& image = *m_layer.image();
-        const ChannelCountFormats& formats = sm_channelCountFormats[image.channelCount()];
+        const ChannelCountFormats& formats = sm_componentCountFormats[image.componentCount()];
         if ( m_tex->isCreated()
           && ( m_tex->width() != image.size().width()
             || m_tex->height() != image.size().height()

@@ -31,27 +31,27 @@ private:
                WRITE setComponentType
                NOTIFY imageTypeChanged FINAL)
     Q_PROPERTY(QSize size READ size WRITE setSize NOTIFY sizeChanged FINAL)
-    Q_PROPERTY(std::size_t channelCount READ channelCount WRITE setChannelCount NOTIFY channelCountChanged FINAL)
+    Q_PROPERTY(std::size_t componentCount READ componentCount WRITE setChannelCount NOTIFY componentCountChanged FINAL)
     Q_PROPERTY(std::size_t byteCount READ byteCount STORED false NOTIFY byteCountChanged FINAL)
 
 public:
     static const std::size_t ImageTypeSizes[];
 
     explicit SSImage(QObject* parent=nullptr);
-    explicit SSImage(DType imageType, const QSize& size, std::size_t channelCount=1, QObject* parent=nullptr);
+    explicit SSImage(DType imageType, const QSize& size, std::size_t componentCount=1, QObject* parent=nullptr);
 
     // Copies contents of rawData to m_rawData; manages m_rawData's buffer
     SSImage(DType imageType,
             const std::uint8_t* rawData,
             const QSize& size,
-            std::size_t channelCount=1,
+            std::size_t componentCount=1,
             QObject* parent=nullptr);
 
     // Makes m_rawData point to the same location as rawData; manages m_rawData's buffer if takeOwnership is true
     SSImage(DType image_type,
             std::uint8_t* rawData,
             const QSize& size,
-            std::size_t channelCount=1,
+            std::size_t componentCount=1,
             bool takeOwnership=false,
             QObject* parent=nullptr);
 
@@ -61,7 +61,7 @@ public:
     SSImage(DType imageType,
             const RawData& rawData,
             const QSize& size,
-            std::size_t channelCount=1,
+            std::size_t componentCount=1,
             bool copyData=true,
             QObject* parent=nullptr);
 
@@ -92,8 +92,8 @@ public:
     const QSize& size() const;
     void setSize(const QSize& size);
 
-    std::size_t channelCount() const;
-    void setChannelCount(std::size_t channelCount);
+    std::size_t componentCount() const;
+    void setChannelCount(std::size_t componentCount);
 
     std::size_t byteCount() const;
 
@@ -107,7 +107,7 @@ signals:
     void isValidChanged(bool);
     void imageTypeChanged(DType);
     void sizeChanged(QSize);
-    void channelCountChanged(std::size_t);
+    void componentCountChanged(std::size_t);
     void byteCountChanged(std::size_t);
 
 public slots:
@@ -124,7 +124,7 @@ protected:
     DType m_componentType;
     RawData m_rawData;
     QSize m_size;
-    std::size_t m_channelCount;
+    std::size_t m_componentCount;
     std::size_t m_byteCount;
 
     void init(RawData& rawData, bool copyData);

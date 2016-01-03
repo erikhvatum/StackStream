@@ -29,6 +29,6 @@ protected:
         QOpenGLTexture::TextureFormat texFormat;
         QOpenGLTexture::PixelFormat srcPixelFormat;
     };
-    static const ChannelCountFormats sm_channelCountFormats[];
+    static const ChannelCountFormats sm_componentCountFormats[];
     static const QOpenGLTexture::PixelType sm_componentPixelTypes[];
 };

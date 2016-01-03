@@ -46,19 +46,19 @@ SSImage::SSImage(QObject *parent)
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(NullDT),
-    m_channelCount(0),
+    m_componentCount(0),
     m_byteCount(0)
 {
 }
 
-SSImage::SSImage(DType imageType, const QSize& size, std::size_t channelCount, QObject* parent)
+SSImage::SSImage(DType imageType, const QSize& size, std::size_t componentCount, QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
     m_componentType(imageType),
     m_size(size),
-    m_channelCount(channelCount),
+    m_componentCount(componentCount),
     m_byteCount(0)
 {
     reconcile();
@@ -67,14 +67,14 @@ SSImage::SSImage(DType imageType, const QSize& size, std::size_t channelCount, Q
 SSImage::SSImage(DType imageType,
                  const std::uint8_t* rawData,
                  const QSize& size,
-                 std::size_t channelCount,
+                 std::size_t componentCount,
                  QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_componentType(imageType),
     m_size(size),
-    m_channelCount(channelCount),
+    m_componentCount(componentCount),
     m_byteCount(0)
 {
     RawData _rawData{const_cast<std::uint8_t*>(rawData), noop_deleter};
@@ -84,7 +84,7 @@ SSImage::SSImage(DType imageType,
 SSImage::SSImage(DType imageType,
                  std::uint8_t* rawData,
                  const QSize& size,
-                 std::size_t channelCount,
+                 std::size_t componentCount,
                  bool takeOwnership,
                  QObject* parent)
   : QObject(parent),
@@ -93,7 +93,7 @@ SSImage::SSImage(DType imageType,
     m_isValid(false),
     m_componentType(imageType),
     m_size(size),
-    m_channelCount(channelCount)
+    m_componentCount(componentCount)
 {
     if(takeOwnership)
     {
@@ -110,7 +110,7 @@ SSImage::SSImage(DType imageType,
 SSImage::SSImage(DType imageType,
                  const RawData& rawData,
                  const QSize& size,
-                 std::size_t channelCount,
+                 std::size_t componentCount,
                  bool copyData,
                  QObject* parent)
   : QObject(parent),
@@ -119,7 +119,7 @@ SSImage::SSImage(DType imageType,
     m_isValid(false),
     m_componentType(imageType),
     m_size(size),
-    m_channelCount(channelCount),
+    m_componentCount(componentCount),
     m_byteCount(0)
 {
     init(const_cast<RawData&>(rawData), copyData);
@@ -132,7 +132,7 @@ SSImage::SSImage(const SSImage &rhs, bool copyData)
     m_isValid(false),
     m_componentType(rhs.m_componentType),
     m_size(rhs.m_size),
-    m_channelCount(rhs.m_channelCount),
+    m_componentCount(rhs.m_componentCount),
     m_byteCount(rhs.m_byteCount)
 {
     init(const_cast<RawData&>(rhs.m_rawData), copyData);
@@ -144,14 +144,14 @@ SSImage::~SSImage()
 
 void SSImage::init(RawData& rawData, bool copyData)
 {
-    if(m_channelCount <= 0)
-        throw std::invalid_argument("The value supplied to full constructor for channelCount must be >= 1.");
+    if(m_componentCount <= 0)
+        throw std::invalid_argument("The value supplied to full constructor for componentCount must be >= 1.");
     if(m_size.width() <= 0 || m_size.height() <= 0)
         throw std::invalid_argument("The value supplied to full constructor for size must have positive width and height.");
     m_byteCount =
         static_cast<std::size_t>(m_size.width()) *
         static_cast<std::size_t>(m_size.height()) *
-        m_channelCount *
+        m_componentCount *
         ImageTypeSizes[m_componentType];
     if(copyData)
     {
@@ -173,7 +173,7 @@ SSImage& SSImage::operator = (const SSImage& rhs)
             NoReconcile NR(*this);
             setComponentType(rhs.m_componentType);
             setSize(rhs.m_size);
-            setChannelCount(rhs.m_channelCount);
+            setChannelCount(rhs.m_componentCount);
         }
         if(rhs.m_isValid)
         {
@@ -213,7 +213,7 @@ bool SSImage::operator == (const SSImage& rhs) const
     else if (m_componentType == rhs.m_componentType
            && m_isValid == rhs.m_isValid
            && m_size == rhs.m_size
-           && m_channelCount == rhs.m_channelCount )
+           && m_componentCount == rhs.m_componentCount )
     {
         if(m_isValid)
         {
@@ -261,10 +261,10 @@ QImage SSImage::as10BpcQImage() const
     std::uint8_t* qiPixIt;
     QImage ret;
     float aFactor;
-    switch(m_channelCount)
+    switch(m_componentCount)
     {
     default:
-        qWarning("m_channelCount must be in the interval [0, 4].");
+        qWarning("m_componentCount must be in the interval [0, 4].");
         break;
     case 4:
     {
@@ -313,7 +313,7 @@ QImage SSImage::as10BpcQImage() const
 //    case 2:
 //    {
 //        // TODO
-//        qWarning("Support for m_channelCount of 2 is not yet implemented.");
+//        qWarning("Support for m_componentCount of 2 is not yet implemented.");
 //        break;
 //    }
 //    case 1:
@@ -380,17 +380,17 @@ void SSImage::setSize(const QSize& size)
     reconcile();
 }
 
-std::size_t SSImage::channelCount() const
+std::size_t SSImage::componentCount() const
 {
-    return m_channelCount;
+    return m_componentCount;
 }
 
-void SSImage::setChannelCount(std::size_t channelCount)
+void SSImage::setChannelCount(std::size_t componentCount)
 {
-    if(channelCount != m_channelCount)
+    if(componentCount != m_componentCount)
     {
-        m_channelCount = channelCount;
-        channelCountChanged(m_channelCount);
+        m_componentCount = componentCount;
+        componentCountChanged(m_componentCount);
     }
     reconcile();
 }
@@ -421,21 +421,21 @@ bool SSImage::read(const QUrl& furl)
         // TODO: direct support for non-uint16 images
         if(fiImage.load(fpath.data()))
         {
-            std::size_t channelCount;
+            std::size_t componentCount;
             switch(fiImage.getImageType())
             {
             default:
-                channelCount = 0;
+                componentCount = 0;
                 break;
             case FIT_BITMAP:
                 switch(fiImage.getBitsPerPixel())
                 {
                 default:
-                    channelCount = 1;
+                    componentCount = 1;
                     break;
                 case 24:
                 case 32:
-                    channelCount = 4;
+                    componentCount = 4;
                     break;
                 }
                 break;
@@ -449,38 +449,38 @@ bool SSImage::read(const QUrl& furl)
             case FIT_RGBA16:
             case FIT_RGBF:
             case FIT_RGBAF:
-                channelCount = 4;
+                componentCount = 4;
                 break;
             }
-            if(channelCount == 0)
+            if(componentCount == 0)
             {
                 qDebug("Image::read(..): Unsupported data type.");
             }
-            else if(channelCount == 1)
+            else if(componentCount == 1)
             {
                 if(!fiImage.convertToUINT16())
                 {
                     qDebug("Image::read(..): Failed to convert image to uint16 grayscale.");
-                    channelCount = 0;
+                    componentCount = 0;
                 }
             }
-            else if(channelCount == 4)
+            else if(componentCount == 4)
             {
                 if(!fiImage.convertToRGBA16())
                 {
                     qDebug("Image::read(..): Failed to convert image to uint16 RGBA.");
-                    channelCount = 0;
+                    componentCount = 0;
                 }
             }
-            if(channelCount > 0)
+            if(componentCount > 0)
             {
                 std::size_t oldByteCount{m_byteCount};
                 {
                     NoReconcile NR(*this);
                     setComponentType(UInt16DT);
                     setSize(QSize(static_cast<int>(fiImage.getWidth()), static_cast<int>(fiImage.getHeight())));
-                    setChannelCount(channelCount);
-                    m_byteCount = m_channelCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_componentType];
+                    setChannelCount(componentCount);
+                    m_byteCount = m_componentCount * fiImage.getWidth() * fiImage.getHeight() * ImageTypeSizes[m_componentType];
                     m_rawData.reset(new std::uint8_t[m_byteCount]);
                     std::memcpy(m_rawData.get(), fiImage.accessPixels(), m_byteCount);
                 }
@@ -518,7 +518,7 @@ void SSImage::reconcile()
         const bool valid {
             m_componentType != NullDT &&
             m_size.width() >= 1 && m_size.height() >= 1 &&
-            m_channelCount >= 1
+            m_componentCount >= 1
         };
         if(valid != m_isValid)
         {
@@ -527,7 +527,7 @@ void SSImage::reconcile()
                 std::size_t byteCount =
                     static_cast<std::size_t>(m_size.width()) *
                     static_cast<std::size_t>(m_size.height()) *
-                    m_channelCount *
+                    m_componentCount *
                     ImageTypeSizes[m_componentType];
                 if(byteCount != m_byteCount)
                 {

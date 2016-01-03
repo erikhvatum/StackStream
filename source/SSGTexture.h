@@ -10,7 +10,7 @@ public:
     virtual ~SSGTexture();
 
 //  void setChannelCount(std::size_t channel_count);
-//  const std::size_t& channelCount() const;
+//  const std::size_t& componentCount() const;
 
 
     void setOwnsTexture(bool owns) { m_owns_texture = owns; }
