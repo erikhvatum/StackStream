@@ -9,7 +9,7 @@ public:
     SSGTexture();
     virtual ~SSGTexture();
 
-//  void setcomponentCount(std::size_t channel_count);
+//  void setComponentCount(std::size_t channel_count);
 //  const std::size_t& componentCount() const;
 
 
@@ -21,7 +21,6 @@ public:
     void setTextureSize(const QSize &size) { m_texture_size = size; }
     QSize textureSize() const { return m_texture_size; }
 
-    void setHasAlphaChannel(bool alpha) { m_has_alpha = alpha; }
     bool hasAlphaChannel() const { return m_has_alpha; }
 
     bool hasMipmaps() const { return mipmapFiltering() != QSGTexture::None; }

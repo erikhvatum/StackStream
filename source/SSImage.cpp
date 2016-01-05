@@ -6,6 +6,29 @@
 
 volatile std::atomic<std::size_t> SSImage::sm_nextSerial{0};
 
+const QList<QStringList> SSImage::smc_componentNames{
+    {},
+    {"Gr"},
+    {"Gr", "A"},
+    {"R", "G", "B"},
+    {"R", "G", "B", "A"}
+};
+const QStringList SSImage::smc_componentsStrs{
+    "",
+    "Gr",
+    "GrA",
+    "RGB",
+    "RGBA"
+};
+
+const std::uint8_t SSImage::smc_componentsCounts[SSImage::Components_last + 1] = {
+    0,
+    1,
+    2,
+    3,
+    4
+};
+
 std::size_t SSImage::generateSerial()
 {
     return sm_nextSerial++;
@@ -30,14 +53,15 @@ private:
 };
 
 const std::size_t SSImage::DTypeSizes[] = {
-    0, // NullDT
-    1, // UInt8DT
-    2, // UInt12DT
-    2, // UInt16DT
-    4, // UInt32DT
-    8, // UInt64DT
-    4, // Float32DT
-    8, // Float64DT
+    0, // DTypeNull
+    1, // DTypeUInt8
+    2, // DTypeUInt12
+    2, // DTypeUInt16
+    4, // DTypeUInt32
+    8, // DTypeUInt64
+    2, // DTypeFloat16
+    4, // DTypeFloat32
+    8, // DTypeFloat64
 };
 
 SSImage::SSImage(QObject *parent)
@@ -45,20 +69,20 @@ SSImage::SSImage(QObject *parent)
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(NullDT),
-    m_componentCount(0),
+    m_componentDType(DTypeNull),
+    m_components(ComponentsNull),
     m_byteCount(0)
 {
 }
 
-SSImage::SSImage(DType componentDType, const QSize& size, std::size_t componentCount, QObject* parent)
+SSImage::SSImage(DType componentDType, const QSize& size, Components components, QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(componentDType),
+    m_componentDType(componentDType),
+    m_components(components),
     m_size(size),
-    m_componentCount(componentCount),
     m_byteCount(0)
 {
     reconcile();
@@ -67,14 +91,14 @@ SSImage::SSImage(DType componentDType, const QSize& size, std::size_t componentC
 SSImage::SSImage(DType componentDType,
                  const std::uint8_t* rawData,
                  const QSize& size,
-                 std::size_t componentCount,
+                 Components components,
                  QObject* parent)
   : QObject(parent),
     m_serial(std::numeric_limits<std::size_t>::max()),
     m_noReconcile(0),
-    m_componentType(componentDType),
+    m_componentDType(componentDType),
+    m_components(components),
     m_size(size),
-    m_componentCount(componentCount),
     m_byteCount(0)
 {
     RawData _rawData{const_cast<std::uint8_t*>(rawData), noop_deleter};
@@ -84,16 +108,16 @@ SSImage::SSImage(DType componentDType,
 SSImage::SSImage(DType componentDType,
                  std::uint8_t* rawData,
                  const QSize& size,
-                 std::size_t componentCount,
+                 Components components,
                  bool takeOwnership,
                  QObject* parent)
   : QObject(parent),
     m_serial(generateSerial()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(componentDType),
-    m_size(size),
-    m_componentCount(componentCount)
+    m_componentDType(componentDType),
+    m_components(components),
+    m_size(size)
 {
     if(takeOwnership)
     {
@@ -110,16 +134,16 @@ SSImage::SSImage(DType componentDType,
 SSImage::SSImage(DType componentDType,
                  const RawData& rawData,
                  const QSize& size,
-                 std::size_t componentCount,
+                 Components components,
                  bool copyData,
                  QObject* parent)
   : QObject(parent),
     m_serial(generateSerial()),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(componentDType),
+    m_componentDType(componentDType),
+    m_components(components),
     m_size(size),
-    m_componentCount(componentCount),
     m_byteCount(0)
 {
     init(const_cast<RawData&>(rawData), copyData);
@@ -130,9 +154,9 @@ SSImage::SSImage(const SSImage &rhs, bool copyData)
     m_serial(rhs.m_serial),
     m_noReconcile(0),
     m_isValid(false),
-    m_componentType(rhs.m_componentType),
+    m_componentDType(rhs.m_componentDType),
+    m_components(rhs.m_components),
     m_size(rhs.m_size),
-    m_componentCount(rhs.m_componentCount),
     m_byteCount(rhs.m_byteCount)
 {
     init(const_cast<RawData&>(rhs.m_rawData), copyData);
@@ -144,15 +168,15 @@ SSImage::~SSImage()
 
 void SSImage::init(RawData& rawData, bool copyData)
 {
-    if(m_componentCount <= 0)
-        throw std::invalid_argument("The value supplied to full constructor for componentCount must be >= 1.");
+    if(m_components == ComponentsNull)
+        throw std::invalid_argument("The value supplied to full constructor for components must not be SSImage::ComponentsNull.");
     if(m_size.width() <= 0 || m_size.height() <= 0)
         throw std::invalid_argument("The value supplied to full constructor for size must have positive width and height.");
     m_byteCount =
         static_cast<std::size_t>(m_size.width()) *
         static_cast<std::size_t>(m_size.height()) *
-        m_componentCount *
-        DTypeSizes[m_componentType];
+        componentCount() *
+        DTypeSizes[m_componentDType];
     if(copyData)
     {
         m_rawData.reset(new std::uint8_t[m_byteCount], get_default_deleter());
@@ -171,9 +195,9 @@ SSImage& SSImage::operator = (const SSImage& rhs)
     {
         {
             NoReconcile NR(*this);
-            setcomponentDType(rhs.m_componentType);
+            setComponentDType(rhs.m_componentDType);
             setSize(rhs.m_size);
-            setcomponentCount(rhs.m_componentCount);
+            setComponents(rhs.m_components);
         }
         if(rhs.m_isValid)
         {
@@ -203,6 +227,11 @@ SSImage& SSImage::operator = (const SSImage& rhs)
     return *this;
 }
 
+void SSImage::clear()
+{
+    setSize(QSize());
+}
+
 bool SSImage::operator == (const SSImage& rhs) const
 {
     bool ret{false};
@@ -210,17 +239,17 @@ bool SSImage::operator == (const SSImage& rhs) const
     {
         ret = true;
     }
-    else if (m_componentType == rhs.m_componentType
+    else if (m_componentDType == rhs.m_componentDType
            && m_isValid == rhs.m_isValid
            && m_size == rhs.m_size
-           && m_componentCount == rhs.m_componentCount )
+           && m_components == rhs.m_components )
     {
         if(m_isValid)
         {
-            if(m_componentType == UInt12DT)
+            if(m_componentDType == DTypeUInt12)
             {
                 // Compare only lower 12 bits
-                // TODO: validate this block 
+                // TODO: validate this block
                 bool same{true};
                 std::uint16_t const *l{(const std::uint16_t*)m_rawData.get()};
                 std::uint16_t const *r{(const std::uint16_t*)rhs.m_rawData.get()};
@@ -253,88 +282,6 @@ SSImage::operator bool () const
     return isValid();
 }
 
-QImage SSImage::as10BpcQImage() const
-{
-    if(!m_isValid) return QImage();
-    const std::uint8_t* fiPixIt{reinterpret_cast<const std::uint8_t*>(m_rawData.get())};
-    const std::uint8_t* const fiPixEndIt{fiPixIt + m_byteCount};
-    std::uint8_t* qiPixIt;
-    QImage ret;
-    float aFactor;
-    switch(m_componentCount)
-    {
-    default:
-        qWarning("m_componentCount must be in the interval [0, 4].");
-        break;
-    case 4:
-    {
-        ret = QImage(m_size, QImage::Format_A2RGB30_Premultiplied);
-        qiPixIt = ret.bits();
-        for(;;)
-        {
-            const FIRGBA16& fiPix = *reinterpret_cast<const FIRGBA16*>(fiPixIt);
-            aFactor = static_cast<float>(fiPix.alpha) / 0xffff;
-            // Should be endian safe (not tested on big endian, however)
-            *reinterpret_cast<std::uint32_t*>(qiPixIt) =
-                ((static_cast<std::uint32_t>(fiPix.alpha          ) >> 14) << 30) |
-                ((static_cast<std::uint32_t>(fiPix.red   * aFactor) >>  6) << 20) |
-                ((static_cast<std::uint32_t>(fiPix.green * aFactor) >>  6) << 10) |
-                 (static_cast<std::uint32_t>(fiPix.blue  * aFactor) >>  6);
-            fiPixIt += 8;
-            if(fiPixIt >= fiPixEndIt) break;
-            qiPixIt += 4;
-        }
-        break;
-//    }
-//    case 3:
-//    {
-//        // TODO: verify this block
-//        struct FiPixel
-//        {
-//            uint16_t r : 16;
-//            uint16_t g : 16;
-//            uint16_t b : 16;
-//        };
-//        ret = QImage(m_size, QImage::QImage::Format_RGB30);
-//        qiPixIt = ret.bits();
-//        for(;;)
-//        {
-//            const FiPixel& fiPix = *reinterpret_cast<const FiPixel*>(fiPixIt);
-////            QiPixel& qiPix = *reinterpret_cast<QiPixel*>(qiPixIt);
-////            qiPix.r = fiPix.r >> 6;
-////            qiPix.g = fiPix.g >> 6;
-////            qiPix.b = fiPix.b >> 6;
-//            fiPixIt += 6;
-//            if(fiPixIt >= fiPixEndIt) break;
-//            qiPixIt += 4;
-//        }
-//        break;
-//    }
-//    case 2:
-//    {
-//        // TODO
-//        qWarning("Support for m_componentCount of 2 is not yet implemented.");
-//        break;
-//    }
-//    case 1:
-//    {
-        // Note: QImage does not offer a 10-bit grayscale format
-//        ret = QImage(m_size, QImage::QImage::Format_RGB30);
-//        qiPixIt = ret.bits();
-//        for(;;)
-//        {
-//            const uint16_t& fiPix = *reinterpret_cast<const uint16_t*>(fiPixIt);
-//            QiPixel& qiPix = *reinterpret_cast<QiPixel*>(qiPixIt);
-//            qiPix.b = qiPix.g = qiPix.r = fiPix >> 6;
-//            fiPixIt += 2;
-//            if(fiPixIt >= fiPixEndIt) break;
-//            qiPixIt += 4;
-//        }
-//        break;
-    }}
-    return ret;
-}
-
 std::size_t SSImage::serial() const
 {
     return m_serial;
@@ -347,17 +294,18 @@ bool SSImage::isValid() const
 
 SSImage::DType SSImage::componentDType() const
 {
-    return m_componentType;
+    return m_componentDType;
 }
 
-void SSImage::setcomponentDType(DType componentDType)
+void SSImage::setComponentDType(DType componentDType)
 {
-    if(componentDType != m_componentType)
+    if(componentDType != m_componentDType)
     {
-        m_componentType = componentDType;
-        componentDTypeChanged(m_componentType);
+        m_componentDType = componentDType;
+        reconcile();
+        componentDTypeChanged(m_componentDType);
     }
-    reconcile();
+    else reconcile();
 }
 
 const SSImage::RawData& SSImage::rawData() const
@@ -375,24 +323,26 @@ void SSImage::setSize(const QSize& size)
     if(size != m_size)
     {
         m_size = size;
+        reconcile();
         sizeChanged(m_size);
     }
-    reconcile();
+    else reconcile();
 }
 
-std::size_t SSImage::componentCount() const
+SSImage::Components SSImage::components() const
 {
-    return m_componentCount;
+    return m_components;
 }
 
-void SSImage::setcomponentCount(std::size_t componentCount)
+void SSImage::setComponents(Components components)
 {
-    if(componentCount != m_componentCount)
+    if(components != m_components)
     {
-        m_componentCount = componentCount;
-        componentCountChanged(m_componentCount);
+        m_components = components;
+        reconcile();
+        componentsChanged(m_components);
     }
-    reconcile();
+    else reconcile();
 }
 
 std::size_t SSImage::byteCount() const
@@ -421,66 +371,15 @@ bool SSImage::read(const QUrl& furl)
         // TODO: direct support for non-uint16 images
         if(fiImage.load(fpath.data()))
         {
-            std::size_t componentCount;
-            switch(fiImage.getImageType())
-            {
-            default:
-                componentCount = 0;
-                break;
-            case FIT_BITMAP:
-                switch(fiImage.getBitsPerPixel())
-                {
-                default:
-                    componentCount = 1;
-                    break;
-                case 24:
-                case 32:
-                    componentCount = 4;
-                    break;
-                }
-                break;
-            case FIT_UINT16:
-            case FIT_INT16:
-            case FIT_UINT32:
-            case FIT_INT32:
-            case FIT_FLOAT:
-            case FIT_DOUBLE:
-            case FIT_RGB16:
-            case FIT_RGBA16:
-            case FIT_RGBF:
-            case FIT_RGBAF:
-                componentCount = 4;
-                break;
-            }
-            if(componentCount == 0)
-            {
-                qDebug("Image::read(..): Unsupported data type.");
-            }
-            else if(componentCount == 1)
-            {
-                if(!fiImage.convertToUINT16())
-                {
-                    qDebug("Image::read(..): Failed to convert image to uint16 grayscale.");
-                    componentCount = 0;
-                }
-            }
-            else if(componentCount == 4)
-            {
-                if(!fiImage.convertToRGBA16())
-                {
-                    qDebug("Image::read(..): Failed to convert image to uint16 RGBA.");
-                    componentCount = 0;
-                }
-            }
-            if(componentCount > 0)
+            if(fiImage.convertToRGBA16())
             {
                 std::size_t oldByteCount{m_byteCount};
                 {
                     NoReconcile NR(*this);
-                    setcomponentDType(UInt16DT);
+                    setComponentDType(DTypeUInt16);
                     setSize(QSize(static_cast<int>(fiImage.getWidth()), static_cast<int>(fiImage.getHeight())));
-                    setcomponentCount(componentCount);
-                    m_byteCount = m_componentCount * fiImage.getWidth() * fiImage.getHeight() * DTypeSizes[m_componentType];
+                    setComponents(ComponentsRGBA);
+                    m_byteCount = componentCount() * fiImage.getWidth() * fiImage.getHeight() * DTypeSizes[m_componentDType];
                     m_rawData.reset(new std::uint8_t[m_byteCount]);
                     std::memcpy(m_rawData.get(), fiImage.accessPixels(), m_byteCount);
                 }
@@ -491,6 +390,10 @@ bool SSImage::read(const QUrl& furl)
                     isValidChanged(m_isValid);
                 }
                 notifyOfDataChange();
+            }
+            else
+            {
+                qDebug("Image::read(..): Failed to convert image to uint16 RGBA.");
             }
         }
     }
@@ -516,9 +419,9 @@ void SSImage::reconcile()
     if(m_noReconcile == 0)
     {
         const bool valid {
-            m_componentType != NullDT &&
+            m_componentDType != DTypeNull &&
             m_size.width() >= 1 && m_size.height() >= 1 &&
-            m_componentCount >= 1
+            m_components != ComponentsNull
         };
         if(valid != m_isValid)
         {
@@ -527,8 +430,8 @@ void SSImage::reconcile()
                 std::size_t byteCount =
                     static_cast<std::size_t>(m_size.width()) *
                     static_cast<std::size_t>(m_size.height()) *
-                    m_componentCount *
-                    DTypeSizes[m_componentType];
+                    componentCount() *
+                    DTypeSizes[m_componentDType];
                 if(byteCount != m_byteCount)
                 {
                     m_byteCount = byteCount;
