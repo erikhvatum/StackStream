@@ -14,6 +14,8 @@ CONFIG += plugin
 
 DESTDIR = $$[QT_INSTALL_PLUGINS]/scenegraph
 
+DEFINES += SSGCONTEXTPLUGIN
+
 SOURCES += \
     ../SSGTexture.cpp \
     SSGLayer.cpp \

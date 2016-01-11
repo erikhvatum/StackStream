@@ -134,6 +134,8 @@ ApplicationWindow {
                 Slider {
                     id: minSlider
                     Layout.fillWidth: true
+                    activeFocusOnPress: true
+                    activeFocusOnTab: true
                     minimumValue: 0
                     maximumValue: 1
                     value: sslayer.min
@@ -141,6 +143,7 @@ ApplicationWindow {
                 }
                 SpinBox {
                     id: minSpinBox
+                    activeFocusOnTab: true
                     decimals: 3
                     value: sslayer.min
                     onValueChanged: { parent._setMin(value) }
@@ -149,6 +152,8 @@ ApplicationWindow {
                 Slider {
                     id: maxSlider
                     Layout.fillWidth: true
+                    activeFocusOnPress: true
+                    activeFocusOnTab: true
                     minimumValue: 0
                     maximumValue: 1
                     value: sslayer.max
@@ -156,6 +161,7 @@ ApplicationWindow {
                 }
                 SpinBox {
                     id: maxSpinBox
+                    activeFocusOnTab: true
                     decimals: 3
                     value: sslayer.max
                     onValueChanged: { parent._setMax(value) }
@@ -163,7 +169,10 @@ ApplicationWindow {
                 Label { text: "γ: " }
                 Slider {
                     id: gammaSlider
+                    objectName: "GammaSlider"
                     Layout.fillWidth: true
+                    activeFocusOnPress: true
+                    activeFocusOnTab: true
                     minimumValue: 0.01
                     maximumValue: 10
                     value: sslayer.gamma
@@ -171,6 +180,7 @@ ApplicationWindow {
                 }
                 SpinBox {
                     id: gammaSpinBox
+                    activeFocusOnTab: true
                     decimals: 3
                     minimumValue: 0.01
                     maximumValue: 10

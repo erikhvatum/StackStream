@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     SSLayerRenderer.cpp \
     SSView.cpp \
     SSGTexture.cpp \
-    SSGTextureMaterial.cpp
+    SSGTextureMaterial.cpp \
+    GilLocker.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -29,9 +30,12 @@ HEADERS += \
     SSLayerRenderer.h \
     SSView.h \
     SSGTexture.h \
-    SSGTextureMaterial.h
+    SSGTextureMaterial.h \
+    GilLocker.h
 
 DISTFILES +=
 
-LIBS += -lfreeimage -lfreeimageplus
+LIBS += -lfreeimage -lfreeimageplus #-lpython3.5dm -lpthread -ldl  -lutil -lm
 
+#QMAKE_INCDIR += /usr/local/debug/include/python3.5dm
+#QMAKE_LIBDIR += /usr/local/debug/lib

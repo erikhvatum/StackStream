@@ -16,6 +16,10 @@
 #include <memory>
 #include <stdexcept>
 
+//#ifndef SSGCONTEXTPLUGIN
+// #include <Python.h>
+//#endif
+
 #ifdef min
  #undef min
 #endif
