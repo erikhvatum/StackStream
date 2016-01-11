@@ -13,6 +13,7 @@ ApplicationWindow {
     width: 1024
     height: 768
     title: qsTr("StackStream")
+    property bool zoomToFitEnabled: zoomToFitEnabledMenuEntry.checked
 
     menuBar: MenuBar {
         id: foobar
@@ -26,6 +27,17 @@ ApplicationWindow {
             MenuItem {
                 text: qsTr("Exit")
                 onTriggered: Qt.quit()
+            }
+        }
+        Menu {
+            title: qsTr("View")
+            MenuItem {
+                id: zoomToFitEnabledMenuEntry
+                text: qsTr("Zoom to Fit")
+                checkable: true
+                checked: false
+                shortcut: "Ctrl+`"
+//                onTriggered: sslayer.width = sslayer.width / 2
             }
         }
         Menu {
@@ -75,21 +87,26 @@ ApplicationWindow {
                     "
             }
 
-            SSLayer {
-                id: sslayer
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.top: parent.top
-                anchors.bottom: parent.bottom
-                width: (implicitWidth / implicitHeight) * height
-                anchors.margins: 10
-                layer.enabled: true
-//                Rectangle {
-//                    x: 10
-//                    y: 10
-//                    color: Qt.rgba(1,0,0,1)
-//                    width: 100
-//                    height: 100
-//                }
+            ScrollView {
+                id: scrollView
+                anchors.fill: parent
+
+                contentItem: SSLayer {
+                    id: sslayer
+                    anchors.top: parent.top
+    //                anchors.bottom: parent.bottom
+                    width: zoomToFitEnabledMenuEntry.checked ? (implicitWidth / implicitHeight) * height : implicitWidth
+                    height: zoomToFitEnabledMenuEntry.checked ? scrollView.viewport.height : implicitHeight
+                    anchors.margins: 0
+                    layer.enabled: true
+    //                Rectangle {
+    //                    x: 10
+    //                    y: 10
+    //                    color: Qt.rgba(1,0,0,1)
+    //                    width: 100
+    //                    height: 100
+    //                }
+                }
             }
         }
 
