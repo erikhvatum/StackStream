@@ -1,4 +1,3 @@
-#include "SSGTextureMaterial.h"
 /****************************************************************************
 **
 ** Portions (C) 2015 The Qt Company Ltd.
@@ -33,6 +32,7 @@
 **
 ****************************************************************************/
 
+#include "common.h"
 #include "SSGTextureMaterial.h"
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>

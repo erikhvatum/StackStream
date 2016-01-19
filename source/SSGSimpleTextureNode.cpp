@@ -53,7 +53,7 @@ public:
 };
 
 static void SSGSimpleTextureNode_update(QSGGeometry *g,
-                                        QSGTexture *texture,
+                                        SSGTexture *texture,
                                         const QRectF &rect,
                                         QRectF sourceRect,
                                         SSGSimpleTextureNode::TextureCoordinatesTransformMode texCoordMode)
@@ -88,10 +88,10 @@ SSGSimpleTextureNode::SSGSimpleTextureNode()
     setGeometry(&m_geometry);
     setMaterial(&m_material);
     setOpaqueMaterial(&m_opaque_material);
-    m_material.setMipmapFiltering(QSGTexture::None);
-    m_opaque_material.setMipmapFiltering(QSGTexture::None);
+    m_material.setMipmapFiltering(SSGTexture::None);
+    m_opaque_material.setMipmapFiltering(SSGTexture::None);
 #ifdef QSG_RUNTIME_DESCRIPTION
-    qsgnode_set_description(this, QLatin1String("simpletexture"));
+    qsgnode_set_description(this, QLatin1String("SSsimpletexture"));
 #endif
 }
 
@@ -102,7 +102,7 @@ SSGSimpleTextureNode::~SSGSimpleTextureNode()
         delete m_material.texture();
 }
 
-void SSGSimpleTextureNode::setFiltering(QSGTexture::Filtering filtering)
+void SSGSimpleTextureNode::setFiltering(SSGTexture::Filtering filtering)
 {
     if (m_material.filtering() == filtering)
         return;
@@ -112,7 +112,7 @@ void SSGSimpleTextureNode::setFiltering(QSGTexture::Filtering filtering)
     markDirty(DirtyMaterial);
 }
 
-QSGTexture::Filtering SSGSimpleTextureNode::filtering() const
+SSGTexture::Filtering SSGSimpleTextureNode::filtering() const
 {
     return m_material.filtering();
 }
@@ -148,7 +148,7 @@ QRectF SSGSimpleTextureNode::sourceRect() const
     return d->sourceRect;
 }
 
-void SSGSimpleTextureNode::setTexture(QSGTexture *texture)
+void SSGSimpleTextureNode::setTexture(SSGTexture *texture)
 {
     Q_ASSERT(texture);
     Q_D(SSGSimpleTextureNode);
@@ -171,7 +171,7 @@ void SSGSimpleTextureNode::setTexture(QSGTexture *texture)
 
 
 
-QSGTexture *SSGSimpleTextureNode::texture() const
+SSGTexture *SSGSimpleTextureNode::texture() const
 {
     return m_material.texture();
 }

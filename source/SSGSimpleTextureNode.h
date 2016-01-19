@@ -33,15 +33,15 @@
 ****************************************************************************/
 
 #pragma once
-
 #include "common.h"
+#include "SSGTextureMaterial.h"
 #include <QtQuick/qsgnode.h>
 #include <QtQuick/qsggeometry.h>
-#include <QtQuick/qsgtexturematerial.h>
 
 class SSGSimpleTextureNodePrivate;
 
-class Q_QUICK_EXPORT SSGSimpleTextureNode : public QSGGeometryNode
+class Q_QUICK_EXPORT SSGSimpleTextureNode
+  : public QSGGeometryNode
 {
 public:
     SSGSimpleTextureNode();
@@ -55,11 +55,11 @@ public:
     inline void setSourceRect(qreal x, qreal y, qreal w, qreal h) { setSourceRect(QRectF(x, y, w, h)); }
     QRectF sourceRect() const;
 
-    void setTexture(QSGTexture *texture);
-    QSGTexture *texture() const;
+    void setTexture(SSGTexture *texture);
+    SSGTexture *texture() const;
 
-    void setFiltering(QSGTexture::Filtering filtering);
-    QSGTexture::Filtering filtering() const;
+    void setFiltering(SSGTexture::Filtering filtering);
+    SSGTexture::Filtering filtering() const;
 
     enum TextureCoordinatesTransformFlag {
         NoTransform        = 0x00,
@@ -76,8 +76,8 @@ public:
 
 private:
     QSGGeometry m_geometry;
-    QSGOpaqueTextureMaterial m_opaque_material;
-    QSGTextureMaterial m_material;
+    SSGOpaqueTextureMaterial m_opaque_material;
+    SSGTextureMaterial m_material;
 
     QRectF m_rect;
 

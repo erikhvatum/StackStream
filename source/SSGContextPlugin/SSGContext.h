@@ -1,10 +1,6 @@
 /****************************************************************************
 **
-** Portions (C) 2015 The Qt Company Ltd.
-** Portions (C) 2016 Erik Hvatum
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the QtQuick module of the Qt Toolkit.
+** (C) 2016 Erik Hvatum
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
