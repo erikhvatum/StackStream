@@ -1,9 +1,10 @@
 #pragma once
 #include "common.h"
 #include "SSImage.h"
+#include "SSQuickFramebufferObject.h"
 
 class SSLayer
-  : public QQuickFramebufferObject
+  : public SSQuickFramebufferObject
 {
     Q_OBJECT
     Q_PROPERTY(bool isValid READ isValid NOTIFY isValidChanged)

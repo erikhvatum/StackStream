@@ -32,17 +32,61 @@
 **
 ****************************************************************************/
 
-#pragma once
+#include "common.h"
+#include "SSGFramebufferObjectNode.h"
 
-class QSGContext;
-class QSGLayer;
-
-class SSGContext
-  : public QSGContext
+SSGFramebufferObjectNode::SSGFramebufferObjectNode()
+  : window(0),
+    fbo(0),
+    msDisplayFbo(0),
+    renderer(0),
+    renderPending(true),
+    invalidatePending(false),
+    devicePixelRatio(1)
 {
-public:
-    explicit SSGContext(QObject* parent=nullptr);
+    qsgnode_set_description(this, QStringLiteral("fbonode"));
+}
 
-    QSGImageNode* createImageNode() override;
-    QSGLayer* createLayer(QSGRenderContext* renderContext) override;
-};
+SSGFramebufferObjectNode::~SSGFramebufferObjectNode()
+{
+    delete renderer;
+    delete texture();
+    delete fbo;
+    delete msDisplayFbo;
+}
+
+void SSGFramebufferObjectNode::scheduleRender()
+{
+    renderPending = true;
+    window->update();
+}
+
+QSGTexture *SSGFramebufferObjectNode::texture() const
+{
+    return QSGSimpleTextureNode::texture();
+}
+
+void SSGFramebufferObjectNode::render()
+{
+    if (renderPending) {
+        renderPending = false;
+        fbo->bind();
+        QOpenGLContext::currentContext()->functions()->glViewport(0, 0, fbo->width(), fbo->height());
+        renderer->render();
+        fbo->bindDefault();
+
+        if (msDisplayFbo)
+            QOpenGLFramebufferObject::blitFramebuffer(msDisplayFbo, fbo);
+
+        markDirty(QSGNode::DirtyMaterial);
+        emit textureChanged();
+    }
+}
+
+void SSGFramebufferObjectNode::handleScreenChange()
+{
+    if (window->effectiveDevicePixelRatio() != devicePixelRatio) {
+        renderer->invalidateFramebufferObject();
+        quickFbo->update();
+    }
+}

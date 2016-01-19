@@ -138,7 +138,7 @@ QOpenGLFramebufferObject* SSLayerRenderer::createFramebufferObject(const QSize&)
     return ret;
 }
 
-void SSLayerRenderer::synchronize(QQuickFramebufferObject *item)
+void SSLayerRenderer::synchronize(SSQuickFramebufferObject *item)
 {
     SSLayer* layer{qobject_cast<SSLayer*>(item)};
     QSize desiredSize{m_fboSize};

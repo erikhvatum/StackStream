@@ -33,16 +33,36 @@
 ****************************************************************************/
 
 #pragma once
+#include "common.h"
+#include "SSQuickFramebufferObject.h"
 
-class QSGContext;
-class QSGLayer;
-
-class SSGContext
-  : public QSGContext
+class SSGFramebufferObjectNode
+  : public QSGTextureProvider,
+    public QSGSimpleTextureNode
 {
-public:
-    explicit SSGContext(QObject* parent=nullptr);
+    Q_OBJECT
 
-    QSGImageNode* createImageNode() override;
-    QSGLayer* createLayer(QSGRenderContext* renderContext) override;
+public:
+    SSGFramebufferObjectNode();
+    ~SSGFramebufferObjectNode();
+
+    void scheduleRender();
+    QSGTexture *texture() const Q_DECL_OVERRIDE;
+
+public Q_SLOTS:
+    void render();
+
+    void handleScreenChange();
+
+public:
+    QQuickWindow *window;
+    QOpenGLFramebufferObject *fbo;
+    QOpenGLFramebufferObject *msDisplayFbo;
+    SSQuickFramebufferObject::Renderer *renderer;
+    SSQuickFramebufferObject *quickFbo;
+
+    bool renderPending;
+    bool invalidatePending;
+
+    int devicePixelRatio;
 };

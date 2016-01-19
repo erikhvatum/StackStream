@@ -1,10 +1,11 @@
 #pragma once
 #include "common.h"
+#include "SSQuickFramebufferObject.h"
 
 class SSLayer;
 
 class SSLayerRenderer
-  : public QQuickFramebufferObject::Renderer,
+  : public SSQuickFramebufferObject::Renderer,
     protected QOpenGLFunctions
 {
 public:
@@ -13,7 +14,7 @@ public:
     SSLayerRenderer();
     void render() override;
     QOpenGLFramebufferObject* createFramebufferObject(const QSize&) override;
-    void synchronize(QQuickFramebufferObject *item) override;
+    void synchronize(SSQuickFramebufferObject *item) override;
 
 protected:
     // When m_layer is not valid, m_fboSize is set to sm_defaultFboSize and m_tex.isCreated() is false.

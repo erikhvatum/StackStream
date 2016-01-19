@@ -58,7 +58,7 @@ public:
     void setImage(const QImage &image);
     const QImage &image() { return m_image; }
 
-    virtual void bind();
+    void bind() override;
 
     static SSGTexture *fromImage(const QImage &image) {
         SSGTexture *t = new SSGTexture();

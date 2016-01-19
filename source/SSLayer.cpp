@@ -3,18 +3,18 @@
 #include "SSLayerRenderer.h"
 
 SSLayer::SSLayer(QQuickItem* parent)
-  : QQuickFramebufferObject(parent),
+  : SSQuickFramebufferObject(parent),
     m_image(nullptr),
     m_min(0),
     m_max(1),
     m_gamma(1),
     m_tint(Qt::white)
 {
-    setTextureFollowsItemSize(false);
+    setTextureFollowsItemSize(true);
 }
 
 SSLayer::SSLayer(const SSLayer& rhs, QQuickItem* parent)
-  : QQuickFramebufferObject(parent),
+  : SSQuickFramebufferObject(parent),
     m_image(nullptr),
     m_min(rhs.m_min),
     m_max(rhs.m_max),
@@ -60,7 +60,7 @@ bool SSLayer::operator != (const SSLayer& rhs) const
     return !(*this == rhs);
 }
 
-QQuickFramebufferObject::Renderer* SSLayer::createRenderer() const
+SSQuickFramebufferObject::Renderer* SSLayer::createRenderer() const
 {
     return new SSLayerRenderer();
 }
@@ -207,7 +207,7 @@ void SSLayer::resetTint()
 
 QSGTextureProvider* SSLayer::textureProvider() const
 {
-    return QQuickFramebufferObject::textureProvider();
+    return SSQuickFramebufferObject::textureProvider();
 }
 
 void SSLayer::aboutQt() const
