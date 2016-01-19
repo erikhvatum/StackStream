@@ -49,11 +49,17 @@ public:
     void setTexture(SSGTexture *texture);
     SSGTexture *texture() const { return m_texture; }
 
-    void setMipmapFiltering(SSGTexture::Filtering filteringType) { m_mipmap_filtering = filteringType; }
-    SSGTexture::Filtering mipmapFiltering() const { return SSGTexture::Filtering(m_mipmap_filtering); }
+    void setMinFiltering(SSGTexture::Filtering filteringType) { m_min_filtering = filteringType; }
+    SSGTexture::Filtering minFiltering() const { return SSGTexture::Filtering(m_min_filtering); }
 
-    void setFiltering(SSGTexture::Filtering filteringType) { m_filtering = filteringType; }
-    SSGTexture::Filtering filtering() const { return SSGTexture::Filtering(m_filtering); }
+    void setMagFiltering(SSGTexture::Filtering filteringType) { m_mag_filtering = filteringType; }
+    SSGTexture::Filtering magFiltering() const { return SSGTexture::Filtering(m_mag_filtering); }
+
+    void setMinMipmapFiltering(SSGTexture::Filtering filteringType) { m_min_mipmap_filtering = filteringType; }
+    SSGTexture::Filtering minMipmapFiltering() const { return SSGTexture::Filtering(m_min_mipmap_filtering); }
+
+    void setMagMipmapFiltering(SSGTexture::Filtering filteringType) { m_mag_mipmap_filtering = filteringType; }
+    SSGTexture::Filtering magMipmapFiltering() const { return SSGTexture::Filtering(m_mag_mipmap_filtering); }
 
     void setHorizontalWrapMode(SSGTexture::WrapMode mode) { m_horizontal_wrap = mode; }
     SSGTexture::WrapMode horizontalWrapMode() const { return SSGTexture::WrapMode(m_horizontal_wrap); }
@@ -64,8 +70,10 @@ public:
 protected:
     SSGTexture *m_texture;
 
-    uint m_filtering: 2;
-    uint m_mipmap_filtering: 2;
+    uint m_min_filtering: 2;
+    uint m_mag_filtering: 2;
+    uint m_min_mipmap_filtering: 2;
+    uint m_mag_mipmap_filtering: 2;
     uint m_horizontal_wrap : 1;
     uint m_vertical_wrap: 1;
 

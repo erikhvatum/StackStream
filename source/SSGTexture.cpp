@@ -40,15 +40,28 @@
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>
 
+inline static bool isPowerOfTwo(int x)
+{
+    // Assumption: x >= 1
+    return x == (x & -x);
+}
+
 SSGTexture::SSGTexture()
-    : QSGTexture()
-    , m_texture_id(0)
-    , m_has_alpha(false)
-    , m_dirty_texture(false)
-    , m_dirty_bind_options(false)
-    , m_owns_texture(true)
-    , m_mipmaps_generated(false)
-    , m_retain_image(false)
+  : m_wrapChanged(false),
+    m_filteringChanged(false),
+    m_horizontalWrap(SSGTexture::ClampToEdge),
+    m_verticalWrap(SSGTexture::ClampToEdge),
+    m_minMipmapMode(SSGTexture::Linear),
+    m_magMipmapMode(SSGTexture::None),
+    m_minFilterMode(SSGTexture::Linear),
+    m_magFilterMode(SSGTexture::Nearest),
+    m_texture_id(0),
+    m_has_alpha(false),
+    m_dirty_texture(false),
+    m_dirty_bind_options(false),
+    m_owns_texture(true),
+    m_mipmaps_generated(false),
+    m_retain_image(false)
 {
 }
 
@@ -56,6 +69,22 @@ SSGTexture::~SSGTexture()
 {
     if (m_texture_id && m_owns_texture && QOpenGLContext::currentContext())
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
+}
+
+SSGTexture *SSGTexture::removedFromAtlas() const
+{
+    Q_ASSERT_X(!isAtlasTexture(), "SSGTexture::removedFromAtlas()", "Called on a non-atlas texture");
+    return 0;
+}
+
+QRectF SSGTexture::normalizedTextureSubRect() const
+{
+    return QRectF(0, 0, 1, 1);
+}
+
+bool SSGTexture::isAtlasTexture() const
+{
+    return false;
 }
 
 void SSGTexture::setImage(const QImage &image)
@@ -99,12 +128,12 @@ void SSGTexture::setTextureId(int id)
 
 void SSGTexture::bind()
 {
-    qDebug() << "SSGTexture::bind()";
+    qWarning("SSGTexture::bind() called; resampling to 10-bpc");
     QOpenGLContext *context = QOpenGLContext::currentContext();
     QOpenGLFunctions *funcs = context->functions();
     if (!m_dirty_texture) {
         funcs->glBindTexture(GL_TEXTURE_2D, m_texture_id);
-        if (mipmapFiltering() != QSGTexture::None && !m_mipmaps_generated) {
+        if ((minMipmapFiltering() != SSGTexture::None || magMipmapFiltering() != SSGTexture::None) && !m_mipmaps_generated) {
             funcs->glGenerateMipmap(GL_TEXTURE_2D);
             m_mipmaps_generated = true;
         }
@@ -141,7 +170,7 @@ void SSGTexture::bind()
 
     funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_texture_size.width(), m_texture_size.height(), 0, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV, tmp.constBits());
 
-    if (mipmapFiltering() != QSGTexture::None) {
+    if (minMipmapFiltering() != SSGTexture::None || magMipmapFiltering() != SSGTexture::None) {
         funcs->glGenerateMipmap(GL_TEXTURE_2D);
         m_mipmaps_generated = true;
     }
@@ -152,3 +181,141 @@ void SSGTexture::bind()
     if (!m_retain_image)
         m_image = QImage();
 }
+
+void SSGTexture::updateBindOptions(bool force)
+{
+    QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
+    force |= isAtlasTexture();
+
+    if (force || m_filteringChanged) {
+        bool minLinear{m_minFilterMode == Linear};
+        bool magLinear{m_magFilterMode == Linear};
+        GLint minFilter = minLinear ? GL_LINEAR : GL_NEAREST;
+        GLint magFilter = magLinear ? GL_LINEAR : GL_NEAREST;
+
+        if (hasMipmaps()) {
+            if (m_minMipmapMode == Nearest)
+                minFilter = minLinear ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST;
+            else if (m_minMipmapMode == Linear)
+                minFilter = minLinear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR;
+
+            if (m_magMipmapMode == Nearest)
+                magFilter = magLinear ? GL_LINEAR_MIPMAP_NEAREST : GL_NEAREST_MIPMAP_NEAREST;
+            else if (m_magMipmapMode == Linear)
+                magFilter = magLinear ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR;
+        }
+        funcs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter);
+        funcs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter);
+        m_filteringChanged = false;
+    }
+
+    if (force || m_wrapChanged) {
+#ifndef QT_NO_DEBUG
+        if (m_horizontalWrap == Repeat || m_verticalWrap == Repeat) {
+            bool npotSupported = QOpenGLFunctions(QOpenGLContext::currentContext()).hasOpenGLFeature(QOpenGLFunctions::NPOTTextures);
+            QSize size = textureSize();
+            bool isNpot = !isPowerOfTwo(size.width()) || !isPowerOfTwo(size.height());
+            if (!npotSupported && isNpot)
+                qWarning("Scene Graph: This system does not support the REPEAT wrap mode for non-power-of-two textures.");
+        }
+#endif
+        funcs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_horizontalWrap == Repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        funcs->glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_verticalWrap == Repeat ? GL_REPEAT : GL_CLAMP_TO_EDGE);
+        m_wrapChanged = false;
+    }
+}
+
+void SSGTexture::setMinMipmapFiltering(Filtering filter)
+{
+    if (m_minMipmapMode != (uint) filter) {
+        m_minMipmapMode = filter;
+        m_filteringChanged = true;
+    }
+}
+
+SSGTexture::Filtering SSGTexture::minMipmapFiltering() const
+{
+    return (SSGTexture::Filtering) m_minMipmapMode;
+}
+
+void SSGTexture::setMagMipmapFiltering(Filtering filter)
+{
+    if (m_magMipmapMode != (uint) filter) {
+        m_magMipmapMode = filter;
+        m_filteringChanged = true;
+    }
+}
+
+SSGTexture::Filtering SSGTexture::magMipmapFiltering() const
+{
+    return (SSGTexture::Filtering) m_magMipmapMode;
+}
+
+void SSGTexture::setMinFiltering(SSGTexture::Filtering filter)
+{
+    if (m_minFilterMode != (uint) filter) {
+        m_minFilterMode = filter;
+        m_filteringChanged = true;
+    }
+}
+
+SSGTexture::Filtering SSGTexture::minFiltering() const
+{
+    return (SSGTexture::Filtering) m_minFilterMode;
+}
+
+void SSGTexture::setMagFiltering(SSGTexture::Filtering filter)
+{
+    if (m_magFilterMode != (uint) filter) {
+        m_magFilterMode = filter;
+        m_filteringChanged = true;
+    }
+}
+
+SSGTexture::Filtering SSGTexture::magFiltering() const
+{
+    return (SSGTexture::Filtering) m_magFilterMode;
+}
+
+void SSGTexture::setHorizontalWrapMode(WrapMode hwrap)
+{
+    if ((uint) hwrap != m_horizontalWrap) {
+        m_horizontalWrap = hwrap;
+        m_wrapChanged = true;
+    }
+}
+
+SSGTexture::WrapMode SSGTexture::horizontalWrapMode() const
+{
+    return (SSGTexture::WrapMode) m_horizontalWrap;
+}
+
+void SSGTexture::setVerticalWrapMode(WrapMode vwrap)
+{
+    if ((uint) vwrap != m_verticalWrap) {
+        m_verticalWrap = vwrap;
+        m_wrapChanged = true;
+    }
+}
+
+SSGTexture::WrapMode SSGTexture::verticalWrapMode() const
+{
+    return (SSGTexture::WrapMode) m_verticalWrap;
+}
+
+#ifndef QT_NO_DEBUG
+Q_GLOBAL_STATIC(QSet<SSGTexture *>, ssg_valid_texture_set)
+Q_GLOBAL_STATIC(QMutex, ssg_valid_texture_mutex)
+
+bool ssg_safeguard_texture(SSGTexture *texture)
+{
+    QMutexLocker locker(ssg_valid_texture_mutex());
+    if (!ssg_valid_texture_set()->contains(texture)) {
+        qWarning() << "Invalid texture accessed:" << (void *) texture;
+        qsg_set_material_failure();
+        QOpenGLContext::currentContext()->functions()->glBindTexture(GL_TEXTURE_2D, 0);
+        return false;
+    }
+    return true;
+}
+#endif

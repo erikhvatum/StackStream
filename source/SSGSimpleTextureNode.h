@@ -58,8 +58,11 @@ public:
     void setTexture(SSGTexture *texture);
     SSGTexture *texture() const;
 
-    void setFiltering(SSGTexture::Filtering filtering);
-    SSGTexture::Filtering filtering() const;
+    void setMinFiltering(SSGTexture::Filtering filtering);
+    SSGTexture::Filtering minFiltering() const;
+
+    void setMagFiltering(SSGTexture::Filtering filtering);
+    SSGTexture::Filtering magFiltering() const;
 
     enum TextureCoordinatesTransformFlag {
         NoTransform        = 0x00,

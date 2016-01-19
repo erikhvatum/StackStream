@@ -77,11 +77,12 @@ void SSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMa
     SSGTexture *t = tx->texture();
 
 #ifndef QT_NO_DEBUG
-    if (!qsg_safeguard_texture(t))
+    if (!ssg_safeguard_texture(t))
         return;
 #endif
 
-    t->setFiltering(tx->filtering());
+    t->setMinFiltering(tx->minFiltering());
+    t->setMagFiltering(tx->magFiltering());
 
     t->setHorizontalWrapMode(tx->horizontalWrapMode());
     t->setVerticalWrapMode(tx->verticalWrapMode());
@@ -96,7 +97,8 @@ void SSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMa
         }
     }
 
-    t->setMipmapFiltering(tx->mipmapFiltering());
+    t->setMinMipmapFiltering(tx->minMipmapFiltering());
+    t->setMagMipmapFiltering(tx->magMipmapFiltering());
 
     if (oldTx == 0 || oldTx->texture()->textureId() != t->textureId())
         t->bind();
@@ -151,11 +153,13 @@ void SSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMa
 
  */
 SSGOpaqueTextureMaterial::SSGOpaqueTextureMaterial()
-    : m_texture(0)
-    , m_filtering(SSGTexture::Nearest)
-    , m_mipmap_filtering(SSGTexture::None)
-    , m_horizontal_wrap(SSGTexture::ClampToEdge)
-    , m_vertical_wrap(SSGTexture::ClampToEdge)
+  : m_texture(0),
+    m_min_filtering(SSGTexture::Nearest),
+    m_mag_filtering(SSGTexture::Nearest),
+    m_min_mipmap_filtering(SSGTexture::None),
+    m_mag_mipmap_filtering(SSGTexture::None),
+    m_horizontal_wrap(SSGTexture::ClampToEdge),
+    m_vertical_wrap(SSGTexture::ClampToEdge)
 {
 }
 
@@ -295,9 +299,13 @@ int SSGOpaqueTextureMaterial::compare(const QSGMaterial *o) const
 {
     Q_ASSERT(o && type() == o->type());
     const SSGOpaqueTextureMaterial *other = static_cast<const SSGOpaqueTextureMaterial *>(o);
-    if (int diff = m_texture->textureId() - other->texture()->textureId())
+    int diff = m_texture->textureId() - other->texture()->textureId();
+    if (diff)
         return diff;
-    return int(m_filtering) - int(other->m_filtering);
+    diff = int(m_min_filtering) - int(other->m_min_filtering);
+    if (diff)
+        return diff;
+    return int(m_mag_filtering) - int(other->m_mag_filtering);
 }
 
 
