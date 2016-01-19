@@ -13,7 +13,8 @@ SOURCES += main.cpp \
     SSGTextureMaterial.cpp \
     GilLocker.cpp \
     SSGFramebufferObjectNode.cpp \
-    SSQuickFramebufferObject.cpp
+    SSQuickFramebufferObject.cpp \
+    SSGSimpleTextureNode.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -35,7 +36,8 @@ HEADERS += \
     SSGTextureMaterial.h \
     GilLocker.h \
     SSGFramebufferObjectNode.h \
-    SSQuickFramebufferObject.h
+    SSQuickFramebufferObject.h \
+    SSGSimpleTextureNode.h
 
 DISTFILES +=
 
