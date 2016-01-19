@@ -40,8 +40,6 @@
 #include <QtGui/qopenglshaderprogram.h>
 #include <QtGui/qopenglfunctions.h>
 
-QT_BEGIN_NAMESPACE
-
 inline static bool isPowerOfTwo(int x)
 {
     // Assumption: x >= 1
@@ -109,49 +107,6 @@ void SSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMa
         program()->setUniformValue(m_matrix_id, state.combinedMatrix());
 }
 
-
-/*!
-    \class SSGOpaqueTextureMaterial
-    \brief The SSGOpaqueTextureMaterial class provides a convenient way of
-    rendering textured geometry in the scene graph.
-    \inmodule QtQuick
-    \ingroup qtquick-scenegraph-materials
-
-    The opaque textured material will fill every pixel in a geometry with
-    the supplied texture. The material does not respect the opacity of the
-    SSGMaterialShader::RenderState, so opacity nodes in the parent chain
-    of nodes using this material, have no effect.
-
-    The geometry to be rendered with an opaque texture material requires
-    vertices in attribute location 0 and texture coordinates in attribute
-    location 1. The texture coordinate is a 2-dimensional floating-point
-    tuple. The SSGGeometry::defaultAttributes_TexturedPoint2D returns an
-    attribute set compatible with this material.
-
-    The texture to be rendered can be set using setTexture(). How the
-    texture should be rendered can be specified using setMipmapFiltering(),
-    setFiltering(), setHorizontalWrapMode() and setVerticalWrapMode().
-    The rendering state is set on the texture instance just before it
-    is bound.
-
-    The opaque textured material respects the current matrix and the alpha
-    channel of the texture. It will disregard the accumulated opacity in
-    the scenegraph.
-
-    A texture material must have a texture set before it is used as
-    a material in the scene graph.
- */
-
-
-
-/*!
-    Creates a new SSGOpaqueTextureMaterial.
-
-    The default mipmap filtering and filtering mode is set to
-    SSGTexture::Nearest. The default wrap modes is set to
-    \c SSGTexture::ClampToEdge.
-
- */
 SSGOpaqueTextureMaterial::SSGOpaqueTextureMaterial()
   : m_texture(0),
     m_min_filtering(SSGTexture::Nearest),
@@ -163,137 +118,21 @@ SSGOpaqueTextureMaterial::SSGOpaqueTextureMaterial()
 {
 }
 
-
-/*!
-    \internal
- */
 QSGMaterialType *SSGOpaqueTextureMaterial::type() const
 {
     return &SSGOpaqueTextureMaterialShader::type;
 }
 
-/*!
-    \internal
- */
 QSGMaterialShader *SSGOpaqueTextureMaterial::createShader() const
 {
     return new SSGOpaqueTextureMaterialShader;
 }
-
-
-
-/*!
-    \fn SSGTexture *SSGOpaqueTextureMaterial::texture() const
-
-    Returns this texture material's texture.
- */
-
-
-
-/*!
-    Sets the texture of this material to \a texture.
-
-    The material does not take ownership of the texture.
- */
 
 void SSGOpaqueTextureMaterial::setTexture(SSGTexture *texture)
 {
     m_texture = texture;
     setFlag(Blending, m_texture ? m_texture->hasAlphaChannel() : false);
 }
-
-
-
-/*!
-    \fn void SSGOpaqueTextureMaterial::setMipmapFiltering(SSGTexture::Filtering filtering)
-
-    Sets the mipmap mode to \a filtering.
-
-    The mipmap filtering mode is set on the texture instance just before the
-    texture is bound for rendering.
-
-    If the texture does not have mipmapping support, enabling mipmapping has no
-    effect.
- */
-
-
-
-/*!
-    \fn SSGTexture::Filtering SSGOpaqueTextureMaterial::mipmapFiltering() const
-
-    Returns this material's mipmap filtering mode.
-
-    The default mipmap mode is \c SSGTexture::Nearest.
- */
-
-
-
-/*!
-    \fn void SSGOpaqueTextureMaterial::setFiltering(SSGTexture::Filtering filtering)
-
-    Sets the filtering to \a filtering.
-
-    The filtering mode is set on the texture instance just before the texture
-    is bound for rendering.
- */
-
-
-
-/*!
-    \fn SSGTexture::Filtering SSGOpaqueTextureMaterial::filtering() const
-
-    Returns this material's filtering mode.
-
-    The default filtering is \c SSGTexture::Nearest.
- */
-
-
-
-/*!
-    \fn void SSGOpaqueTextureMaterial::setHorizontalWrapMode(SSGTexture::WrapMode mode)
-
-    Sets the horizontal wrap mode to \a mode.
-
-    The horizontal wrap mode is set on the texture instance just before the texture
-    is bound for rendering.
- */
-
-
-
- /*!
-     \fn SSGTexture::WrapMode SSGOpaqueTextureMaterial::horizontalWrapMode() const
-
-     Returns this material's horizontal wrap mode.
-
-     The default horizontal wrap mode is \c SSGTexutre::ClampToEdge.
-  */
-
-
-
-/*!
-    \fn void SSGOpaqueTextureMaterial::setVerticalWrapMode(SSGTexture::WrapMode mode)
-
-    Sets the vertical wrap mode to \a mode.
-
-    The vertical wrap mode is set on the texture instance just before the texture
-    is bound for rendering.
- */
-
-
-
- /*!
-     \fn SSGTexture::WrapMode SSGOpaqueTextureMaterial::verticalWrapMode() const
-
-     Returns this material's vertical wrap mode.
-
-     The default vertical wrap mode is \c SSGTexutre::ClampToEdge.
-  */
-
-
-
-/*!
-    \internal
- */
 
 int SSGOpaqueTextureMaterial::compare(const QSGMaterial *o) const
 {
@@ -308,56 +147,12 @@ int SSGOpaqueTextureMaterial::compare(const QSGMaterial *o) const
     return int(m_mag_filtering) - int(other->m_mag_filtering);
 }
 
-
-
-/*!
-    \class SSGTextureMaterial
-    \brief The QSGTextureMaterial class provides a convenient way of
-    rendering textured geometry in the scene graph.
-    \inmodule QtQuick
-    \ingroup qtquick-scenegraph-materials
-
-    The textured material will fill every pixel in a geometry with
-    the supplied texture.
-
-    The geometry to be rendered with a texture material requires
-    vertices in attribute location 0 and texture coordinates in attribute
-    location 1. The texture coordinate is a 2-dimensional floating-point
-    tuple. The QSGGeometry::defaultAttributes_TexturedPoint2D returns an
-    attribute set compatible with this material.
-
-    The texture to be rendered can be set using setTexture(). How the
-    texture should be rendered can be specified using setMipmapFiltering(),
-    setFiltering(), setHorizontalWrapMode() and setVerticalWrapMode().
-    The rendering state is set on the texture instance just before it
-    is bound.
-
-    The textured material respects the current matrix and the alpha
-    channel of the texture. It will also respect the accumulated opacity
-    in the scenegraph.
-
-    A texture material must have a texture set before it is used as
-    a material in the scene graph.
- */
-
 QSGMaterialType SSGTextureMaterialShader::type;
-
-
-
-/*!
-    \internal
- */
 
 QSGMaterialType *SSGTextureMaterial::type() const
 {
     return &SSGTextureMaterialShader::type;
 }
-
-
-
-/*!
-    \internal
- */
 
 QSGMaterialShader *SSGTextureMaterial::createShader() const
 {
@@ -384,5 +179,3 @@ void SSGTextureMaterialShader::initialize()
     SSGOpaqueTextureMaterialShader::initialize();
     m_opacity_id = program()->uniformLocation("opacity");
 }
-
-QT_END_NAMESPACE

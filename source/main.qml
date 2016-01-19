@@ -94,6 +94,7 @@ ApplicationWindow {
                 contentItem: SSLayer {
                     id: sslayer
                     anchors.top: parent.top
+                    smooth: height < implicitHeight // TODO: remove this line after determining how in the heck mag filter manages to remain GL_LINEAR without it
     //                anchors.bottom: parent.bottom
                     width: zoomToFitEnabledMenuEntry.checked ? (implicitWidth / implicitHeight) * height : implicitWidth
                     height: zoomToFitEnabledMenuEntry.checked ? scrollView.viewport.height : implicitHeight
