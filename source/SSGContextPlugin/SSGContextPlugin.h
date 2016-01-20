@@ -34,7 +34,7 @@
 #include <QtQuick/private/qsgcontextplugin_p.h>
 #include <QObject>
 
-class QSGContextFactoryInterface;
+struct QSGContextFactoryInterface;
 
 class SSGContextPlugin
   : public QObject,

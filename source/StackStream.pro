@@ -43,5 +43,7 @@ DISTFILES +=
 
 LIBS += -lfreeimage -lfreeimageplus #-lpython3.5dm -lpthread -ldl  -lutil -lm
 
+QMAKE_LIBDIR += /usr/local/lib
+QMAKE_INCDIR += /usr/local/include
 #QMAKE_INCDIR += /usr/local/debug/include/python3.5dm
 #QMAKE_LIBDIR += /usr/local/debug/lib

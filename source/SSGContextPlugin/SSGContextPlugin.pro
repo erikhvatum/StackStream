@@ -30,6 +30,8 @@ HEADERS += \
 DISTFILES += SSGContextPlugin.json
 
 unix {
-    target.path = /usr/lib
+    target.path = /Qt5/lib
     INSTALLS += target
 }
+
+QMAKE_INCDIR += /usr/local/include
