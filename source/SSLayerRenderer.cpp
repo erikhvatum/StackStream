@@ -66,7 +66,7 @@ const QVector<QVector2D> SSLayerRenderer::sm_quad{
 
 SSLayerRenderer::SSLayerRenderer()
   : m_fboSize(sm_defaultFboSize),
-    m_tex(new QOpenGLTexture(QOpenGLTexture::Target2D)),
+    m_tex(QOpenGLTexture::Target2D),
     m_texSerial(0)
 {
 //    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{1.1f, -1.1f};
@@ -100,10 +100,10 @@ SSLayerRenderer::SSLayerRenderer()
     m_gammaLoc        = m_shaderProgram.uniformLocation("gamma");
     m_tintLoc         = m_shaderProgram.uniformLocation("tint");
 
-    m_tex->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
-    m_tex->setMipLevels(1);
-    m_tex->setAutoMipMapGenerationEnabled(false);
-    m_tex->setWrapMode(QOpenGLTexture::ClampToEdge);
+    //m_tex.setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
+    //m_tex.setMipLevels(11);
+    //m_tex.setAutoMipMapGenerationEnabled(true);
+    //m_tex.setWrapMode(QOpenGLTexture::ClampToEdge);
 }
 
 void SSLayerRenderer::render()
@@ -115,32 +115,35 @@ void SSLayerRenderer::render()
     {
         SSImage& image = *m_layer.image();
         const componentCountFormats& formats = sm_componentCountFormats[image.componentCount()];
-        if ( m_tex->isCreated()
-          && ( m_tex->width() != image.size().width()
-            || m_tex->height() != image.size().height()
-            || m_tex->format() != formats.texFormat ) )
+        if ( m_tex.isCreated()
+          && ( m_tex.width() != image.size().width()
+            || m_tex.height() != image.size().height()
+            || m_tex.format() != formats.texFormat ) )
         {
-            m_tex->destroy();
+            m_tex.destroy();
         }
-        if(!m_tex->isCreated())
+        if(!m_tex.isCreated())
         {
-            m_tex->create();
-            m_tex->setFormat(formats.texFormat);
-            m_tex->setSize(image.size().width(), image.size().height(), 1);
-            m_tex->allocateStorage();
+            m_tex.setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
+            m_tex.setWrapMode(QOpenGLTexture::ClampToEdge);
+            m_tex.setAutoMipMapGenerationEnabled(true);
+            m_tex.setMipLevels(11);
+            m_tex.setFormat(formats.texFormat);
+            m_tex.setSize(image.size().width(), image.size().height(), 1);
+            m_tex.allocateStorage();
             m_texSerial = std::numeric_limits<std::size_t>::max();
         }
-        m_tex->bind(0, QOpenGLTexture::ResetTextureUnit);
         if(m_texSerial != m_layer.imageSerial())
         {
             QOpenGLPixelTransferOptions ptos;
             ptos.setAlignment(1);
-            m_tex->setData(formats.srcPixelFormat,
+            m_tex.setData(formats.srcPixelFormat,
                            sm_componentPixelTypes[image.componentDType()],
                            image.rawData().get(),
                            &ptos);
             m_texSerial = m_layer.imageSerial();
         }
+        m_tex.bind();
         m_shaderProgram.bind();
         m_shaderProgram.setUniformValue(m_texLoc, 0);
         float viewportRect[4];
@@ -155,7 +158,7 @@ void SSLayerRenderer::render()
         m_shaderProgram.setUniformValue(m_tintLoc, tint.redF(), tint.greenF(), tint.blueF(), tint.alphaF());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         m_shaderProgram.disableAttributeArray(m_vertCoordLoc);
-        m_tex->release(0);
+        m_tex.release(0);
         m_shaderProgram.release();
     }
 }
@@ -175,16 +178,7 @@ QOpenGLFramebufferObject* SSLayerRenderer::createFramebufferObject(const QSize&)
 void SSLayerRenderer::synchronize(SSQuickFramebufferObject *item)
 {
     SSLayer* layer{qobject_cast<SSLayer*>(item)};
-    QSize desiredSize{m_fboSize};
-    if(layer->isValid())
-    {
-        desiredSize = layer->image()->size();
-    }
-    else if(m_layer.isValid())
-    {
-        m_tex->destroy();
-        desiredSize = sm_defaultFboSize;
-    }
+    QSize desiredSize{layer->isValid() ? layer->image()->size() : sm_defaultFboSize};
     m_layer = *layer;
     if(m_fboSize != desiredSize)
     {

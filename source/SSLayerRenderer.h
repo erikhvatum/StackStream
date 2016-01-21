@@ -55,7 +55,7 @@ protected:
     SSLayer m_layer;
     QSize m_fboSize;
     QOpenGLShaderProgram m_shaderProgram;
-    QOpenGLTexture* m_tex;
+    QOpenGLTexture m_tex;
     std::size_t m_texSerial;
     int m_vertCoordLoc, m_texLoc, m_viewportSizeLoc;
     int m_rescaleMinLoc, m_rescaleRangeLoc, m_gammaLoc, m_tintLoc;
