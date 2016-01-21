@@ -1,6 +1,10 @@
 /****************************************************************************
 **
-** (C) 2016 Erik Hvatum
+** Portions (C) 2015 The Qt Company Ltd.
+** Portions (C) 2016 Erik Hvatum
+** Contact: http://www.qt.io/licensing/
+**
+** This file is part of the QtQuick module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL21$
 ** Commercial License Usage
@@ -29,41 +33,17 @@
 ****************************************************************************/
 
 #pragma once
+#include "common.h"
 
-#include <QApplication>
-#include <QSharedDataPointer>
-#include <QtCore>
-#include <QtGui>
-#include <QtPlugin>
-#include <QtQml>
-#include <QtQuick>
-#include <QtWidgets>
-#include <atomic>
-#include <cstdint>
-#include <forward_list>
-#include <limits>
-#include <FreeImagePlus.h>
-#include <memory>
-#include <stdexcept>
-#include <vector>
+class SSGTextureProvider
+  : public QObject
+{
+    Q_OBJECT
+public:
+    explicit SSGTextureProvider(QObject *parent = 0);
 
-//#ifndef SSGCONTEXTPLUGIN
-// #include <Python.h>
-//#endif
+signals:
+    void textureChanged();
 
-#ifdef min
- #undef min
-#endif
-
-#ifdef max
- #undef max
-#endif
-
-#ifdef read
- #undef read
-#endif
-
-#ifdef write
- #undef write
-#endif
-
+public slots:
+};

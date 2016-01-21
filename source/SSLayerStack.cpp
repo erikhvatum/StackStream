@@ -29,86 +29,200 @@
 ****************************************************************************/
 
 #include "common.h"
+#include "SSGTexture.h"
 #include "SSLayerStack.h"
+#include <QtQuick/QSGTextureProvider>
+#include <QtQuick/QSGGeometryNode>
+#include <QtQuick/QSGSimpleMaterial>
+
+static const GLenum GL_TEXTURES[] = {
+    GL_TEXTURE0,
+    GL_TEXTURE1,
+    GL_TEXTURE2,
+    GL_TEXTURE3,
+    GL_TEXTURE4,
+    GL_TEXTURE5,
+    GL_TEXTURE6,
+    GL_TEXTURE7
+};
+
+struct LayerStackState {
+    std::vector<SSGTexture*> textures;
+};
+
+class LayerStackShader
+  : public QSGSimpleMaterialShader<LayerStackState>
+{
+    QSG_DECLARE_SIMPLE_SHADER(LayerStackShader, LayerStackState);
+
+public:
+    LayerStackShader()
+      : m_fragmentShader("void main() {}\n")
+    {
+    }
+
+    const char* vertexShader() const
+    {
+        return
+            "attribute highp vec4 aVertex;              \n"
+            "attribute highp vec2 aTexCoord;            \n"
+            "uniform highp mat4 qt_Matrix;              \n"
+            "varying highp vec2 vTexCoord;              \n"
+            "void main() {                              \n"
+            "    gl_Position = qt_Matrix * aVertex;     \n"
+            "    vTexCoord = aTexCoord;                 \n"
+            "}";
+    }
+
+    const char* fragmentShader() const
+    {
+        return m_fragmentShader.toUtf8();
+    }
+
+    virtual QList<QByteArray> attributes() const
+    {
+        return QList<QByteArray>() << "aVertex" << "aTexCoord";
+    }
+
+    virtual void updateState(const LayerStackState *newState, const LayerStackState *oldState)
+    {
+        QOpenGLFunctions* gl{QOpenGLContext::currentContext()->functions()};
+        m_fragmentShader = "uniform lowp float qt_Opacity;\n";
+        for(std::vector<SSGTexture*>::iterator t{newState->textures.begin()}; t != newState->textures.end(); ++t)
+        {
+            m_fragmentShader+= QString("uniform sampler2D tex%1;\n").arg(t-newState->textures.begin());
+        }
+        m_fragmentShader+= "void main() {\n";
+        m_fragmentShader+= "    vec4 s;\n";
+        m_fragmentShader+= "    float da;\n";
+        m_fragmentShader+= "    vec3 sca, dca;\n";
+        for(std::vector<SSGTexture*>::iterator t{newState->textures.begin()}; t != newState->textures.end(); ++t)
+        {
+            m_fragmentShader+= QString("    s = texture2D(tex%1, vTexCoord);\n").arg(t-newState->textures.begin());
+            if(t - newState->textures.begin() == 0)
+            {
+                m_fragmentShader+=
+                "    sca = s.rgb * s.a;\n"
+                "    da = s.a;\n";
+            }
+            else
+            {
+                m_fragmentShader+=
+                "    sca = s.rgb * s.a;\n"
+                "    dca = clamp(sca + dca - sca * dca, 0.0, 1.0);\n";
+                "    da = clamp(s.a + da - s.a * da, 0.0, 1.0);\n";
+            }
+        }
+        m_fragmentShader+= "    gl_FragColor = vec4(dca / da, da * qt_Opacity;\n"
+                           "}";
+        m_textures = newState->textures;
+        compile();
+    }
+
+    /*void resolveUniforms() {
+        // The texture units never change, only the texturess we bind to them so
+        // we set these once and for all here. 
+        for(int idx = )
+        for(std::vector<SSGTexture*>::iterator t{newState.begin()}; t != newState.end(); ++t)
+        {
+            m_fragmentShader+= QString("uniform sampler2D tex%1;\n").arg(t-newState.begin());
+        } 
+        program()->setUniformValue("uSource1", 0); // GL_TEXTURE0
+        program()->setUniformValue("uSource2", 1); // GL_TEXTURE1
+    }*/
+
+    /*virtual char const *const * attributeNames() const
+    {
+        return nullptr;
+    }*/
+
+protected:
+    QString m_fragmentShader;
+    std::vector<SSGTexture*> m_textures;
+};
 
 SSLayerStack::SSLayerStack(QQuickItem* parent)
-  : QQuickItem(parent),
-    m_layer0(nullptr),
-    m_layer1(nullptr),
-    m_layer2(nullptr),
-    m_layer3(nullptr),
-    m_layer4(nullptr),
-    m_layer5(nullptr),
-    m_layer6(nullptr),
-    m_layer7(nullptr)
+  : QQuickItem(parent)
 {
+    m_layers[0] = nullptr;
+    m_layers[1] = nullptr;
+    m_layers[2] = nullptr;
+    m_layers[3] = nullptr;
+    m_layers[4] = nullptr;
+    m_layers[5] = nullptr;
+    m_layers[6] = nullptr;
+    m_layers[7] = nullptr;
+    m_layersChanged[0] = false;
+    m_layersChanged[1] = false;
+    m_layersChanged[2] = false;
+    m_layersChanged[3] = false;
+    m_layersChanged[4] = false;
+    m_layersChanged[5] = false;
+    m_layersChanged[6] = false;
+    m_layersChanged[7] = false;
 }
 
 SSLayerStack::~SSLayerStack() {}
 
-SSLayer* SSLayerStack::layer0() const {return m_layer0;}
-SSLayer* SSLayerStack::layer1() const {return m_layer1;}
-SSLayer* SSLayerStack::layer2() const {return m_layer2;}
-SSLayer* SSLayerStack::layer3() const {return m_layer3;}
-SSLayer* SSLayerStack::layer4() const {return m_layer4;}
-SSLayer* SSLayerStack::layer5() const {return m_layer5;}
-SSLayer* SSLayerStack::layer6() const {return m_layer6;}
-SSLayer* SSLayerStack::layer7() const {return m_layer7;}
-
-void SSLayerStack::setLayer0(SSLayer* layer) {
-    if(m_layer0 != layer) {
-        m_layer0 = layer;
-        layer0Changed(m_layer0);
+SSLayer* SSLayerStack::layer(int idx) const
+{
+    if(idx >= 0 && idx < 8)
+    {
+        return m_layers[idx];
+    }
+    else
+    {
+        qWarning("SSLayer* SSLayerStack::layer(int idx): idx is not in the interval [0, 7].");
+        return nullptr;
     }
 }
 
-void SSLayerStack::setLayer1(SSLayer* layer) {
-    if(m_layer1 != layer) {
-        m_layer1 = layer;
-        layer1Changed(m_layer1);
+void SSLayerStack::setLayer(int idx, SSLayer* layer)
+{
+    if(idx >= 0 && idx < 8)
+    {
+        if(m_layers[idx] != layer)
+        {
+            m_layers[idx] = layer;
+            m_layersChanged[idx] = true;
+            switch(idx)
+            {
+            case 0:
+                layer0Changed(idx, m_layers[idx]);
+                break;
+            case 1:
+                layer1Changed(idx, m_layers[idx]);
+                break;
+            case 2:
+                layer2Changed(idx, m_layers[idx]);
+                break;
+            case 3:
+                layer3Changed(idx, m_layers[idx]);
+                break;
+            case 4:
+                layer4Changed(idx, m_layers[idx]);
+                break;
+            case 5:
+                layer5Changed(idx, m_layers[idx]);
+                break;
+            case 6:
+                layer6Changed(idx, m_layers[idx]);
+                break;
+            case 7:
+                layer7Changed(idx, m_layers[idx]);
+                break;
+            }
+        }
     }
-}
-
-void SSLayerStack::setLayer2(SSLayer* layer) {
-    if(m_layer2 != layer) {
-        m_layer2 = layer;
-        layer2Changed(m_layer2);
+    else
+    {
+        qWarning("void SSLayerStack::setLayer(int idx, SSLayer* layer): idx is not in the interval [0, 7].");
     }
-}
-
-void SSLayerStack::setLayer3(SSLayer* layer) {
-    if(m_layer3 != layer) {
-        m_layer3 = layer;
-        layer3Changed(m_layer3);
-    }
-}
-
-void SSLayerStack::setLayer4(SSLayer* layer) {
-    if(m_layer4 != layer) {
-        m_layer4 = layer;
-        layer4Changed(m_layer4);
-    }
-}
-
-void SSLayerStack::setLayer5(SSLayer* layer) {
-    if(m_layer5 != layer) {
-        m_layer5 = layer;
-        layer5Changed(m_layer5);
-    }
-}
-
-void SSLayerStack::setLayer6(SSLayer* layer) {
-    if(m_layer6 != layer) {
-        m_layer6 = layer;
-        layer6Changed(m_layer6);
-    }
-}
-
-void SSLayerStack::setLayer7(SSLayer* layer) {
-    if(m_layer7 != layer) {
-        m_layer7 = layer;
-        layer7Changed(m_layer7);
-    }
+    m_visibleLayers.clear();
+    for(SSLayer *layer{m_layers}, *const layersEnd{m_layers + sizeof(m_layers) / sizeof(SSLayer*)}; layer != layersEnd; ++layer)
+        if(layer && layer->isValid() && layer->isVisible())
+            m_visibleLayers.push_back(layer);
+    update();
 }
 
 QSGNode* SSLayerStack::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* /*updatePaintNodeData*/)

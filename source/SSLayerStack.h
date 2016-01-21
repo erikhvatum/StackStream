@@ -32,6 +32,9 @@
 #include "common.h"
 #include "SSLayer.h"
 
+// This will soon operate on a list of layers rather than having 8 individual layer properties;
+// for initial proof of concept purposes, we skip that part.
+
 class SSLayerStack
   : public QQuickItem
 {
@@ -48,42 +51,41 @@ public:
     explicit SSLayerStack(QQuickItem* parent=nullptr);
     virtual ~SSLayerStack();
 
-    virtual SSLayer* layer0() const;
-    virtual SSLayer* layer1() const;
-    virtual SSLayer* layer2() const;
-    virtual SSLayer* layer3() const;
-    virtual SSLayer* layer4() const;
-    virtual SSLayer* layer5() const;
-    virtual SSLayer* layer6() const;
-    virtual SSLayer* layer7() const;
+    virtual SSLayer* layer(int idx) const;
 
-    virtual void setLayer0(SSLayer* layer);
-    virtual void setLayer1(SSLayer* layer);
-    virtual void setLayer2(SSLayer* layer);
-    virtual void setLayer3(SSLayer* layer);
-    virtual void setLayer4(SSLayer* layer);
-    virtual void setLayer5(SSLayer* layer);
-    virtual void setLayer6(SSLayer* layer);
-    virtual void setLayer7(SSLayer* layer);
+    SSLayer* layer0() const { return layer(0); }
+    SSLayer* layer1() const { return layer(1); }
+    SSLayer* layer2() const { return layer(2); }
+    SSLayer* layer3() const { return layer(3); }
+    SSLayer* layer4() const { return layer(4); }
+    SSLayer* layer5() const { return layer(5); }
+    SSLayer* layer6() const { return layer(6); }
+    SSLayer* layer7() const { return layer(7); }
+
+    virtual void setLayer(int idx, SSLayer* layer);
+
+    void setLayer0(SSLayer* layer) { setLayer(0, layer); }
+    void setLayer1(SSLayer* layer) { setLayer(1, layer); }
+    void setLayer2(SSLayer* layer) { setLayer(2, layer); }
+    void setLayer3(SSLayer* layer) { setLayer(3, layer); }
+    void setLayer4(SSLayer* layer) { setLayer(4, layer); }
+    void setLayer5(SSLayer* layer) { setLayer(5, layer); }
+    void setLayer6(SSLayer* layer) { setLayer(6, layer); }
+    void setLayer7(SSLayer* layer) { setLayer(7, layer); }
 
 signals:
-    void layer0Changed(SSLayer* layer);
-    void layer1Changed(SSLayer* layer);
-    void layer2Changed(SSLayer* layer);
-    void layer3Changed(SSLayer* layer);
-    void layer4Changed(SSLayer* layer);
-    void layer5Changed(SSLayer* layer);
-    void layer6Changed(SSLayer* layer);
-    void layer7Changed(SSLayer* layer);
+    void layer0Changed(int idx, SSLayer* layer);
+    void layer1Changed(int idx, SSLayer* layer);
+    void layer2Changed(int idx, SSLayer* layer);
+    void layer3Changed(int idx, SSLayer* layer);
+    void layer4Changed(int idx, SSLayer* layer);
+    void layer5Changed(int idx, SSLayer* layer);
+    void layer6Changed(int idx, SSLayer* layer);
+    void layer7Changed(int idx, SSLayer* layer);
 
 protected:
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData);
-    SSLayer* m_layer0;
-    SSLayer* m_layer1;
-    SSLayer* m_layer2;
-    SSLayer* m_layer3;
-    SSLayer* m_layer4;
-    SSLayer* m_layer5;
-    SSLayer* m_layer6;
-    SSLayer* m_layer7;
+    SSLayer* m_layers[8];
+    std::vector<SSLayer*> m_visibleLayers;
+    bool m_layersChanged[8];
 };
