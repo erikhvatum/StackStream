@@ -59,7 +59,7 @@ ApplicationWindow {
             anchors.bottom: parent.bottom
             width: parent.width - layerPropertiesGroupBox.width - 20
             z: -1
-            layer.enabled: true
+//            layer.enabled: true
 
             DropArea {
                 anchors.fill: parent
@@ -80,6 +80,7 @@ ApplicationWindow {
             ShaderEffect {
                 id: tileBackground
                 anchors.fill: parent
+                layer.enabled: true
 
                 property real tileSize: 16
                 property color color1: Qt.rgba(0.9, 0.9, 0.9, 1);
@@ -110,7 +111,7 @@ ApplicationWindow {
                 contentItem: SSLayer {
                     id: sslayer
                     anchors.top: parent.top
-                    smooth: false //height < implicitHeight // TODO: remove this line after determining how in the heck mag filter manages to remain GL_LINEAR without it
+                    smooth: height < implicitHeight // TODO: remove this line after determining how in the heck mag filter manages to remain GL_LINEAR without it
     //                anchors.bottom: parent.bottom
                     width: zoomToFitEnabledMenuEntry.checked ? (implicitWidth / implicitHeight) * height : implicitWidth
                     height: zoomToFitEnabledMenuEntry.checked ? scrollView.viewport.height : implicitHeight

@@ -18,15 +18,15 @@ DEFINES += SSGCONTEXTPLUGIN
 
 SOURCES += \
     ../SSGTexture.cpp \
-    SSGLayer.cpp \
     SSGContextPlugin.cpp \
-    SSGContext.cpp
+    SSGContext.cpp \
+    SSGQuickLayer.cpp
 
 HEADERS += \
     ../SSGTexture.h \
-    SSGLayer.h \
     SSGContextPlugin.h \
-    SSGContext.h
+    SSGContext.h \
+    SSGQuickLayer.h
 DISTFILES += SSGContextPlugin.json
 
 unix {

@@ -32,6 +32,9 @@
 **
 ****************************************************************************/
 
+// NB: SSGQuickLayer is *not* the scene graph personality of an SSLayer.  SSGQuickLayer replaces QSGDefaultLayer,
+// the thing that is created when a QML Item's .layer property is set to true.
+
 #pragma once
 #include <QtQuick/private/qsgadaptationlayer_p.h>
 #include <QtQuick/private/qsgcontext_p.h>

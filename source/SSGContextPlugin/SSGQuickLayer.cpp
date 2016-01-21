@@ -34,7 +34,7 @@
 
 #include <QtQuick/private/qsgdefaultlayer_p.h>
 #include <QOpenGLFramebufferObject>
-#include "SSGLayer.h"
+#include "SSGQuickLayer.h"
 
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qsgrenderer_p.h>
