@@ -34,6 +34,7 @@
 SSGContextPlugin::SSGContextPlugin(QObject *parent) 
   : QObject(parent)
 {
+    qDebug() << "SSGContextPlugin loaded";
 }
 
 QStringList SSGContextPlugin::keys() const

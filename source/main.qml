@@ -61,6 +61,22 @@ ApplicationWindow {
             z: -1
             layer.enabled: true
 
+            DropArea {
+                anchors.fill: parent
+                onEntered: {
+                    console.log('drop area entered');
+                    drag.accept(Qt.CopyAction);
+                }
+                onDropped: {
+                    if(sslayer.openURL(drop.urls[0])) {
+                        drop.accept(Qt.CopyAction);
+                    }
+                }
+                onExited: {
+                    console.log('drop area exited');
+                }
+            }
+
             ShaderEffect {
                 id: tileBackground
                 anchors.fill: parent
@@ -94,7 +110,7 @@ ApplicationWindow {
                 contentItem: SSLayer {
                     id: sslayer
                     anchors.top: parent.top
-                    smooth: height < implicitHeight // TODO: remove this line after determining how in the heck mag filter manages to remain GL_LINEAR without it
+                    smooth: false //height < implicitHeight // TODO: remove this line after determining how in the heck mag filter manages to remain GL_LINEAR without it
     //                anchors.bottom: parent.bottom
                     width: zoomToFitEnabledMenuEntry.checked ? (implicitWidth / implicitHeight) * height : implicitWidth
                     height: zoomToFitEnabledMenuEntry.checked ? scrollView.viewport.height : implicitHeight
@@ -108,6 +124,7 @@ ApplicationWindow {
     //                    height: 100
     //                }
                 }
+
             }
         }
 

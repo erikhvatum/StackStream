@@ -100,7 +100,7 @@ SSLayerRenderer::SSLayerRenderer()
     m_gammaLoc        = m_shaderProgram.uniformLocation("gamma");
     m_tintLoc         = m_shaderProgram.uniformLocation("tint");
 
-    m_tex->setMinMagFilters(QOpenGLTexture::Linear, QOpenGLTexture::Linear);
+    m_tex->setMinMagFilters(QOpenGLTexture::Nearest, QOpenGLTexture::Nearest);
     m_tex->setMipLevels(1);
     m_tex->setAutoMipMapGenerationEnabled(false);
     m_tex->setWrapMode(QOpenGLTexture::ClampToEdge);

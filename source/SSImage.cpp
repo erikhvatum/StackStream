@@ -420,6 +420,7 @@ bool SSImage::read(const QUrl& furl)
                     isValidChanged(m_isValid);
                 }
                 notifyOfDataChange();
+                ret = true;
             }
             else
             {

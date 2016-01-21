@@ -50,6 +50,8 @@ public:
 
     QSGTextureProvider* textureProvider() const override;
 
+    Q_INVOKABLE bool openURL(const QUrl& url);
+
 signals:
     void isValidChanged(bool);
     void imageSerialChanged(std::size_t);

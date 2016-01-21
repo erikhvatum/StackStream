@@ -51,9 +51,9 @@ SSGTexture::SSGTexture()
     m_filteringChanged(false),
     m_horizontalWrap(SSGTexture::ClampToEdge),
     m_verticalWrap(SSGTexture::ClampToEdge),
-    m_minMipmapMode(SSGTexture::Linear),
+    m_minMipmapMode(SSGTexture::None),
     m_magMipmapMode(SSGTexture::None),
-    m_minFilterMode(SSGTexture::Linear),
+    m_minFilterMode(SSGTexture::Nearest),
     m_magFilterMode(SSGTexture::Nearest),
     m_texture_id(0),
     m_has_alpha(false),
@@ -312,7 +312,7 @@ bool ssg_safeguard_texture(SSGTexture *texture)
     QMutexLocker locker(ssg_valid_texture_mutex());
     if (!ssg_valid_texture_set()->contains(texture)) {
         qWarning() << "Invalid texture accessed:" << (void *) texture;
-        qsg_set_material_failure();
+//        qsg_set_material_failure();
         QOpenGLContext::currentContext()->functions()->glBindTexture(GL_TEXTURE_2D, 0);
         return false;
     }

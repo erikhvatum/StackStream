@@ -231,3 +231,12 @@ void SSLayer::onImageSizeChanged(QSize size)
 {
     setImplicitSize(size.width(), size.height());
 }
+
+bool SSLayer::openURL(const QUrl& url)
+{
+    SSImage* im{new SSImage(this)};
+    bool ret{im->read(url)};
+    if(ret) setImage(im);
+    else im->deleteLater();
+    return ret;
+}
