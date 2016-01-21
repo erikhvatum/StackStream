@@ -233,6 +233,8 @@
             <F N="source/SSLayerRenderer.cpp"/>
             <F N="source/SSLayerRenderer.frag"/>
             <F N="source/SSLayerRenderer.h"/>
+            <F N="source/SSLayerStack.cpp"/>
+            <F N="source/SSLayerStack.h"/>
             <F N="source/SSQuickFramebufferObject.cpp"/>
             <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>

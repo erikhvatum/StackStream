@@ -14,7 +14,8 @@ SOURCES += main.cpp \
     GilLocker.cpp \
     SSGFramebufferObjectNode.cpp \
     SSQuickFramebufferObject.cpp \
-    SSGSimpleTextureNode.cpp
+    SSGSimpleTextureNode.cpp \
+    SSLayerStack.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -37,7 +38,8 @@ HEADERS += \
     GilLocker.h \
     SSGFramebufferObjectNode.h \
     SSQuickFramebufferObject.h \
-    SSGSimpleTextureNode.h
+    SSGSimpleTextureNode.h \
+    SSLayerStack.h
 
 DISTFILES +=
 
