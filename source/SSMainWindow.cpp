@@ -22,21 +22,14 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#pragma once
 #include "common.h"
+#include "SSMainWindow.h"
 
-class SSRedisInst
-  : public QObject
+SSMainWindow::SSMainWindow(QWidget *parent)
+  : QMainWindow(parent)
 {
-    Q_OBJECT
-public:
-    explicit SSRedisInst(QObject* parent=nullptr);
-    virtual ~SSRedisInst();
+}
 
-    virtual operator bool() const;
-
-protected:
-    bool m_ok;
-    QProcess* m_process;
-};
-
+SSMainWindow::~SSMainWindow()
+{
+}

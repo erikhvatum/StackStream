@@ -23,15 +23,15 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #include "common.h"
-#include "SSRedisInst.h"
+#include "RedisInst.h"
 #include <QProcess>
 
-SSRedisInst::SSRedisInst(QObject *parent)
+RedisInst::RedisInst(QObject *parent)
   : QObject(parent),
     m_ok(false)
 {
     m_process = new QProcess(this);
-    m_process->start("redis", {"-"});
+    m_process->start("redis-server", {"-"});
     m_process->write("daemonize no                                      \n"
                      "port 65445                                        \n"
                      "tcp-backlog 511                                   \n"
@@ -69,13 +69,15 @@ SSRedisInst::SSRedisInst(QObject *parent)
                      "aof-rewrite-incremental-fsync yes                 \n");
     m_process->closeWriteChannel();
     m_ok = m_process->waitForStarted(3000);
+    qDebug() << m_process->readAll();
+    qDebug() << m_process->error();
 }
 
-SSRedisInst::~SSRedisInst()
+RedisInst::~RedisInst()
 {
 }
 
-SSRedisInst::operator bool() const
+RedisInst::operator bool() const
 {
     return m_ok;
 }
