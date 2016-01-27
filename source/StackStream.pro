@@ -15,7 +15,7 @@ SOURCES += main.cpp \
     SSGFramebufferObjectNode.cpp \
     SSQuickFramebufferObject.cpp \
     SSGSimpleTextureNode.cpp \
-    SSLayerStack.cpp
+    SSRedisInst.cpp
 
 PRECOMPILED_HEADER = common.h
 
@@ -39,7 +39,7 @@ HEADERS += \
     SSGFramebufferObjectNode.h \
     SSQuickFramebufferObject.h \
     SSGSimpleTextureNode.h \
-    SSLayerStack.h
+    SSRedisInst.h
 
 DISTFILES +=
 

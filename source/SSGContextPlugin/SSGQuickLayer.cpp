@@ -79,7 +79,7 @@ namespace
     }
 }
 
-SSGLayer::SSGLayer(QSGRenderContext *context)
+SSGQuickLayer::SSGQuickLayer(QSGRenderContext *context)
     : QSGLayer()
     , m_item(0)
     , m_device_pixel_ratio(1)
@@ -104,12 +104,12 @@ SSGLayer::SSGLayer(QSGRenderContext *context)
 {
 }
 
-SSGLayer::~SSGLayer()
+SSGQuickLayer::~SSGQuickLayer()
 {
     invalidated();
 }
 
-void SSGLayer::invalidated()
+void SSGQuickLayer::invalidated()
 {
     delete m_renderer;
     m_renderer = 0;
@@ -126,23 +126,23 @@ void SSGLayer::invalidated()
     }
 }
 
-int SSGLayer::textureId() const
+int SSGQuickLayer::textureId() const
 {
     return m_fbo ? m_fbo->texture() : 0;
 }
 
-bool SSGLayer::hasAlphaChannel() const
+bool SSGQuickLayer::hasAlphaChannel() const
 {
     return true;
 }
 
-bool SSGLayer::hasMipmaps() const
+bool SSGQuickLayer::hasMipmaps() const
 {
     return m_mipmap;
 }
 
 
-void SSGLayer::bind()
+void SSGQuickLayer::bind()
 {
 #ifndef QT_NO_DEBUG
     if (!m_recursive && m_fbo && ((m_multisampling && m_secondaryFbo->isBound()) || m_fbo->isBound()))
@@ -164,7 +164,7 @@ void SSGLayer::bind()
     }
 }
 
-bool SSGLayer::updateTexture()
+bool SSGQuickLayer::updateTexture()
 {
     bool doGrab = (m_live || m_grab) && m_dirtyTexture;
     if (doGrab)
@@ -175,7 +175,7 @@ bool SSGLayer::updateTexture()
     return doGrab;
 }
 
-void SSGLayer::setHasMipmaps(bool mipmap)
+void SSGQuickLayer::setHasMipmaps(bool mipmap)
 {
     if (mipmap == m_mipmap)
         return;
@@ -185,7 +185,7 @@ void SSGLayer::setHasMipmaps(bool mipmap)
 }
 
 
-void SSGLayer::setItem(QSGNode *item)
+void SSGQuickLayer::setItem(QSGNode *item)
 {
     if (item == m_item)
         return;
@@ -201,7 +201,7 @@ void SSGLayer::setItem(QSGNode *item)
     markDirtyTexture();
 }
 
-void SSGLayer::setRect(const QRectF &rect)
+void SSGQuickLayer::setRect(const QRectF &rect)
 {
     if (rect == m_rect)
         return;
@@ -209,7 +209,7 @@ void SSGLayer::setRect(const QRectF &rect)
     markDirtyTexture();
 }
 
-void SSGLayer::setSize(const QSize &size)
+void SSGQuickLayer::setSize(const QSize &size)
 {
     if (size == m_size)
         return;
@@ -225,12 +225,12 @@ void SSGLayer::setSize(const QSize &size)
     markDirtyTexture();
 }
 
-void SSGLayer::setFormat(GLenum)
+void SSGQuickLayer::setFormat(GLenum)
 {
     // NOPE!  We're always GL_RGBA32F!
 }
 
-void SSGLayer::setLive(bool live)
+void SSGQuickLayer::setLive(bool live)
 {
     if (live == m_live)
         return;
@@ -246,7 +246,7 @@ void SSGLayer::setLive(bool live)
     markDirtyTexture();
 }
 
-void SSGLayer::scheduleUpdate()
+void SSGQuickLayer::scheduleUpdate()
 {
     if (m_grab)
         return;
@@ -255,29 +255,29 @@ void SSGLayer::scheduleUpdate()
         emit updateRequested();
 }
 
-void SSGLayer::setRecursive(bool recursive)
+void SSGQuickLayer::setRecursive(bool recursive)
 {
     m_recursive = recursive;
 }
 
-void SSGLayer::setMirrorHorizontal(bool mirror)
+void SSGQuickLayer::setMirrorHorizontal(bool mirror)
 {
     m_mirrorHorizontal = mirror;
 }
 
-void SSGLayer::setMirrorVertical(bool mirror)
+void SSGQuickLayer::setMirrorVertical(bool mirror)
 {
     m_mirrorVertical = mirror;
 }
 
-void SSGLayer::markDirtyTexture()
+void SSGQuickLayer::markDirtyTexture()
 {
     m_dirtyTexture = true;
     if (m_live || m_grab)
         emit updateRequested();
 }
 
-void SSGLayer::grab()
+void SSGQuickLayer::grab()
 {
     if (!m_item || m_size.isNull()) {
         delete m_fbo;
@@ -435,7 +435,7 @@ void SSGLayer::grab()
         markDirtyTexture(); // Continuously update if 'live' and 'recursive'.
 }
 
-QImage SSGLayer::toImage() const
+QImage SSGQuickLayer::toImage() const
 {
     if (m_fbo)
         return m_fbo->toImage();
@@ -443,7 +443,7 @@ QImage SSGLayer::toImage() const
     return QImage();
 }
 
-QRectF SSGLayer::normalizedTextureSubRect() const
+QRectF SSGQuickLayer::normalizedTextureSubRect() const
 {
     return QRectF(m_mirrorHorizontal ? 1 : 0,
                   m_mirrorVertical ? 0 : 1,

@@ -23,40 +23,20 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #pragma once
+#include "common.h"
 
-#include <QApplication>
-#include <QSharedDataPointer>
-#include <QtCore>
-#include <QtGui>
-#include <QtPlugin>
-#include <QtQml>
-#include <QtQuick>
-#include <QtWidgets>
-#include <atomic>
-#include <cstdint>
-#include <forward_list>
-#include <limits>
-#include <FreeImagePlus.h>
-#include <memory>
-#include <stdexcept>
+class SSRedisInst
+  : public QObject
+{
+    Q_OBJECT
+public:
+    explicit SSRedisInst(QObject* parent=nullptr);
+    virtual ~SSRedisInst();
 
-//#ifndef SSGCONTEXTPLUGIN
-// #include <Python.h>
-//#endif
+    virtual operator bool() const;
 
-#ifdef min
- #undef min
-#endif
-
-#ifdef max
- #undef max
-#endif
-
-#ifdef read
- #undef read
-#endif
-
-#ifdef write
- #undef write
-#endif
+protected:
+    bool m_ok;
+    QProcess* m_process;
+};
 

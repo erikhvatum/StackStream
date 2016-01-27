@@ -42,12 +42,12 @@
 
 #define QSG_DEBUG_FBO_OVERLAY
 
-class SSGLayer : public QSGLayer
+class SSGQuickLayer : public QSGLayer
 {
     Q_OBJECT
 public:
-    SSGLayer(QSGRenderContext *context);
-    ~SSGLayer();
+    SSGQuickLayer(QSGRenderContext *context);
+    ~SSGQuickLayer();
 
     bool updateTexture() override;
 
