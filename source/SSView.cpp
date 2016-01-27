@@ -22,8 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
-#include "SSView.h"
+#include "StackStream.h"
 
 SSView::SSView()
 {

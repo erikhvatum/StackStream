@@ -32,8 +32,7 @@
 **
 ****************************************************************************/
 
-#include "common.h"
-#include "SSGTexture.h"
+#include "StackStream.h"
 #include <QtQml/private/qqmlglobal_p.h>
 #include <QtQuick/private/qquickprofiler_p.h>
 #include <QtQuick/private/qsgcontext_p.h>

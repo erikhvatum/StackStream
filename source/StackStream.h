@@ -24,25 +24,31 @@
 
 #pragma once
 
-#include <QApplication>
 #include <QSharedDataPointer>
 #include <QtCore>
 #include <QtGui>
 #include <QtPlugin>
 #include <QtQml>
 #include <QtQuick>
+#include <QtQuick/qsggeometry.h>
+#include <QtQuick/qsgnode.h>
 #include <QtWidgets>
 #include <atomic>
 #include <cstdint>
 #include <forward_list>
 #include <limits>
-#include <FreeImagePlus.h>
 #include <memory>
 #include <stdexcept>
 
-//#ifndef SSGCONTEXTPLUGIN
-// #include <Python.h>
-//#endif
+#ifdef WITH_PYTHON
+ #include <Python.h>
+#endif
+
+#ifdef STACKSTREAM
+ #define STACKSTREAM_DLLSPEC Q_DECL_EXPORT
+#else
+ #define STACKSTREAM_DLLSPEC Q_DECL_IMPORT
+#endif
 
 #ifdef min
  #undef min
@@ -60,3 +66,15 @@
  #undef write
 #endif
 
+#include "GilLocker.h"
+#include "RedisInst.h"
+#include "SSGFramebufferObjectNode.h"
+#include "SSGSimpleTextureNode.h"
+#include "SSGTexture.h"
+#include "SSGTextureMaterial.h"
+#include "SSImage.h"
+#include "SSLayer.h"
+#include "SSQuickFramebufferObject.h"
+#include "SSLayerRenderer.h"
+#include "SSView.h"
+#include "SSMainWindow.h"

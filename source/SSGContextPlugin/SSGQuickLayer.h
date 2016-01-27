@@ -42,7 +42,8 @@
 
 #define QSG_DEBUG_FBO_OVERLAY
 
-class SSGQuickLayer : public QSGLayer
+class SSGQuickLayer
+  : public QSGLayer
 {
     Q_OBJECT
 public:

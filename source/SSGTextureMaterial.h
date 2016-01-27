@@ -33,8 +33,6 @@
 ****************************************************************************/
 
 #pragma once
-#include "common.h"
-#include "SSGTexture.h"
 
 class SSGOpaqueTextureMaterial
     : public QSGMaterial

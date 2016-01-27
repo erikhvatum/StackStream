@@ -22,11 +22,10 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
+#include "StackStream.h"
 #include <exception>
 #include <cstring>
-
-#include "SSImage.h"
+#include <FreeImagePlus.h>
 
 volatile std::atomic<std::size_t> SSImage::sm_nextSerial{0};
 

@@ -22,11 +22,8 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
-#include "RedisInst.h"
-#include "SSImage.h"
-#include "SSLayer.h"
-#include "SSView.h"
+#include "StackStream.h"
+#include <QApplication>
 
 static QSurfaceFormat fmt;
 

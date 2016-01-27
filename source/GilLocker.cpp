@@ -22,9 +22,9 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
-#include "GilLocker.h"
-/*
+#ifdef WITH_PYTHON
+#include "StackStream.h"
+
 GilLocker::GilLocker()
   : m_PyGILState_STATE(PyGILState_Ensure())
 {
@@ -49,4 +49,5 @@ GilUnlocker::~GilUnlocker()
 {
     PyEval_RestoreThread(m_pyThreadState);
 }
-*/
+
+#endif

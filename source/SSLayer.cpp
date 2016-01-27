@@ -22,9 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
-#include "SSLayer.h"
-#include "SSLayerRenderer.h"
+#include "StackStream.h"
 
 SSLayer::SSLayer(QQuickItem* parent)
   : SSQuickFramebufferObject(parent),

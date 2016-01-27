@@ -33,8 +33,6 @@
 ****************************************************************************/
 
 #pragma once
-#include "common.h"
-#include "SSQuickFramebufferObject.h"
 
 class SSGFramebufferObjectNode
   : public QSGTextureProvider,

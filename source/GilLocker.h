@@ -23,9 +23,9 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #pragma once
-#include "common.h"
-/*
-class GilLocker
+#ifdef WITH_PYTHON
+
+class STACKSTREAM_DLLSPEC GilLocker
 {
 public:
     GilLocker();
@@ -37,7 +37,7 @@ private:
     PyGILState_STATE m_PyGILState_STATE;
 };
 
-class GilUnlocker
+class STACKSTREAM_DLLSPEC GilUnlocker
 {
 public:
     GilUnlocker();
@@ -48,4 +48,5 @@ public:
 private:
     PyThreadState* m_pyThreadState;
 };
-*/
+
+#endif

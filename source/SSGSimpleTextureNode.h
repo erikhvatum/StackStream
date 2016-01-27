@@ -33,10 +33,6 @@
 ****************************************************************************/
 
 #pragma once
-#include "common.h"
-#include "SSGTextureMaterial.h"
-#include <QtQuick/qsgnode.h>
-#include <QtQuick/qsggeometry.h>
 
 class SSGSimpleTextureNodePrivate;
 

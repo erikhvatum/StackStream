@@ -200,24 +200,33 @@
             Name="source"
             Filters="">
             <Folder
+                Name="Application"
+                Filters="">
+                <F N="source/Application/CMakeLists.txt"/>
+                <F N="source/Application/main.cpp"/>
+            </Folder>
+            <Folder
+                Name="PythonModule"
+                Filters="">
+                <F N="source/PythonModule/CMakeLists.txt"/>
+            </Folder>
+            <Folder
                 Name="SSGContextPlugin"
                 Filters="">
+                <F N="source/SSGContextPlugin/CMakeLists.txt"/>
                 <F N="source/SSGContextPlugin/SSGContext.cpp"/>
                 <F N="source/SSGContextPlugin/SSGContext.h"/>
                 <F N="source/SSGContextPlugin/SSGContextPlugin.cpp"/>
                 <F N="source/SSGContextPlugin/SSGContextPlugin.h"/>
                 <F N="source/SSGContextPlugin/SSGContextPlugin.json"/>
-                <F N="source/SSGContextPlugin/SSGContextPlugin.pro"/>
-                <F N="source/SSGContextPlugin/SSGLayer.cpp"/>
-                <F N="source/SSGContextPlugin/SSGLayer.h"/>
+                <F N="source/SSGContextPlugin/SSGQuickLayer.cpp"/>
+                <F N="source/SSGContextPlugin/SSGQuickLayer.h"/>
             </Folder>
-            <F N="source/common.h"/>
-            <F N="source/deployment.pri"/>
+            <F N="source/CMakeLists.txt"/>
             <F N="source/GilLocker.cpp"/>
             <F N="source/GilLocker.h"/>
-            <F N="source/main.cpp"/>
-            <F N="source/main.qml"/>
-            <F N="source/qml.qrc"/>
+            <F N="source/RedisInst.cpp"/>
+            <F N="source/RedisInst.h"/>
             <F N="source/SSGFramebufferObjectNode.cpp"/>
             <F N="source/SSGFramebufferObjectNode.h"/>
             <F N="source/SSGSimpleTextureNode.cpp"/>
@@ -233,14 +242,13 @@
             <F N="source/SSLayerRenderer.cpp"/>
             <F N="source/SSLayerRenderer.frag"/>
             <F N="source/SSLayerRenderer.h"/>
-            <F N="source/SSLayerStack.cpp"/>
-            <F N="source/SSLayerStack.h"/>
             <F N="source/SSQuickFramebufferObject.cpp"/>
             <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>
             <F N="source/SSView.h"/>
-            <F N="source/StackStream.pro"/>
+            <F N="source/StackStream.h"/>
         </Folder>
+        <F N="CMakeLists.txt"/>
         <F N="README.md"/>
     </Files>
 </Project>

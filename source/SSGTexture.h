@@ -33,7 +33,6 @@
 ****************************************************************************/
 
 #pragma once
-#include "common.h"
 
 class SSGTexture
   : public QObject

@@ -22,9 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
-#include "SSLayer.h"
-#include "SSLayerRenderer.h"
+#include "StackStream.h"
 
 const QSize SSLayerRenderer::sm_defaultFboSize(100, 100);
 
