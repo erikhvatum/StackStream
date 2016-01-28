@@ -29,7 +29,8 @@ RedisInst::RedisInst(QObject *parent)
     m_ok(false)
 {
     m_process = new QProcess(this);
-    m_process->start("redis-server", {"-"});
+    QStringList args; args << "-";
+    m_process->start("redis-server", args);
     m_process->write("daemonize no                                      \n"
                      "port 65445                                        \n"
                      "tcp-backlog 511                                   \n"
@@ -37,7 +38,7 @@ RedisInst::RedisInst(QObject *parent)
                      "timeout 0                                         \n"
                      "tcp-keepalive 60                                  \n"
                      "loglevel notice                                   \n"
-                     "logfile ""                                        \n"
+                     "logfile \"\"                                      \n"
                      "databases 16                                      \n"
                      "slave-serve-stale-data yes                        \n"
                      "slave-read-only yes                               \n"
@@ -50,7 +51,7 @@ RedisInst::RedisInst(QObject *parent)
                      "slowlog-log-slower-than 10000                     \n"
                      "slowlog-max-len 128                               \n"
                      "latency-monitor-threshold 0                       \n"
-                     "notify-keyspace-events ""                         \n"
+                     "notify-keyspace-events \"\"                       \n"
                      "hash-max-ziplist-entries 512                      \n"
                      "hash-max-ziplist-value 64                         \n"
                      "list-max-ziplist-entries 512                      \n"
@@ -67,12 +68,13 @@ RedisInst::RedisInst(QObject *parent)
                      "aof-rewrite-incremental-fsync yes                 \n");
     m_process->closeWriteChannel();
     m_ok = m_process->waitForStarted(3000);
-//  qDebug() << m_process->readAll();
-//  qDebug() << m_process->error();
+    qDebug() << "redis started: " << m_ok;
 }
 
 RedisInst::~RedisInst()
 {
+    m_process->terminate();
+    m_process->waitForFinished();
 }
 
 RedisInst::operator bool() const
