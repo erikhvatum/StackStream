@@ -22,9 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "common.h"
-#include "RedisInst.h"
-#include <QProcess>
+#include "StackStream.h"
 
 RedisInst::RedisInst(QObject *parent)
   : QObject(parent),

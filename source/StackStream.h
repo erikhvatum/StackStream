@@ -28,6 +28,7 @@
 #include <QtCore>
 #include <QtGui>
 #include <QtPlugin>
+#include <QProcess>
 #include <QtQml>
 #include <QtQuick>
 #include <QtQuick/qsggeometry.h>
@@ -68,13 +69,13 @@
 
 #include "GilLocker.h"
 #include "RedisInst.h"
-#include "SSGFramebufferObjectNode.h"
-#include "SSGSimpleTextureNode.h"
 #include "SSGTexture.h"
 #include "SSGTextureMaterial.h"
 #include "SSImage.h"
-#include "SSLayer.h"
 #include "SSQuickFramebufferObject.h"
+#include "SSGSimpleTextureNode.h"
+#include "SSGFramebufferObjectNode.h"
+#include "SSLayer.h"
 #include "SSLayerRenderer.h"
 #include "SSView.h"
 #include "SSMainWindow.h"

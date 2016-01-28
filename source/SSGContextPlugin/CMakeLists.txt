@@ -41,4 +41,5 @@ set(LIBRARIES
 
 add_library(SSGContextPlugin MODULE ${SOURCE_FILES})
 qt5_use_modules(SSGContextPlugin Core Gui Qml OpenGL Quick Widgets)
-include(/usr/local/debug/qt5/qtdeclarative/src/quick/scenegraph/qsgcontextplugin_p.h)
+get_target_property(FOO SSGContextPlugin INCLUDE_DIRECTORIES)
+message(STATUS "include dirs: ${FOO}")

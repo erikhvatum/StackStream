@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
         QQmlApplicationEngine engine;
         QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-        engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+        engine.load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
 
         return app.exec();
     }
