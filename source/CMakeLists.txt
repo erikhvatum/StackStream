@@ -55,7 +55,7 @@ set(LIBRARIES
     ${FREEIMAGEPLUS_LIBRARY})
 
 qt5_add_resources(RESOURCES StackStream.qrc)
-add_library(StackStream ${SOURCE_FILES} ${RESOURCES})
+add_library(StackStream SHARED ${SOURCE_FILES} ${RESOURCES})
 qt5_use_modules(StackStream Core Gui Qml OpenGL Quick Widgets)
 target_link_libraries(StackStream ${LIBRARIES})
 set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")

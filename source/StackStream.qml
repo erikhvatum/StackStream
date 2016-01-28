@@ -240,7 +240,8 @@ ApplicationWindow {
         selectMultiple: false
         onAccepted: {
             if(sslayer.image == null) {
-                sslayer.image = Qt.createQmlObject('import StackStream 1.0; SSImage {}', sslayer, 'apath')
+//              sslayer.image = Qt.createQmlObject('import StackStream 1.0; SSImage {}', sslayer, 'apath')
+                sslayer.image = ssimageFactory.makeImage();
             }
             sslayer.image.read(fileUrls[0]);
         }

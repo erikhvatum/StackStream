@@ -46,6 +46,7 @@ QSGImageNode* SSGContext::createImageNode()
 
 QSGLayer* SSGContext::createLayer(QSGRenderContext* renderContext)
 {
-//  qDebug() << "QSGLayer* SSGContext::createLayer(QSGRenderContext* renderContext)";
+    qDebug() << "QSGLayer* SSGContext::createLayer(QSGRenderContext* renderContext)";
     return new SSGQuickLayer(renderContext);
+//  return QSGContext::createLayer(renderContext);
 }

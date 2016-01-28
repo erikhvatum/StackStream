@@ -67,8 +67,8 @@ RedisInst::RedisInst(QObject *parent)
                      "aof-rewrite-incremental-fsync yes                 \n");
     m_process->closeWriteChannel();
     m_ok = m_process->waitForStarted(3000);
-    qDebug() << m_process->readAll();
-    qDebug() << m_process->error();
+//  qDebug() << m_process->readAll();
+//  qDebug() << m_process->error();
 }
 
 RedisInst::~RedisInst()

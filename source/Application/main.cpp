@@ -22,10 +22,19 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "StackStream.h"
+#include "../StackStream.h"
 #include <QApplication>
+#include <cstdio>
 
 static QSurfaceFormat fmt;
+
+class MakeImage
+  : public QObject
+{
+    Q_OBJECT
+public:
+    Q_INVOKABLE SSImage* makeImage() { return new SSImage(); }
+};
 
 static void onApplicationWindowCreated(QObject* object, const QUrl&)
 {
@@ -39,6 +48,7 @@ static void onApplicationWindowCreated(QObject* object, const QUrl&)
 
 int main(int argc, char *argv[])
 {
+//  setenv("QMLSCENE_DEVICE", "SSGContextPlugin", 1);
     QApplication app(argc, argv);
     RedisInst redisInst;
     if(redisInst)
@@ -71,6 +81,9 @@ int main(int argc, char *argv[])
         QQmlApplicationEngine engine;
         QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
         engine.load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
+        MakeImage* ssimageFactory{new MakeImage()};
+        engine.rootContext()->setContextProperty("ssimageFactory", ssimageFactory);
+        engine.setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
 
         return app.exec();
     }
@@ -80,3 +93,5 @@ int main(int argc, char *argv[])
         return -1;
     }
 }
+
+#include "main.moc"

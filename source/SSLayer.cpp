@@ -112,7 +112,7 @@ void SSLayer::setImage(SSImage* image)
             disconnect(m_imageSignalConnections.front());
             m_imageSignalConnections.pop_front();
         }
-        if(m_image->parent() == this) m_image->deleteLater();
+//      if(m_image->parent() == this) m_image->deleteLater();
     }
     m_image = image;
     if(m_image == nullptr)

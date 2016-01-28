@@ -22,3 +22,16 @@
 #
 # Authors: Erik Hvatum <ice.rikh@gmail.com>
 
+project(StackStreamApplication)
+
+set(SOURCE_FILES
+    ../StackStream.h
+    main.cpp)
+set(LIBRARIES
+    ${OPENGL_LIBRARIES}
+    ${FREEIMAGE_LIBRARY}
+    ${FREEIMAGEPLUS_LIBRARY})
+
+add_executable(StackStreamApplication ${SOURCE_FILES})
+qt5_use_modules(StackStreamApplication Core Gui Qml OpenGL Quick Widgets)
+target_link_libraries(StackStreamApplication StackStream)

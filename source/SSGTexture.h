@@ -34,7 +34,7 @@
 
 #pragma once
 
-class SSGTexture
+class STACKSTREAM_DLLSPEC SSGTexture
   : public QObject
 {
     Q_OBJECT

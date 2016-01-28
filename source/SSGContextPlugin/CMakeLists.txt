@@ -26,8 +26,6 @@ project(SSGContextPlugin)
 
 set(SOURCE_FILES
     ../StackStream.h
-    ../SSGTexture.cpp
-    ../SSGTexture.h
     SSGContext.h
     SSGContext.cpp
     SSGContextPlugin.h
@@ -39,7 +37,5 @@ set(LIBRARIES
     ${FREEIMAGE_LIBRARY}
     ${FREEIMAGEPLUS_LIBRARY})
 
-add_library(SSGContextPlugin MODULE ${SOURCE_FILES})
+add_library(SSGContextPlugin SHARED ${SOURCE_FILES})
 qt5_use_modules(SSGContextPlugin Core Gui Qml OpenGL Quick Widgets)
-get_target_property(FOO SSGContextPlugin INCLUDE_DIRECTORIES)
-message(STATUS "include dirs: ${FOO}")

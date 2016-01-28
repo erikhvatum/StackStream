@@ -25,7 +25,7 @@
 #pragma once
 #include "StackStream.h"
 
-class RedisInst
+class STACKSTREAM_DLLSPEC RedisInst
   : public QObject
 {
     Q_OBJECT
