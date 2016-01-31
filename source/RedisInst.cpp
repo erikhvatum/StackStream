@@ -85,6 +85,16 @@ RedisInst::RedisInst(QObject *parent)
                          "client-output-buffer-limit pubsub 32mb 8mb 60     \n"
                          "hz 10                                             \n"
                          "aof-rewrite-incremental-fsync yes                 \n");
+        connect(m_process, &QProcess::readyReadStandardOutput, [&](){
+            QString str(this->m_process->readAllStandardOutput());
+            std::string sstr{str.toStdString()};
+            qDebug() << "redis stdout:\n" << sstr.c_str();
+        });
+        connect(m_process, &QProcess::readyReadStandardError, [&](){
+            QString str(this->m_process->readAllStandardError());
+            std::string sstr{str.toStdString()};
+            qDebug() << "redis stderr:\n" << sstr.c_str();
+        });
         m_process->closeWriteChannel();
         if(m_process->waitForStarted(3000))
         {
