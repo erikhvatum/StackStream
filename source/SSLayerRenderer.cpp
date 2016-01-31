@@ -52,6 +52,8 @@ const QVector<QVector2D> SSLayerRenderer::sm_quad{
     QVector2D{1.1f, 1.1f}
 };
 
+QOpenGLDebugLogger* g_glDebugLogger{nullptr};
+
 SSLayerRenderer::SSLayerRenderer()
   : m_fboSize(sm_defaultFboSize),
     m_tex(QOpenGLTexture::Target2D),
@@ -62,6 +64,27 @@ SSLayerRenderer::SSLayerRenderer()
 //    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{-1.1f, 1.1f};
 //    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{1.1f, 1.1f};
     initializeOpenGLFunctions();
+
+    if(!g_glDebugLogger)
+    {
+        if(!QOpenGLContext::currentContext()->hasExtension(QByteArrayLiteral("GL_KHR_debug")))
+        {
+            qWarning("SSLayerRenderer::makeContexts(): GL_KHR_debug OpenGL extension is required "
+                     "for OpenGL debug logging.  Logging disabled.");
+        }
+        else
+        {
+            g_glDebugLogger = new QOpenGLDebugLogger();
+            if(!g_glDebugLogger->initialize())
+            {
+                qWarning("SSLayerRenderer::makeContexts(): Failed to initialize OpenGL logger.");
+            }
+            QObject::connect(g_glDebugLogger, &QOpenGLDebugLogger::messageLogged,
+                             [&](const QOpenGLDebugMessage& debugMessage){qDebug() << debugMessage.message();});
+            g_glDebugLogger->startLogging(QOpenGLDebugLogger::SynchronousLogging);
+            g_glDebugLogger->enableMessages();
+        }
+    }
 
     QOpenGLShader* vShad{new QOpenGLShader(QOpenGLShader::Vertex, &m_shaderProgram)};
     const char* vShadSrc =

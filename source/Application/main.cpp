@@ -48,9 +48,10 @@ static void onApplicationWindowCreated(QObject* object, const QUrl&)
 
 int main(int argc, char *argv[])
 {
-//  setenv("QMLSCENE_DEVICE", "SSGContextPlugin", 1);
+    setenv("QMLSCENE_DEVICE", "SSGContextPlugin", 1);
     QApplication app(argc, argv);
     RedisInst redisInst;
+    int ret;
     if(redisInst)
     {
         const char ss[] = "StackStream";
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
         fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
         fmt.setSwapInterval(1);
         fmt.setVersion(4, 5);
-        fmt.setOptions(QSurfaceFormat::DeprecatedFunctions);
+        fmt.setOptions(QSurfaceFormat::DebugContext | QSurfaceFormat::DeprecatedFunctions);
         fmt.setStencilBufferSize(8);
         fmt.setSamples(8);
         // We request 30-bit color; if it's not available, Qt automatically falls back to 24-bit
@@ -85,13 +86,14 @@ int main(int argc, char *argv[])
         engine.rootContext()->setContextProperty("ssimageFactory", ssimageFactory);
         engine.setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
 
-        return app.exec();
+        ret = app.exec();
     }
     else
     {
         qWarning("Failed to start Redis instance.");
-        return -1;
+        ret = -1;
     }
+    return ret;
 }
 
 #include "main.moc"

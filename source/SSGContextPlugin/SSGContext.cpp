@@ -40,7 +40,7 @@ SSGContext::SSGContext(QObject* parent)
 
 QSGImageNode* SSGContext::createImageNode()
 {
-//  qDebug() << "QSGImageNode* SSGContext::createImageNode()";
+    qDebug() << "QSGImageNode* SSGContext::createImageNode()";
     return QSGContext::createImageNode();
 }
 
