@@ -52,7 +52,9 @@ const QVector<QVector2D> SSLayerRenderer::sm_quad{
     QVector2D{1.1f, 1.1f}
 };
 
+#ifdef ENABLE_GL_DEBUG_LOGGING
 QOpenGLDebugLogger* g_glDebugLogger{nullptr};
+#endif
 
 SSLayerRenderer::SSLayerRenderer()
   : m_fboSize(sm_defaultFboSize),
@@ -65,6 +67,7 @@ SSLayerRenderer::SSLayerRenderer()
 //    const_cast<QVector<QVector2D>&>(sm_quad) << QVector2D{1.1f, 1.1f};
     initializeOpenGLFunctions();
 
+#ifdef ENABLE_GL_DEBUG_LOGGING
     if(!g_glDebugLogger)
     {
         if(!QOpenGLContext::currentContext()->hasExtension(QByteArrayLiteral("GL_KHR_debug")))
@@ -85,6 +88,7 @@ SSLayerRenderer::SSLayerRenderer()
             g_glDebugLogger->enableMessages();
         }
     }
+#endif
 
     QOpenGLShader* vShad{new QOpenGLShader(QOpenGLShader::Vertex, &m_shaderProgram)};
     const char* vShadSrc =

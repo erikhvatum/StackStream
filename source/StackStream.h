@@ -47,7 +47,9 @@
 
 #ifdef STACKSTREAM
  #define STACKSTREAM_DLLSPEC Q_DECL_EXPORT
+ #ifdef ENABLE_GL_DEBUG_LOGGING
   extern QOpenGLDebugLogger* g_glDebugLogger;
+ #endif
 #else
  #define STACKSTREAM_DLLSPEC Q_DECL_IMPORT
 #endif

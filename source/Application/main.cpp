@@ -68,7 +68,11 @@ int main(int argc, char *argv[])
         fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
         fmt.setSwapInterval(1);
         fmt.setVersion(4, 5);
+#ifdef ENABLE_GL_DEBUG_LOGGING
         fmt.setOptions(QSurfaceFormat::DebugContext | QSurfaceFormat::DeprecatedFunctions);
+#else
+        fmt.setOptions(QSurfaceFormat::DeprecatedFunctions);
+#endif
         fmt.setStencilBufferSize(8);
         fmt.setSamples(8);
         // We request 30-bit color; if it's not available, Qt automatically falls back to 24-bit
@@ -87,6 +91,13 @@ int main(int argc, char *argv[])
         engine.setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
 
         ret = app.exec();
+#ifdef ENABLE_GL_DEBUG_LOGGING
+        if(g_glDebugLogger)
+        {
+            delete g_glDebugLogger;
+            g_glDebugLogger = nullptr;
+        }
+#endif
     }
     else
     {

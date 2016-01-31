@@ -32,7 +32,7 @@ static const char* s_redisPaths[] =
     "/opt/bin/redis-server",
     "/sw/local/bin/redis-server",
 #elif Q_OS_WIN
-    // TODO: Update readme.md to make clear that windows users need to swiper the Zune charm to
+    // TODO: Update readme.md to make clear that windows users need to swipe the Zune charm to
     // install a two-tone metro design language version of redis from the XBOX store or whatever.
     "C:/program files/redis/redis-server",
     "C:/program files (x86)/redis/redis-server",

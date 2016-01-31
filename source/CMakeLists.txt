@@ -59,6 +59,7 @@ add_library(StackStream SHARED ${SOURCE_FILES} ${RESOURCES})
 qt5_use_modules(StackStream Core Gui Qml OpenGL Quick Widgets)
 target_link_libraries(StackStream ${LIBRARIES})
 set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")
+#set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DENABLE_GL_DEBUG_LOGGING")
 
 add_subdirectory(Application)
 add_subdirectory(SSGContextPlugin)
