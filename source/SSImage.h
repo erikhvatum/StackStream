@@ -148,7 +148,6 @@ signals:
     void componentCountChanged(std::uint8_t);
     void byteCountChanged(std::size_t);
 
-
 public slots:
     bool read(const QUrl& furl);
     bool write(const QUrl& furl) const;

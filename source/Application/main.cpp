@@ -46,13 +46,36 @@ static void onApplicationWindowCreated(QObject* object, const QUrl&)
     }
 }
 
+static QPointer<RedisCaptiveInst> redisInst;
+static QPointer<QQmlApplicationEngine> engine;
+
+static void onRedisInstStatusChanged(RedisInst::Status status, RedisInst::Status /*oldStatus*/)
+{
+    if(status == RedisInst::Closed)
+    {
+        QApplication::instance()->exit(-1);
+        return;
+    }
+    if(status == RedisInst::Ready)
+    {
+        RedisConnection* c{redisInst->getThreadSharedConnection()};
+        engine = new QQmlApplicationEngine();
+        QObject::connect(engine.data(), &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
+        engine->load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
+        MakeImage* ssimageFactory{new MakeImage()};
+        engine->rootContext()->setContextProperty("ssimageFactory", ssimageFactory);
+        engine->setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
+
+        redisReply* r = reinterpret_cast<redisReply*>(redisCommand(c->c(), "PING"));
+        qDebug() << r->str;
+        freeReplyObject(r);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     setenv("QMLSCENE_DEVICE", "SSGContextPlugin", 1);
     QApplication app(argc, argv);
-    RedisInst redisInst;
-    int ret;
-    if(redisInst)
     {
         const char ss[] = "StackStream";
         const int ver[] = {1, 0};
@@ -82,14 +105,13 @@ int main(int argc, char *argv[])
         // NB: Requesting 2-bit alpha and getting it on Linux leads to crashes
     //    fmt.setAlphaBufferSize(2);
         QSurfaceFormat::setDefaultFormat(fmt);
-
-        QQmlApplicationEngine engine;
-        QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-        engine.load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
-        MakeImage* ssimageFactory{new MakeImage()};
-        engine.rootContext()->setContextProperty("ssimageFactory", ssimageFactory);
-        engine.setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
-
+    }
+    redisInst = new RedisCaptiveInst();
+    QObject::connect(redisInst, &RedisInst::statusChanged, onRedisInstStatusChanged);
+    QScopedPointer<RedisCaptiveInst> redisInst_{redisInst};
+    int ret{-1};
+    if(redisInst->status() == RedisInst::Initializing)
+    {
         ret = app.exec();
 #ifdef ENABLE_GL_DEBUG_LOGGING
         if(g_glDebugLogger)
@@ -98,11 +120,6 @@ int main(int argc, char *argv[])
             g_glDebugLogger = nullptr;
         }
 #endif
-    }
-    else
-    {
-        qWarning("Failed to start Redis instance.");
-        ret = -1;
     }
     return ret;
 }

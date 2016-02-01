@@ -223,10 +223,11 @@
                 <F N="source/SSGContextPlugin/SSGQuickLayer.h"/>
             </Folder>
             <F N="source/CMakeLists.txt"/>
+            <F N="source/DraggableLayer.qml"/>
             <F N="source/GilLocker.cpp"/>
             <F N="source/GilLocker.h"/>
-            <F N="source/RedisInst.cpp"/>
-            <F N="source/RedisInst.h"/>
+            <F N="source/Redis.cpp"/>
+            <F N="source/Redis.h"/>
             <F N="source/SSGFramebufferObjectNode.cpp"/>
             <F N="source/SSGFramebufferObjectNode.h"/>
             <F N="source/SSGSimpleTextureNode.cpp"/>

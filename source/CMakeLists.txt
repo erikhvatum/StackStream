@@ -25,8 +25,8 @@
 set(SOURCE_FILES
     GilLocker.cpp
     GilLocker.h
-    RedisInst.cpp
-    RedisInst.h
+    Redis.cpp
+    Redis.h
     SSGFramebufferObjectNode.cpp
     SSGFramebufferObjectNode.h
     SSGSimpleTextureNode.cpp
@@ -52,7 +52,8 @@ set(SOURCE_FILES
 set(LIBRARIES
     ${OPENGL_LIBRARIES}
     ${FREEIMAGE_LIBRARY}
-    ${FREEIMAGEPLUS_LIBRARY})
+    ${FREEIMAGEPLUS_LIBRARY}
+    ${HIREDIS_LIBRARIES})
 
 qt5_add_resources(RESOURCES StackStream.qrc)
 add_library(StackStream SHARED ${SOURCE_FILES} ${RESOURCES})
@@ -61,8 +62,8 @@ target_link_libraries(StackStream ${LIBRARIES})
 set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")
 #set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DENABLE_GL_DEBUG_LOGGING")
 
-add_subdirectory(Application)
 add_subdirectory(SSGContextPlugin)
+add_subdirectory(Application)
 if(BUILD_STACKSTREAM_PYTHON_MODULE)
     add_subdirectory(PythonModule)
 endif()

@@ -37,9 +37,11 @@
 #include <atomic>
 #include <cstdint>
 #include <forward_list>
+#include <hiredis/hiredis.h>
 #include <limits>
 #include <memory>
 #include <stdexcept>
+#include <string>
 
 #ifdef WITH_PYTHON
  #include <Python.h>
@@ -71,7 +73,7 @@
 #endif
 
 #include "GilLocker.h"
-#include "RedisInst.h"
+#include "Redis.h"
 #include "SSGTexture.h"
 #include "SSGTextureMaterial.h"
 #include "SSImage.h"
