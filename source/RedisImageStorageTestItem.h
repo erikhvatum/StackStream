@@ -30,4 +30,6 @@ class RedisImageStorageTestItem
     Q_OBJECT
 public:
     RedisImageStorageTestItem(QQuickItem* parent=nullptr);
+
+    Q_INVOKABLE bool loadImages(const QList<QUrl> urls);
 };

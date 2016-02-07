@@ -35,7 +35,7 @@ RedisImageStorageTestItem_ {
     DropArea {
         anchors.fill: parent
         onDropped: {
-            if(sslayer.openURL(drop.urls[0])) {
+            if(loadImages(drop.urls)) {
                 drop.accept(Qt.CopyAction);
             }
         }

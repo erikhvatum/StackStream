@@ -28,3 +28,12 @@ RedisImageStorageTestItem::RedisImageStorageTestItem(QQuickItem *parent)
   : QQuickItem(parent)
 {
 }
+
+bool RedisImageStorageTestItem::loadImages(const QList<QUrl> urls)
+{
+    foreach(auto url, urls)
+    {
+        qDebug() << url;
+    }
+    return true;
+}
