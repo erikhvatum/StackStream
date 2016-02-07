@@ -58,9 +58,14 @@ RedisConnection::~RedisConnection()
     }
 }
 
-RedisConnection::operator bool() const
+bool RedisConnection::isOk() const
 {
     return m_ok;
+}
+
+RedisConnection::operator bool() const
+{
+    return isOk();
 }
 
 redisContext* RedisConnection::c() const

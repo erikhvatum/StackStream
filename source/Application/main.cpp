@@ -48,27 +48,36 @@ static void onApplicationWindowCreated(QObject* object, const QUrl&)
 
 static QPointer<RedisCaptiveInst> redisInst;
 static QPointer<QQmlApplicationEngine> engine;
+static QMetaObject::Connection redisInstStatusChangedConnection;
 
 static void onRedisInstStatusChanged(RedisInst::Status status, RedisInst::Status /*oldStatus*/)
 {
     if(status == RedisInst::Closed)
     {
-        QApplication::instance()->exit(-1);
+        qCritical("Failed to establish connection to redis instance.");
         return;
     }
     if(status == RedisInst::Ready)
     {
-        RedisConnection* c{redisInst->getThreadSharedConnection()};
-        engine = new QQmlApplicationEngine();
-        QObject::connect(engine.data(), &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-        engine->load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
-        MakeImage* ssimageFactory{new MakeImage()};
-        engine->rootContext()->setContextProperty("ssimageFactory", ssimageFactory);
-        engine->setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
-
-        redisReply* r = reinterpret_cast<redisReply*>(redisCommand(c->c(), "PING"));
-        qDebug() << r->str;
+        QObject::disconnect(redisInstStatusChangedConnection);
+        RedisConnection* redisConnection{redisInst->makeConnection()};
+        redisReply* r = reinterpret_cast<redisReply*>(redisCommand(redisConnection->c(), "PING"));
+        QString rqstr(r->str);
         freeReplyObject(r);
+        if(rqstr != "PONG")
+        {
+            qCritical("Did not receive \"PONG\" in response to redis \"PING\" command.");
+        }
+        else
+        {
+            engine = new QQmlApplicationEngine();
+            engine->rootContext()->setContextProperty("redisConnection", redisConnection);
+            QObject::connect(engine.data(), &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
+            engine->load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
+            MakeImage* ssimageFactory{new MakeImage()};
+            engine->rootContext()->setContextProperty("ssimageFactory", ssimageFactory);
+            engine->setObjectOwnership(ssimageFactory, QQmlEngine::CppOwnership);
+        }
     }
 }
 
@@ -82,9 +91,12 @@ int main(int argc, char *argv[])
         qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImage");
         qmlRegisterType<SSLayer>(ss, ver[0], ver[1], "SSLayer");
         qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
+        qmlRegisterUncreatableType<RedisConnection>(ss, ver[0], ver[1], "RedisConnection", "A RedisConnection cannot be instantiated from QML.");
+        qmlRegisterUncreatableType<RedisInst>(ss, ver[0], ver[1], "RedisInst", "A RedisInst cannot be instantiated from QML.");
         qRegisterMetaType<SSImage::DType>("DType");
         qRegisterMetaType<SSImage::Components>("Components");
         qRegisterMetaType<std::size_t>("std::size_t");
+        qRegisterMetaType<RedisInst::Status>("RedisInstStatus");
 
         fmt.setRenderableType(QSurfaceFormat::OpenGL);
         fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
@@ -107,7 +119,7 @@ int main(int argc, char *argv[])
         QSurfaceFormat::setDefaultFormat(fmt);
     }
     redisInst = new RedisCaptiveInst();
-    QObject::connect(redisInst, &RedisInst::statusChanged, onRedisInstStatusChanged);
+    redisInstStatusChangedConnection = QObject::connect(redisInst, &RedisInst::statusChanged, onRedisInstStatusChanged);
     QScopedPointer<RedisCaptiveInst> redisInst_{redisInst};
     int ret{-1};
     if(redisInst->status() == RedisInst::Initializing)

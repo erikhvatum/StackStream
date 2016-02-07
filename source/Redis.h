@@ -35,14 +35,20 @@ class STACKSTREAM_DLLSPEC RedisConnection
   : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(bool isOk READ isOk STORED false NOTIFY isOkChanged)
 public:
     friend RedisInst;
     friend RedisCaptiveInst;
     friend RedisExternalInst;
     RedisConnection(RedisConnection&) = delete;
     RedisConnection& operator = (const RedisConnection&) = delete;
+    bool isOk() const;
+    // Casting to bool is equivalent to calling .isOk()
     operator bool() const;
     redisContext* c() const;
+
+signals:
+    void isOkChanged(bool isOk);
 
 protected:
     redisContext* m_c;

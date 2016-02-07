@@ -74,6 +74,7 @@
 
 #include "GilLocker.h"
 #include "Redis.h"
+#include "RedisImageStorageTestItem.h"
 #include "SSGTexture.h"
 #include "SSGTextureMaterial.h"
 #include "SSImage.h"
