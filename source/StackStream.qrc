@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>RedisImageStorageTestItem.qml</file>
         <file>StackStream.qml</file>
         <file>SSLayerRenderer.frag</file>
     </qresource>

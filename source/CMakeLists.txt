@@ -27,6 +27,8 @@ set(SOURCE_FILES
     GilLocker.h
     Redis.cpp
     Redis.h
+    RedisImageStorageTestItem.cpp
+    RedisImageStorageTestItem.h
     SSGFramebufferObjectNode.cpp
     SSGFramebufferObjectNode.h
     SSGSimpleTextureNode.cpp

@@ -224,9 +224,17 @@ ApplicationWindow {
                     onValueChanged: { parent._setGamma(value) }
                 }
 
-                Item {
-                    Layout.fillHeight: true
+                Button {
+                    text: "hi"
+                    Layout.fillWidth: true
                     Layout.columnSpan: 3
+                }
+
+                RedisImageStorageTestItem {
+                    Layout.fillHeight: true
+                    Layout.fillWidth: true
+                    Layout.columnSpan: 3
+                    id: redisImageStorageTestItem
                 }
             }
         }

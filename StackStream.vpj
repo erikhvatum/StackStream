@@ -230,6 +230,7 @@
             <F N="source/Redis.h"/>
             <F N="source/RedisImageStorageTestItem.cpp"/>
             <F N="source/RedisImageStorageTestItem.h"/>
+            <F N="source/RedisImageStorageTestItem.qml"/>
             <F N="source/SSGFramebufferObjectNode.cpp"/>
             <F N="source/SSGFramebufferObjectNode.h"/>
             <F N="source/SSGSimpleTextureNode.cpp"/>
@@ -253,6 +254,7 @@
             <F N="source/SSView.h"/>
             <F N="source/StackStream.h"/>
             <F N="source/StackStream.qml"/>
+            <F N="source/StackStream.qrc"/>
         </Folder>
         <F N="CMakeLists.txt"/>
         <F N="README.md"/>
