@@ -22,7 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "StackStream.h"
+#include "SSMainWindow.h"
 
 SSMainWindow::SSMainWindow(QWidget *parent)
   : QMainWindow(parent)

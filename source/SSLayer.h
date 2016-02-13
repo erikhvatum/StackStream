@@ -23,6 +23,9 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #pragma once
+#include "common.h"
+#include "SSQuickFramebufferObject.h"
+#include "SSImage.h"
 
 class SSLayer
   : public SSQuickFramebufferObject

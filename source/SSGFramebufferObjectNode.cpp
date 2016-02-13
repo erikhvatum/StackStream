@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "StackStream.h"
+#include "SSGFramebufferObjectNode.h"
 
 SSGFramebufferObjectNode::SSGFramebufferObjectNode()
   : window(0),

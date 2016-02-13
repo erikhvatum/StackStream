@@ -22,7 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "StackStream.h"
+#include "RedisImageStorageTestItem.h"
 
 RedisImageStorageTestItem::RedisImageStorageTestItem(QQuickItem *parent)
   : QQuickItem(parent)

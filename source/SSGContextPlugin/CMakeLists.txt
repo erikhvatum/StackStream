@@ -25,7 +25,7 @@
 project(SSGContextPlugin)
 
 set(SOURCE_FILES
-    ../StackStream.h
+    ../common.h
     SSGContext.h
     SSGContext.cpp
     SSGContextPlugin.h

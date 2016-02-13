@@ -32,7 +32,8 @@
 **
 ****************************************************************************/
 
-#include "StackStream.h"
+#include "SSQuickFramebufferObject.h"
+#include "SSGFramebufferObjectNode.h"
 #include <private/qquickitem_p.h>
 
 class SSQuickFramebufferObjectPrivate : public QQuickItemPrivate

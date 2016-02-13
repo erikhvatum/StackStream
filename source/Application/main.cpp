@@ -22,9 +22,15 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "../StackStream.h"
+#include "../common.h"
+#include "../SSImage.h"
+#include "../SSLayer.h"
+#include "../SSView.h"
+#include "../Redis.h"
+#include "../RedisImageStorageTestItem.h"
 #include <QApplication>
 #include <cstdio>
+#include <hiredis/hiredis.h>
 
 static QSurfaceFormat fmt;
 

@@ -33,6 +33,9 @@
 ****************************************************************************/
 
 #pragma once
+#include "common.h"
+#include "SSGTexture.h"
+#include "SSGTextureMaterial.h"
 
 class SSGSimpleTextureNodePrivate;
 

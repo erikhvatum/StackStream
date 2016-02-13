@@ -33,8 +33,9 @@
 ****************************************************************************/
 
 #pragma once
+#include "common.h"
 
-class STACKSTREAM_DLLSPEC SSGTexture
+class SSGTexture
   : public QObject
 {
     Q_OBJECT

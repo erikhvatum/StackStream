@@ -23,7 +23,8 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #pragma once
-#include "StackStream.h"
+#include "common.h"
+#include <hiredis/hiredis.h>
 
 class RedisInst;
 class RedisCaptiveInst;

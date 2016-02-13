@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #pragma once
+#include "common.h"
 
 class QOpenGLFramebufferObject;
 class SSQuickFramebufferObjectPrivate;

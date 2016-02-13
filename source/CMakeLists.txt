@@ -23,20 +23,21 @@
 # Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 set(SOURCE_FILES
+    common.h
     GilLocker.cpp
     GilLocker.h
-    Redis.cpp
     Redis.h
-    RedisImageStorageTestItem.cpp
+    Redis.cpp
     RedisImageStorageTestItem.h
-    SSGFramebufferObjectNode.cpp
-    SSGFramebufferObjectNode.h
+    RedisImageStorageTestItem.cpp
     SSGSimpleTextureNode.cpp
     SSGSimpleTextureNode.h
     SSGTexture.cpp
     SSGTexture.h
     SSGTextureMaterial.cpp
     SSGTextureMaterial.h
+    SSGFramebufferObjectNode.h
+    SSGFramebufferObjectNode.cpp
     SSImage.cpp
     SSImage.h
     SSLayer.cpp
@@ -49,8 +50,7 @@ set(SOURCE_FILES
     SSQuickFramebufferObject.cpp
     SSQuickFramebufferObject.h
     SSView.cpp
-    SSView.h
-    StackStream.h)
+    SSView.h)
 set(LIBRARIES
     ${OPENGL_LIBRARIES}
     ${FREEIMAGE_LIBRARY}

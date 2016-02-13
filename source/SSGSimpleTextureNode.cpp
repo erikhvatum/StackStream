@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "StackStream.h"
+#include "SSGSimpleTextureNode.h"
 #include <private/qsgnode_p.h>
 
 class SSGSimpleTextureNodePrivate : public QSGGeometryNodePrivate

@@ -33,6 +33,9 @@
 ****************************************************************************/
 
 #pragma once
+#include "common.h"
+#include "SSLayer.h"
+#include "SSQuickFramebufferObject.h"
 
 class SSLayer;
 

@@ -223,6 +223,7 @@
                 <F N="source/SSGContextPlugin/SSGQuickLayer.h"/>
             </Folder>
             <F N="source/CMakeLists.txt"/>
+            <F N="source/common.h"/>
             <F N="source/DraggableLayer.qml"/>
             <F N="source/GilLocker.cpp"/>
             <F N="source/GilLocker.h"/>
@@ -252,7 +253,6 @@
             <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>
             <F N="source/SSView.h"/>
-            <F N="source/StackStream.h"/>
             <F N="source/StackStream.qml"/>
             <F N="source/StackStream.qrc"/>
         </Folder>

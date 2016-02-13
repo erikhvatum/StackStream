@@ -23,7 +23,7 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #ifdef WITH_PYTHON
-#include "StackStream.h"
+#include "GilLocker.h"
 
 GilLocker::GilLocker()
   : m_PyGILState_STATE(PyGILState_Ensure())

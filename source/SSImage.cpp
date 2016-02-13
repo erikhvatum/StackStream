@@ -22,7 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "StackStream.h"
+#include "SSImage.h"
 #include <exception>
 #include <cstring>
 #include <FreeImagePlus.h>

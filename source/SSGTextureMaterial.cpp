@@ -32,7 +32,7 @@
 **
 ****************************************************************************/
 
-#include "StackStream.h"
+#include "SSGTextureMaterial.h"
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>
 #include <QtGui/qopenglshaderprogram.h>

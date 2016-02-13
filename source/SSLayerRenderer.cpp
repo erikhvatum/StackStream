@@ -22,7 +22,8 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "StackStream.h"
+#include "SSLayerRenderer.h"
+#include "SSQuickFramebufferObject.h"
 
 const QSize SSLayerRenderer::sm_defaultFboSize(100, 100);
 

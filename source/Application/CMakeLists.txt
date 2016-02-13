@@ -25,7 +25,7 @@
 project(StackStreamApplication)
 
 set(SOURCE_FILES
-    ../StackStream.h
+    ../common.h
     main.cpp)
 set(LIBRARIES
     ${OPENGL_LIBRARIES}

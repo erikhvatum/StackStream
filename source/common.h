@@ -33,11 +33,12 @@
 #include <QtQuick>
 #include <QtQuick/qsggeometry.h>
 #include <QtQuick/qsgnode.h>
+#include <QtQuick/qsgtexture.h>
+#include <QtQuick/qsgtextureprovider.h>
 #include <QtWidgets>
 #include <atomic>
 #include <cstdint>
 #include <forward_list>
-#include <hiredis/hiredis.h>
 #include <limits>
 #include <memory>
 #include <stdexcept>
@@ -72,16 +73,3 @@
  #undef write
 #endif
 
-#include "GilLocker.h"
-#include "Redis.h"
-#include "RedisImageStorageTestItem.h"
-#include "SSGTexture.h"
-#include "SSGTextureMaterial.h"
-#include "SSImage.h"
-#include "SSQuickFramebufferObject.h"
-#include "SSGSimpleTextureNode.h"
-#include "SSGFramebufferObjectNode.h"
-#include "SSLayer.h"
-#include "SSLayerRenderer.h"
-#include "SSView.h"
-#include "SSMainWindow.h"

@@ -22,7 +22,7 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "StackStream.h"
+#include "Redis.h"
 
 RedisConnection::RedisConnection(const QString& host, std::uint16_t tcpPort)
   : m_ok(false)
