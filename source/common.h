@@ -29,6 +29,7 @@
 #include <QtGui>
 #include <QtPlugin>
 #include <QProcess>
+#include <QSharedPointer>
 #include <QtQml>
 #include <QtQuick>
 #include <QtQuick/qsggeometry.h>
@@ -73,3 +74,28 @@
  #undef write
 #endif
 
+#include <chrono>
+#include <iostream>
+#include <iomanip>
+
+class TimeThisBlock
+{
+public:
+    TimeThisBlock() : t0(std::chrono::high_resolution_clock::now()) {}
+    ~TimeThisBlock()
+    {
+        std::chrono::high_resolution_clock::time_point t1{std::chrono::high_resolution_clock::now()};
+        double nanoseconds_elapsed = static_cast<double>(std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0).count());
+        if(nanoseconds_elapsed < 1000)
+            std::cout << nanoseconds_elapsed << "ns";
+        else if(nanoseconds_elapsed < 1e6)
+            std::cout << nanoseconds_elapsed * static_cast<double>(1e-3) << "µs";
+        else if(nanoseconds_elapsed < 1e9)
+            std::cout << nanoseconds_elapsed * static_cast<double>(1e-6) << "ms";
+        else
+            std::cout << nanoseconds_elapsed * static_cast<double>(1e-9) << "s";
+        std::cout << std::endl;
+    }
+protected:
+    std::chrono::high_resolution_clock::time_point t0;
+};

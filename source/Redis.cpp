@@ -31,6 +31,8 @@ RedisConnection::RedisConnection(const QString& host, std::uint16_t tcpPort)
     m_c = redisConnectWithTimeout(host_.data(),
                                   static_cast<int>(tcpPort),
                                   {1, 500000}); // 1.5 second timeout
+//    m_c = redisConnectUnixWithTimeout("/tmp/____redis.sock",
+//                                      {1, 500000}); // 1.5 second timeout
     if(!m_c)
     {
         qWarning("RedisConnection::RedisConnection(const QString& host, std::uint16_t tcpPort): Failed to allocate redis context.");
@@ -120,6 +122,42 @@ static const char* s_captiveRedisPaths[] =
     "C:/program files (x86)/redis/redis-server",
 #endif
 };
+
+//static const QString s_captiveRedisConf{
+//R"|||(daemonize no
+//tcp-backlog 511
+//unixsocket /tmp/____redis.sock
+//timeout 0
+//tcp-keepalive 60
+//loglevel notice
+//logfile ""
+//databases 16
+//slave-serve-stale-data yes
+//slave-read-only yes
+//repl-diskless-sync no
+//repl-diskless-sync-delay 5
+//repl-disable-tcp-nodelay no
+//slave-priority 100
+//appendonly no
+//lua-time-limit 5000
+//slowlog-log-slower-than 10000
+//slowlog-max-len 128
+//latency-monitor-threshold 0
+//notify-keyspace-events ""
+//hash-max-ziplist-entries 512
+//hash-max-ziplist-value 64
+//list-max-ziplist-entries 512
+//list-max-ziplist-value 64
+//set-max-intset-entries 512
+//zset-max-ziplist-entries 128
+//zset-max-ziplist-value 64
+//hll-sparse-max-bytes 3000
+//activerehashing yes
+//client-output-buffer-limit normal 0 0 0
+//client-output-buffer-limit slave 256mb 64mb 60
+//client-output-buffer-limit pubsub 32mb 8mb 60
+//hz 10
+//aof-rewrite-incremental-fsync yes)|||"};
 
 static const QString s_captiveRedisConf{
 R"|||(daemonize no

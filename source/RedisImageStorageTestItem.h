@@ -33,4 +33,7 @@ public:
     RedisImageStorageTestItem(QQuickItem* parent=nullptr);
 
     Q_INVOKABLE bool loadImages(const QList<QUrl> urls);
+
+protected:
+    QList<QSharedPointer<QImage>> ims;
 };

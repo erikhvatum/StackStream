@@ -38,9 +38,9 @@ class STACKSTREAM_DLLSPEC RedisConnection
     Q_OBJECT
     Q_PROPERTY(bool isOk READ isOk STORED false NOTIFY isOkChanged)
 public:
-    friend RedisInst;
-    friend RedisCaptiveInst;
-    friend RedisExternalInst;
+    friend class RedisInst;
+    friend class RedisCaptiveInst;
+    friend class RedisExternalInst;
     RedisConnection(RedisConnection&) = delete;
     RedisConnection& operator = (const RedisConnection&) = delete;
     bool isOk() const;
@@ -59,7 +59,7 @@ protected:
     ~RedisConnection();
 };
 
-//// 
+////
 
 class STACKSTREAM_DLLSPEC RedisInst
   : public QObject
@@ -93,7 +93,7 @@ protected:
     QThreadStorage<QPointer<RedisConnection>> m_threadSharedConnections;
 };
 
-//// 
+////
  
 class STACKSTREAM_DLLSPEC RedisCaptiveInst
   : public RedisInst

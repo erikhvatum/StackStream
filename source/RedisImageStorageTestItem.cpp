@@ -23,17 +23,44 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #include "RedisImageStorageTestItem.h"
+#include "Redis.h"
+#include "SSImage.h"
 
 RedisImageStorageTestItem::RedisImageStorageTestItem(QQuickItem *parent)
   : QQuickItem(parent)
 {
 }
 
+#include <chrono>
+#include <iostream>
+#include <iomanip>
+
 bool RedisImageStorageTestItem::loadImages(const QList<QUrl> urls)
 {
+
+    RedisConnection* redis{qvariant_cast<RedisConnection*>(qmlContext(this)->contextProperty("redisConnection"))};
+    SSImage im;
+    int idx{0};
+    bool ok;
+    QByteArray r;
+
     foreach(auto url, urls)
     {
-        qDebug() << url;
+        if(im.read(url))
+        {
+            qDebug() << "read" << url;
+            r = QString::number(idx).toUtf8();
+            {
+                TimeThisBlock t;
+                freeReplyObject(redisCommand(redis->c(), "SET %s %b", r.data(), im.rawData().get(), im.byteCount()));
+            }
+        }
+        else
+        {
+            qDebug() << "failed to read" << url;
+        }
+        ++idx;
     }
+
     return true;
 }
