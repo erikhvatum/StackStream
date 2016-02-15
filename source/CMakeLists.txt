@@ -26,8 +26,6 @@ set(SOURCE_FILES
     common.h
     GilLocker.cpp
     GilLocker.h
-    Redis.h
-    Redis.cpp
     SSGSimpleTextureNode.cpp
     SSGSimpleTextureNode.h
     SSGTexture.cpp
@@ -50,12 +48,11 @@ set(SOURCE_FILES
 set(LIBRARIES
     ${OPENGL_LIBRARIES}
     ${FREEIMAGE_LIBRARY}
-    ${FREEIMAGEPLUS_LIBRARY}
-    ${HIREDIS_LIBRARIES})
+    ${FREEIMAGEPLUS_LIBRARY})
 
 qt5_add_resources(RESOURCES StackStream.qrc)
 add_library(StackStream SHARED ${SOURCE_FILES} ${RESOURCES})
-qt5_use_modules(StackStream Core Gui Qml Network OpenGL Quick Widgets)
+qt5_use_modules(StackStream Core Gui Qml OpenGL Quick Widgets)
 target_link_libraries(StackStream ${LIBRARIES})
 set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")
 #set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DENABLE_GL_DEBUG_LOGGING")
