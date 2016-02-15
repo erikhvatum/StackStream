@@ -60,7 +60,7 @@ static void onRedisInstStatusChanged(RedisInst::Status status, RedisInst::Status
 {
     if(status == RedisInst::Closed)
     {
-        qCritical("Failed to establish connection to redis instance.");
+        qFatal("Failed to establish connection to redis instance.");
         return;
     }
     if(status == RedisInst::Ready)

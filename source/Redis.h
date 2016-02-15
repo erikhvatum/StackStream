@@ -100,16 +100,24 @@ class STACKSTREAM_DLLSPEC RedisCaptiveInst
 {
     Q_OBJECT
 public:
+    // If tcpPort's value is 0, the default Redis port is used if available, falling back to a an
+    // arbitrary port number if possible, failing which status() changes to RedisInst::Closed.
+    // If tcpPort's value is not 0, the specified port number is used if available, failing which
+    // status() changes to RedistInst::Closed.
     explicit RedisCaptiveInst(std::uint16_t tcpPort=0, QObject* parent=nullptr);
     virtual ~RedisCaptiveInst();
 
     RedisConnection* makeConnection() override;
 
 protected:
+    static const std::uint16_t smc_defaultTcpPort;
+
     const std::uint16_t m_tcpPort;
     QProcess* m_process;
     QString m_stdOutBuff;
     QString m_stdErrBuff;
+
+    static std::uint16_t findAvailableTcpPort();
 
 protected slots:
     void onReadyReadStandardOutput();

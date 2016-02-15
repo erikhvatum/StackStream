@@ -31,8 +31,6 @@ RedisConnection::RedisConnection(const QString& host, std::uint16_t tcpPort)
     m_c = redisConnectWithTimeout(host_.data(),
                                   static_cast<int>(tcpPort),
                                   {1, 500000}); // 1.5 second timeout
-//    m_c = redisConnectUnixWithTimeout("/tmp/____redis.sock",
-//                                      {1, 500000}); // 1.5 second timeout
     if(!m_c)
     {
         qWarning("RedisConnection::RedisConnection(const QString& host, std::uint16_t tcpPort): Failed to allocate redis context.");
@@ -123,47 +121,12 @@ static const char* s_captiveRedisPaths[] =
 #endif
 };
 
-//static const QString s_captiveRedisConf{
-//R"|||(daemonize no
-//tcp-backlog 511
-//unixsocket /tmp/____redis.sock
-//timeout 0
-//tcp-keepalive 60
-//loglevel notice
-//logfile ""
-//databases 16
-//slave-serve-stale-data yes
-//slave-read-only yes
-//repl-diskless-sync no
-//repl-diskless-sync-delay 5
-//repl-disable-tcp-nodelay no
-//slave-priority 100
-//appendonly no
-//lua-time-limit 5000
-//slowlog-log-slower-than 10000
-//slowlog-max-len 128
-//latency-monitor-threshold 0
-//notify-keyspace-events ""
-//hash-max-ziplist-entries 512
-//hash-max-ziplist-value 64
-//list-max-ziplist-entries 512
-//list-max-ziplist-value 64
-//set-max-intset-entries 512
-//zset-max-ziplist-entries 128
-//zset-max-ziplist-value 64
-//hll-sparse-max-bytes 3000
-//activerehashing yes
-//client-output-buffer-limit normal 0 0 0
-//client-output-buffer-limit slave 256mb 64mb 60
-//client-output-buffer-limit pubsub 32mb 8mb 60
-//hz 10
-//aof-rewrite-incremental-fsync yes)|||"};
-
 static const QString s_captiveRedisConf{
 R"|||(daemonize no
 tcp-backlog 511
 bind 127.0.0.1
 timeout 0
+maxclients 512
 tcp-keepalive 60
 loglevel notice
 logfile ""
@@ -200,6 +163,16 @@ RedisCaptiveInst::RedisCaptiveInst(std::uint16_t tcpPort, QObject* parent)
     m_tcpPort(tcpPort),
     m_process(nullptr)
 {
+    if(m_tcpPort == 0)
+    {
+        const_cast<std::uint16_t&>(m_tcpPort) = findAvailableTcpPort();
+        if(m_tcpPort == 0)
+        {
+            qWarning() << "Failed to find available localhost TCP port for use by redis-server instance.";
+            return;
+        }
+    }
+
     QString conf;
     QStringList args; args << "-";
     for(const char** redisPath{s_captiveRedisPaths},
@@ -210,7 +183,7 @@ RedisCaptiveInst::RedisCaptiveInst(std::uint16_t tcpPort, QObject* parent)
         m_process = new QProcess(this);
         m_process->start(*redisPath, args);
         conf = s_captiveRedisConf;
-        if(m_tcpPort) conf += QString::number(m_tcpPort);
+        conf += QString("\nport %1").arg(m_tcpPort);
         m_process->write(conf.toLocal8Bit());
         m_process->closeWriteChannel();
         if(m_process->waitForStarted(3000))
@@ -222,6 +195,7 @@ RedisCaptiveInst::RedisCaptiveInst(std::uint16_t tcpPort, QObject* parent)
         }
         else
         {
+            m_status = Closed;
             delete m_process;
             m_process = nullptr;
         }
@@ -275,13 +249,12 @@ void RedisCaptiveInst::onReadyReadStandardOutput()
                 std::uint16_t port{static_cast<std::uint16_t>(readyRegex.cap(1).toInt())};
                 if(m_tcpPort != port)
                 {
-                    if(m_tcpPort != 0)
-                        qWarning() << "Although port" << static_cast<int>(m_tcpPort)
-                                   << "was specified, captive redis-server instance is listening on port" << static_cast<int>(port);
+                    qWarning() << "Although port" << static_cast<int>(m_tcpPort)
+                               << "was specified, captive redis-server instance is listening on port" << static_cast<int>(port);
                     const_cast<std::uint16_t&>(m_tcpPort) = port;
-                    m_status = Ready;
-                    emit statusChanged(Ready, Initializing);
                 }
+                m_status = Ready;
+                emit statusChanged(Ready, Initializing);
             }
             else if(addrInUseRegex.exactMatch(*line))
             {
@@ -310,6 +283,27 @@ void RedisCaptiveInst::onFinished()
         m_status = Closed;
         emit statusChanged(Closed, oldStatus);
     }
+}
+
+const std::uint16_t RedisCaptiveInst::smc_defaultTcpPort = 6397;
+
+#include <QHostAddress>
+#include <QTcpServer>
+
+std::uint16_t RedisCaptiveInst::findAvailableTcpPort()
+{
+    QTcpServer s;
+    if(s.listen(QHostAddress("127.0.0.1"), smc_defaultTcpPort))
+        return smc_defaultTcpPort;
+    qWarning() << "Default redis-server tcp listen port," << static_cast<int>(smc_defaultTcpPort)
+               << "on 127.0.0.1, is not available.  Finding an available tcp port...";
+    if(s.listen(QHostAddress("127.0.0.1"), 0))
+    {
+        std::uint16_t port{s.serverPort()};
+        qWarning() << "Port" << static_cast<int>(port) << "is available and will be used.";
+        return port;
+    }
+    return 0;
 }
 
 RedisExternalInst::RedisExternalInst(const QString& host, std::uint16_t tcpPort, QObject* parent)
