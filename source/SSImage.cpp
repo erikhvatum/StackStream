@@ -23,7 +23,6 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #include "SSImage.h"
-#include <exception>
 #include <cstring>
 #include <FreeImagePlus.h>
 

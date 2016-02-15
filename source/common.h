@@ -24,6 +24,11 @@
 
 #pragma once
 
+#ifndef QT_NO_DEBUG
+ #define QT_QML_DEBUG
+#endif
+
+#include <QEnableSharedFromThis>
 #include <QSharedDataPointer>
 #include <QtCore>
 #include <QtGui>

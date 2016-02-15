@@ -237,6 +237,8 @@
             <F N="source/SSGTextureMaterial.h"/>
             <F N="source/SSImage.cpp"/>
             <F N="source/SSImage.h"/>
+            <F N="source/SSImageItem.cpp"/>
+            <F N="source/SSImageItem.h"/>
             <F N="source/SSLayer.cpp"/>
             <F N="source/SSLayer.h"/>
             <F N="source/SSLayerRenderer.cpp"/>

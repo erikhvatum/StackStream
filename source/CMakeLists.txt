@@ -36,6 +36,8 @@ set(SOURCE_FILES
     SSGFramebufferObjectNode.cpp
     SSImage.cpp
     SSImage.h
+    SSImageItem.h
+    SSImageItem.cpp
     SSLayer.cpp
     SSLayer.h
     SSLayerRenderer.cpp

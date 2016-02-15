@@ -28,7 +28,8 @@
 class NoReconcile;
 
 class SSImage
-  : public QObject
+  : public QObject,
+    public QEnableSharedFromThis<SSImage>
 {
 public:
     enum DType
