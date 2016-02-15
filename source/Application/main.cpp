@@ -27,7 +27,6 @@
 #include "../SSLayer.h"
 #include "../SSView.h"
 #include "../Redis.h"
-#include "../RedisImageStorageTestItem.h"
 #include <QApplication>
 #include <cstdio>
 #include <hiredis/hiredis.h>
@@ -99,7 +98,6 @@ int main(int argc, char *argv[])
         qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
         qmlRegisterUncreatableType<RedisConnection>(ss, ver[0], ver[1], "RedisConnection", "A RedisConnection cannot be instantiated from QML.");
         qmlRegisterUncreatableType<RedisInst>(ss, ver[0], ver[1], "RedisInst", "A RedisInst cannot be instantiated from QML.");
-        qmlRegisterType<RedisImageStorageTestItem>(ss, ver[0], ver[1], "RedisImageStorageTestItem_");
         qRegisterMetaType<SSImage::DType>("DType");
         qRegisterMetaType<SSImage::Components>("Components");
         qRegisterMetaType<std::size_t>("std::size_t");

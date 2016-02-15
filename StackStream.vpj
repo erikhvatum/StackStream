@@ -229,9 +229,6 @@
             <F N="source/GilLocker.h"/>
             <F N="source/Redis.cpp"/>
             <F N="source/Redis.h"/>
-            <F N="source/RedisImageStorageTestItem.cpp"/>
-            <F N="source/RedisImageStorageTestItem.h"/>
-            <F N="source/RedisImageStorageTestItem.qml"/>
             <F N="source/SSGFramebufferObjectNode.cpp"/>
             <F N="source/SSGFramebufferObjectNode.h"/>
             <F N="source/SSGSimpleTextureNode.cpp"/>
@@ -247,8 +244,6 @@
             <F N="source/SSLayerRenderer.cpp"/>
             <F N="source/SSLayerRenderer.frag"/>
             <F N="source/SSLayerRenderer.h"/>
-            <F N="source/SSMainWindow.cpp"/>
-            <F N="source/SSMainWindow.h"/>
             <F N="source/SSQuickFramebufferObject.cpp"/>
             <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>

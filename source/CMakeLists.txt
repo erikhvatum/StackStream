@@ -28,8 +28,6 @@ set(SOURCE_FILES
     GilLocker.h
     Redis.h
     Redis.cpp
-    RedisImageStorageTestItem.h
-    RedisImageStorageTestItem.cpp
     SSGSimpleTextureNode.cpp
     SSGSimpleTextureNode.h
     SSGTexture.cpp
@@ -45,8 +43,6 @@ set(SOURCE_FILES
     SSLayerRenderer.cpp
     SSLayerRenderer.frag
     SSLayerRenderer.h
-    SSMainWindow.cpp
-    SSMainWindow.h
     SSQuickFramebufferObject.cpp
     SSQuickFramebufferObject.h
     SSView.cpp
