@@ -24,8 +24,6 @@
 
 #include "../common.h"
 #include "../SSImage.h"
-#include "../SSLayer.h"
-#include "../SSView.h"
 #include <QApplication>
 #include <cstdio>
 
@@ -39,7 +37,7 @@ public:
     Q_INVOKABLE SSImage* makeImage() { return new SSImage(); }
 };
 
-static void onApplicationWindowCreated(QObject* object, const QUrl&)
+static void onStackStreamWindowCreated(QObject* object, const QUrl&)
 {
     QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};
     if(stackStreamMainWindow && stackStreamMainWindow->objectName() == "stackStreamMainWindow")
@@ -54,15 +52,6 @@ int main(int argc, char *argv[])
     setenv("QMLSCENE_DEVICE", "SSGContextPlugin", 1);
     QApplication app(argc, argv);
     {
-        const char ss[] = "StackStream";
-        const int ver[] = {1, 0};
-        qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImage");
-        qmlRegisterType<SSLayer>(ss, ver[0], ver[1], "SSLayer");
-        qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
-        qRegisterMetaType<SSImage::DType>("DType");
-        qRegisterMetaType<SSImage::Components>("Components");
-        qRegisterMetaType<std::size_t>("std::size_t");
-
         fmt.setRenderableType(QSurfaceFormat::OpenGL);
         fmt.setProfile(QSurfaceFormat::CompatibilityProfile);
         fmt.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
@@ -85,8 +74,8 @@ int main(int argc, char *argv[])
     }
 
     QQmlApplicationEngine engine;
-    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onApplicationWindowCreated);
-    engine.load(QUrl(QStringLiteral("qrc:/StackStream.qml")));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onStackStreamWindowCreated);
+    engine.load(QUrl(QStringLiteral("qrc:/Application.qml")));
     MakeImage ssimageFactory;
     engine.rootContext()->setContextProperty("ssimageFactory", &ssimageFactory);
     engine.setObjectOwnership(&ssimageFactory, QQmlEngine::CppOwnership);

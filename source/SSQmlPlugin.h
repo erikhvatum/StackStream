@@ -22,25 +22,17 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "SSGContextPlugin.h"
-#include "SSGContext.h"
+#pragma once
+#include "common.h"
+#include <QQmlExtensionPlugin>
 
-SSGContextPlugin::SSGContextPlugin(QObject* parent)
-  : QObject(parent)
+class SSQmlPlugin
+  : public QQmlExtensionPlugin
 {
-    qDebug() << "SSGContextPlugin loaded";
-}
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+public:
+    explicit SSQmlPlugin(QObject* parent=nullptr);
 
-QStringList SSGContextPlugin::keys() const
-{
-    // This never seems to be invoked.  Perhaps it is vestigial?  It does appear to be
-    // redundant, given that the json metadata file contains a "Keys" entry.
-    QStringList ret;
-    ret << "SSGContextPlugin";
-    return ret;
-}
-
-QSGContext* SSGContextPlugin::create(const QString& key) const
-{
-    return (key == "SSGContextPlugin") ? new SSGContext() : nullptr;
-}
+    void registerTypes(const char* uri) override;
+};

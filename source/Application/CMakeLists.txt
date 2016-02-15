@@ -32,34 +32,68 @@ set(LIBRARIES
     ${FREEIMAGE_LIBRARY}
     ${FREEIMAGEPLUS_LIBRARY})
 
-add_executable(StackStreamApplication ${SOURCE_FILES})
+unset(RESOURCES)
+qt5_add_resources(RESOURCES Application.qrc)
+add_executable(StackStreamApplication ${SOURCE_FILES} ${RESOURCES})
 qt5_use_modules(StackStreamApplication Core Gui Qml OpenGL Quick Widgets)
-target_link_libraries(StackStreamApplication StackStream)
+target_link_libraries(StackStreamApplication StackStreamPlugin)
 
 # TODO: Remove this cheap hack, which is, at the moment, very helpful
 # for running directly out of a build directory.
 cmake_policy(SET CMP0026 OLD)
 get_target_property(_SSG_CONTEXT_PLUGIN_LOCATION SSGContextPlugin LOCATION)
 get_target_property(_STACKSTREAM_APPLICATION_LOCATION StackStreamApplication LOCATION)
+get_target_property(_STACKSTREAM_PLUGIN_LOCATION StackStreamPlugin LOCATION)
 
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "from pathlib import Path; print(str(Path('${_STACKSTREAM_APPLICATION_LOCATION}').parent / 'scenegraph'))"
                 OUTPUT_VARIABLE _SSG_CONTEXT_PLUGIN_DEST_DPATH
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 
+execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "from pathlib import Path; print(str(Path('${_STACKSTREAM_APPLICATION_LOCATION}').parent / 'StackStream'))"
+                OUTPUT_VARIABLE _STACKSTREAM_PLUGIN_DEST_DPATH
+                OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 file(MAKE_DIRECTORY ${_SSG_CONTEXT_PLUGIN_DEST_DPATH})
+file(MAKE_DIRECTORY ${_STACKSTREAM_PLUGIN_DEST_DPATH})
 
 if(WIN32)
     string(REPLACE "/" "\\" _SSG_CONTEXT_PLUGIN_LOCATION ${_SSG_CONTEXT_PLUGIN_LOCATION})
     string(REPLACE "/" "\\" _SSG_CONTEXT_PLUGIN_DEST_DPATH ${_SSG_CONTEXT_PLUGIN_DEST_DPATH})
+    string(REPLACE "/" "\\" _STACKSTREAM_PLUGIN_LOCATION ${_STACKSTREAM_PLUGIN_LOCATION})
+    string(REPLACE "/" "\\" CMAKE_SOURCE_DIR _CMAKE_SOURCE_DIR)
     add_custom_command(
         TARGET StackStreamApplication
         POST_BUILD
         COMMAND copy /Y ${_SSG_CONTEXT_PLUGIN_LOCATION} ${_SSG_CONTEXT_PLUGIN_DEST_DPATH})
+    add_custom_command(
+        TARGET StackStreamPlugin
+        POST_BUILD
+        COMMAND copy /Y ${_STACKSTREAM_PLUGIN_LOCATION} ${_STACKSTREAM_PLUGIN_DEST_DPATH})
+    add_custom_command(
+        TARGET StackStreamPlugin
+        POST_BUILD
+        COMMAND copy /Y ${_CMAKE_SOURCE_DIR}\\source\\qmldir ${_STACKSTREAM_PLUGIN_DEST_DPATH})
+    add_custom_command(
+        TARGET StackStreamPlugin
+        POST_BUILD
+        COMMAND copy /Y ${_CMAKE_SOURCE_DIR}\\source\\StackStreamMainWindow.qml ${_STACKSTREAM_PLUGIN_DEST_DPATH})
 else()
     add_custom_command(
         TARGET StackStreamApplication
         POST_BUILD
         COMMAND cp -fv ${_SSG_CONTEXT_PLUGIN_LOCATION} ${_SSG_CONTEXT_PLUGIN_DEST_DPATH})
+    add_custom_command(
+        TARGET StackStreamApplication
+        POST_BUILD
+        COMMAND cp -fv ${_STACKSTREAM_PLUGIN_LOCATION} ${_STACKSTREAM_PLUGIN_DEST_DPATH})
+    add_custom_command(
+        TARGET StackStreamApplication
+        POST_BUILD
+        COMMAND cp -fv ${CMAKE_SOURCE_DIR}/source/qmldir ${_STACKSTREAM_PLUGIN_DEST_DPATH})
+    add_custom_command(
+        TARGET StackStreamApplication
+        POST_BUILD
+        COMMAND cp -fv ${CMAKE_SOURCE_DIR}/source/StackStreamMainWindow.qml ${_STACKSTREAM_PLUGIN_DEST_DPATH})
 endif()
 
 

@@ -1,0 +1,3 @@
+module StackStream
+StackStreamMainWindow 1.0 StackStreamMainWindow.qml
+plugin StackStreamPlugin

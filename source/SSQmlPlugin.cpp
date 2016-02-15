@@ -22,25 +22,29 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
-#include "SSGContextPlugin.h"
-#include "SSGContext.h"
+#include "SSQmlPlugin.h"
+#include "SSImage.h"
+#include "SSImageItem.h"
+#include "SSLayer.h"
+#include "SSView.h"
 
-SSGContextPlugin::SSGContextPlugin(QObject* parent)
-  : QObject(parent)
+SSQmlPlugin::SSQmlPlugin(QObject* parent)
+  : QQmlExtensionPlugin(parent)
 {
-    qDebug() << "SSGContextPlugin loaded";
+    qDebug() << "SSQmlPlugin loaded";
 }
 
-QStringList SSGContextPlugin::keys() const
+void SSQmlPlugin::registerTypes(const char* uri)
 {
-    // This never seems to be invoked.  Perhaps it is vestigial?  It does appear to be
-    // redundant, given that the json metadata file contains a "Keys" entry.
-    QStringList ret;
-    ret << "SSGContextPlugin";
-    return ret;
-}
+    Q_ASSERT(uri == QLatin1String("StackStream"));
+    qDebug() << "SSQmlPlugin::registerTypes(..)";
 
-QSGContext* SSGContextPlugin::create(const QString& key) const
-{
-    return (key == "SSGContextPlugin") ? new SSGContext() : nullptr;
+    const char ss[] = "StackStream";
+    const int ver[] = {1, 0};
+    qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImage");
+    qmlRegisterType<SSLayer>(ss, ver[0], ver[1], "SSLayer");
+    qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
+    qRegisterMetaType<SSImage::DType>("DType");
+    qRegisterMetaType<SSImage::Components>("Components");
+    qRegisterMetaType<std::size_t>("std::size_t");
 }

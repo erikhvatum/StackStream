@@ -39,7 +39,7 @@ class SSGContextPlugin
     Q_INTERFACES(QSGContextFactoryInterface:QFactoryInterface)
 
 public:
-    SSGContextPlugin(QObject *parent = 0);
+    explicit SSGContextPlugin(QObject* parent=nullptr);
 
     QSGContext* create(const QString& key) const override;
     QStringList keys() const override;

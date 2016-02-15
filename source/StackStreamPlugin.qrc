@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>StackStream.qml</file>
         <file>SSLayerRenderer.frag</file>
+        <file>StackStreamMainWindow.qml</file>
     </qresource>
 </RCC>

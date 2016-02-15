@@ -26,23 +26,26 @@ set(SOURCE_FILES
     common.h
     GilLocker.cpp
     GilLocker.h
+    qmldir
+    SSGFramebufferObjectNode.cpp
+    SSGFramebufferObjectNode.h
     SSGSimpleTextureNode.cpp
     SSGSimpleTextureNode.h
     SSGTexture.cpp
     SSGTexture.h
     SSGTextureMaterial.cpp
     SSGTextureMaterial.h
-    SSGFramebufferObjectNode.h
-    SSGFramebufferObjectNode.cpp
     SSImage.cpp
     SSImage.h
-    SSImageItem.h
     SSImageItem.cpp
+    SSImageItem.h
     SSLayer.cpp
     SSLayer.h
     SSLayerRenderer.cpp
     SSLayerRenderer.frag
     SSLayerRenderer.h
+    SSQmlPlugin.cpp
+    SSQmlPlugin.h
     SSQuickFramebufferObject.cpp
     SSQuickFramebufferObject.h
     SSView.cpp
@@ -52,15 +55,16 @@ set(LIBRARIES
     ${FREEIMAGE_LIBRARY}
     ${FREEIMAGEPLUS_LIBRARY})
 
-qt5_add_resources(RESOURCES StackStream.qrc)
-add_library(StackStream SHARED ${SOURCE_FILES} ${RESOURCES})
-qt5_use_modules(StackStream Core Gui Qml OpenGL Quick Widgets)
-target_link_libraries(StackStream ${LIBRARIES})
-set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")
-#set_target_properties(StackStream PROPERTIES COMPILE_OPTIONS "-DENABLE_GL_DEBUG_LOGGING")
+qt5_add_resources(RESOURCES StackStreamPlugin.qrc)
+add_library(StackStreamPlugin SHARED ${SOURCE_FILES} ${RESOURCES})
+qt5_use_modules(StackStreamPlugin Core Gui Qml OpenGL Quick Widgets)
+target_link_libraries(StackStreamPlugin ${LIBRARIES})
+set_target_properties(StackStreamPlugin PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")
+#set_target_properties(StackStreamPlugin PROPERTIES COMPILE_OPTIONS "-DENABLE_GL_DEBUG_LOGGING")
 
 add_subdirectory(SSGContextPlugin)
 add_subdirectory(Application)
 if(BUILD_STACKSTREAM_PYTHON_MODULE)
     add_subdirectory(PythonModule)
 endif()
+

@@ -202,6 +202,8 @@
             <Folder
                 Name="Application"
                 Filters="">
+                <F N="source/Application/Application.qml"/>
+                <F N="source/Application/Application.qrc"/>
                 <F N="source/Application/CMakeLists.txt"/>
                 <F N="source/Application/main.cpp"/>
             </Folder>
@@ -227,6 +229,7 @@
             <F N="source/DraggableLayer.qml"/>
             <F N="source/GilLocker.cpp"/>
             <F N="source/GilLocker.h"/>
+            <F N="source/qmldir"/>
             <F N="source/SSGFramebufferObjectNode.cpp"/>
             <F N="source/SSGFramebufferObjectNode.h"/>
             <F N="source/SSGSimpleTextureNode.cpp"/>
@@ -244,12 +247,14 @@
             <F N="source/SSLayerRenderer.cpp"/>
             <F N="source/SSLayerRenderer.frag"/>
             <F N="source/SSLayerRenderer.h"/>
+            <F N="source/SSQmlPlugin.cpp"/>
+            <F N="source/SSQmlPlugin.h"/>
             <F N="source/SSQuickFramebufferObject.cpp"/>
             <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>
             <F N="source/SSView.h"/>
-            <F N="source/StackStream.qml"/>
-            <F N="source/StackStream.qrc"/>
+            <F N="source/StackStreamMainWindow.qml"/>
+            <F N="source/StackStreamPlugin.qrc"/>
         </Folder>
         <F N="CMakeLists.txt"/>
         <F N="README.md"/>
