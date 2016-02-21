@@ -42,15 +42,15 @@ class ListRoleModel(Qt.QAbstractListModel):
         try:
             property_name = self.property_rolenames[property_role]
             setattr(self.signaling_list[row], property_name, v)
+            return True
         except:
-            return
+            return False
 
     def setData(self, midx, value, role=Qt.Qt.EditRole):
         if midx.isValid():
             if isinstance(value, Qt.QVariant):
                 value = value.value()
-            self.set_row_value_for_role(midx.row(), role, value)
-            return True
+            return self.set_row_value_for_role(midx.row(), role, value)
         return False
 
 #   def headerData(self, section, orientation, role=Qt.Qt.DisplayRole):
@@ -120,11 +120,10 @@ class ListRoleModel(Qt.QAbstractListModel):
             assert instance_count >= 0
             if instance_count == 0:
                 for property_name in self.property_names:
-                    property_role = self.property_nameroles[property_name]
-                    # try:
-                    getattr(element, property_name + 'Changed').disconnect(getattr(element, '_{}LAMBDA_'.format(property_name)))
-                    # except AttributeError:
-                    #     pass
+                    try:
+                        getattr(element, property_name + 'Changed').disconnect(getattr(element, '_{}LAMBDA_'.format(property_name)))
+                    except AttributeError:
+                        pass
                 del self._instance_counts[element]
             else:
                 self._instance_counts[element] = instance_count

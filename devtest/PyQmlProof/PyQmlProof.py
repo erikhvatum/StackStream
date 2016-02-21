@@ -76,12 +76,4 @@ class PickerWidget(Qt.QQuickWidget):
 if __name__ == "__main__":
     app = Qt.QApplication(sys.argv)
     picker_widget = PickerWidget()
-    btn = Qt.QPushButton('pow')
-    btn.show()
-    def on_btn():
-        print(picker_widget.point_list)
-        point = picker_widget.point_list[0]
-        point.x_ = 20
-        print(picker_widget.point_list)
-    btn.clicked.connect(on_btn)
     app.exec_()
