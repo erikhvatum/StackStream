@@ -34,12 +34,20 @@
 
 #pragma once
 #include "common.h"
+#include "SSImage.h"
 
 class SSGTexture
   : public QObject
 {
     Q_OBJECT
 public:
+    struct ComponentCountFormats {
+        QOpenGLTexture::TextureFormat texFormat;
+        QOpenGLTexture::PixelFormat srcPixelFormat;
+    };
+    static const ComponentCountFormats sm_componentCountFormats[];
+    static const QOpenGLTexture::PixelType sm_componentPixelTypes[];
+
     enum WrapMode {
         Repeat,
         ClampToEdge
@@ -57,24 +65,20 @@ public:
     void setOwnsTexture(bool owns) { m_owns_texture = owns; }
     bool ownsTexture() const { return m_owns_texture; }
 
-    virtual void setTextureId(int id);
-    virtual int textureId() const;
-    void setTextureSize(const QSize &size) { m_texture_size = size; }
-    QSize textureSize() const { return m_texture_size; }
-    bool hasAlphaChannel() const { return m_has_alpha; }
-    bool hasMipmaps() const { return minMipmapFiltering() != SSGTexture::None || magMipmapFiltering() != SSGTexture::None; }
+    void setTextureId(int id);
+    int textureId() const;
+    inline void setTextureSize(const QSize &size) { m_texture_size = size; }
+    inline QSize textureSize() const { return m_texture_size; }
+    inline bool hasAlphaChannel() const { return m_has_alpha; }
+    inline bool hasMipmaps() const { return minMipmapFiltering() != SSGTexture::None || magMipmapFiltering() != SSGTexture::None; }
+    inline QRectF normalizedTextureSubRect() const { return QRectF(0, 0, 1, 1); }
+    QRectF convertToNormalizedSourceRect(const QRectF &rect) const;
 
-    virtual QRectF normalizedTextureSubRect() const;
-
-    virtual bool isAtlasTexture() const;
-
-    virtual SSGTexture* removedFromAtlas() const;
-
-    virtual void setImage(const QImage &image);
-    virtual const QImage &image() { return m_image; }
+    void setImage(SSImage* image);
+    SSImage* image() { return m_image.data(); }
 
     virtual void bind();
-    virtual void updateBindOptions(bool force = false);
+    virtual void updateBindOptions(bool force=false);
 
     void setMinMipmapFiltering(Filtering filter);
     SSGTexture::Filtering minMipmapFiltering() const;
@@ -94,27 +98,14 @@ public:
     void setVerticalWrapMode(WrapMode vwrap);
     SSGTexture::WrapMode verticalWrapMode() const;
 
-    inline QRectF convertToNormalizedSourceRect(const QRectF &rect) const {
-        QSize s = textureSize();
-        QRectF r = normalizedTextureSubRect();
-
-        qreal sx = r.width() / s.width();
-        qreal sy = r.height() / s.height();
-
-        return QRectF(r.x() + rect.x() * sx,
-                      r.y() + rect.y() * sy,
-                      rect.width() * sx,
-                      rect.height() * sy);
-    }
-
-    static SSGTexture *fromImage(const QImage &image) {
+    static SSGTexture *fromImage(SSImage* image) {
         SSGTexture *t = new SSGTexture();
         t->setImage(image);
         return t;
     }
 
 protected:
-    QImage m_image;
+    QSharedPointer<SSImage> m_image;
 
     uint m_wrapChanged : 1;
     uint m_filteringChanged : 1;

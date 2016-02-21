@@ -10,30 +10,32 @@ class OutlinePoint(Qt.QObject):
 
     def __init__(self, x=0, y=0, parent=None):
         super().__init__(parent)
-        self._x = x
-        self._y = y
+        self._x = float(x)
+        self._y = float(y)
 
-    @Qt.pyqtProperty(float, notify=x_Changed)
-    def x_(self):
+    def __repr__(self):
+        return 'OutlinePoint({}, {})'.format(self._x, self._y)
+
+    def getX_(self):
         return self._x
 
-    @x_.setter
     def setX_(self, x):
         x = float(x)
-        if x != self._x:
+        if abs(x - self._x) > 0.00001:
             self._x = x
             self.x_Changed.emit(x)
 
-    @Qt.pyqtProperty(float, notify=y_Changed)
-    def y_(self):
+    x_ = Qt.pyqtProperty(float, fget=getX_, fset=setX_, notify=x_Changed)
+
+    def getY_(self):
         return self._y
 
-    @y_.setter
     def setY_(self, y):
-        y = float(y)
-        if y != self._y:
+        if abs(y - self._y) > 0.00001:
             self._y = y
             self.y_Changed.emit(y)
+
+    y_ = Qt.pyqtProperty(float, fget=getY_, fset=setY_, notify=y_Changed)
 
 class OutlinePointList(om.UniformSignalingList):
     def take_input_element(self, obj):
@@ -54,18 +56,32 @@ class PointListModel(ListRoleModel):
     def delAtIndex(self, idx):
         del self.signaling_list[idx]
 
+_QML_TYPES_REGISTERED = False
+
+class PickerWidget(Qt.QQuickWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        global _QML_TYPES_REGISTERED
+        if not _QML_TYPES_REGISTERED:
+            Qt.qmlRegisterType(OutlinePoint)
+            Qt.qmlRegisterType(ListRoleModel)
+            _QML_TYPES_REGISTERED = True
+        self.setResizeMode(Qt.QQuickWidget.SizeRootObjectToView)
+        self.point_list = OutlinePointList()
+        self.point_list_model = PointListModel(('x_', 'y_'), self.point_list)
+        self.rootContext().setContextProperty("pointListModel", self.point_list_model)
+        self.setSource(Qt.QUrl(str(Path(__file__).parent / 'PyQmlProof.qml')))
+        self.show()
+
 if __name__ == "__main__":
     app = Qt.QApplication(sys.argv)
-    Qt.qmlRegisterType(OutlinePoint)
-    Qt.qmlRegisterType(ListRoleModel)
-    point_list = OutlinePointList()
-    point_list_model = PointListModel(('x_', 'y_'), point_list)
-    quick_widget = Qt.QQuickWidget()
-    quick_widget.setResizeMode(Qt.QQuickWidget.SizeRootObjectToView)
-    quick_widget.rootContext().setContextProperty("pointListModel", point_list_model)
-    Path(__file__).parent / 'PyQmlProof.py'
-    url = Qt.QUrl(str(Path(__file__).parent / 'PyQmlProof.qml'))
-    quick_widget.setSource(url)
-    quick_widget.show()
-    #
+    picker_widget = PickerWidget()
+    btn = Qt.QPushButton('pow')
+    btn.show()
+    def on_btn():
+        print(picker_widget.point_list)
+        point = picker_widget.point_list[0]
+        point.x_ = 20
+        print(picker_widget.point_list)
+    btn.clicked.connect(on_btn)
     app.exec_()

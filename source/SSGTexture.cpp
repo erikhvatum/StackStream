@@ -39,11 +39,24 @@
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>
 
-inline static bool isPowerOfTwo(int x)
-{
-    // Assumption: x >= 1
-    return x == (x & -x);
-}
+const SSLayerRenderer::componentCountFormats SSLayerRenderer::sm_componentCountFormats[] = {
+    {QOpenGLTexture::NoFormat, QOpenGLTexture::NoSourceFormat},
+    {QOpenGLTexture::R32F, QOpenGLTexture::Red},
+    {QOpenGLTexture::RG32F, QOpenGLTexture::RG},
+    {QOpenGLTexture::RGB32F, QOpenGLTexture::RGB},
+    {QOpenGLTexture::RGBA32F, QOpenGLTexture::RGBA}
+};
+
+const QOpenGLTexture::PixelType SSLayerRenderer::sm_componentPixelTypes[] = {
+    QOpenGLTexture::NoPixelType,
+    QOpenGLTexture::UInt8,
+    QOpenGLTexture::UInt16,
+    QOpenGLTexture::UInt16,
+    QOpenGLTexture::UInt32,
+    QOpenGLTexture::NoPixelType, // TODO: add support; may require abandoning QOpenGLTexture
+    QOpenGLTexture::Float32,
+    QOpenGLTexture::NoPixelType  // TODO: add support; may require abandoning QOpenGLTexture
+};
 
 SSGTexture::SSGTexture()
   : m_wrapChanged(false),
@@ -70,25 +83,9 @@ SSGTexture::~SSGTexture()
         QOpenGLContext::currentContext()->functions()->glDeleteTextures(1, &m_texture_id);
 }
 
-SSGTexture *SSGTexture::removedFromAtlas() const
+void SSGTexture::setImage(SSImage* image)
 {
-    Q_ASSERT_X(!isAtlasTexture(), "SSGTexture::removedFromAtlas()", "Called on a non-atlas texture");
-    return 0;
-}
-
-QRectF SSGTexture::normalizedTextureSubRect() const
-{
-    return QRectF(0, 0, 1, 1);
-}
-
-bool SSGTexture::isAtlasTexture() const
-{
-    return false;
-}
-
-void SSGTexture::setImage(const QImage &image)
-{
-    qDebug() << "SSGTexture::setImage(const QImage &image)";
+    qDebug() << "SSGTexture::setImage(SSImage* image)";
     m_image = image;
     m_texture_size = image.size();
     m_has_alpha = image.hasAlphaChannel();
@@ -121,13 +118,27 @@ void SSGTexture::setTextureId(int id)
     m_texture_id = id;
     m_dirty_texture = false;
     m_dirty_bind_options = true;
-    m_image = QImage();
+    m_image.reset();
     m_mipmaps_generated = false;
+}
+
+QRectF SSGTexture::convertToNormalizedSourceRect(const QRectF &rect) const
+{
+    QSize s = textureSize();
+    QRectF r = normalizedTextureSubRect();
+
+    qreal sx = r.width() / s.width();
+    qreal sy = r.height() / s.height();
+
+    return QRectF(r.x() + rect.x() * sx,
+                  r.y() + rect.y() * sy,
+                  rect.width() * sx,
+                  rect.height() * sy);
 }
 
 void SSGTexture::bind()
 {
-    qWarning("SSGTexture::bind() called; resampling to 10-bpc");
+    qDebug() << "SSGTexture::bind()";
     QOpenGLContext *context = QOpenGLContext::currentContext();
     QOpenGLFunctions *funcs = context->functions();
     if (!m_dirty_texture) {
@@ -143,7 +154,7 @@ void SSGTexture::bind()
 
     m_dirty_texture = false;
 
-    if (m_image.isNull()) {
+    if (m_image) {
         if (m_texture_id && m_owns_texture) {
             funcs->glDeleteTextures(1, &m_texture_id);
         }
@@ -178,7 +189,7 @@ void SSGTexture::bind()
 
     m_dirty_bind_options = false;
     if (!m_retain_image)
-        m_image = QImage();
+        m_image.reset();
 }
 
 void SSGTexture::updateBindOptions(bool force)

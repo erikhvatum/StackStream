@@ -50,12 +50,12 @@ SSGOpaqueTextureMaterialShader::SSGOpaqueTextureMaterialShader()
     : QSGMaterialShader()
 {
     setShaderSourceFile(QOpenGLShader::Vertex, QStringLiteral(":/scenegraph/shaders/opaquetexture.vert"));
-    setShaderSourceFile(QOpenGLShader::Fragment, QStringLiteral(":/scenegraph/shaders/opaquetexture.frag"));
+    setShaderSourceFile(QOpenGLShader::Fragment, QStringLiteral(":/scenegraph/shaders/texture.frag"));
 }
 
 char const *const *SSGOpaqueTextureMaterialShader::attributeNames() const
 {
-    static char const *const attr[] = { "qt_VertexPosition", "qt_VertexTexCoord", 0 };
+    static char const *const attr[] = { "qt_VertexPosition", "qt_VertexTexCoord", "opacity", 0 };
     return attr;
 }
 
@@ -69,6 +69,9 @@ void SSGOpaqueTextureMaterialShader::updateState(const RenderState &state, QSGMa
     Q_ASSERT(oldEffect == 0 || newEffect->type() == oldEffect->type());
     SSGOpaqueTextureMaterial *tx = static_cast<SSGOpaqueTextureMaterial *>(newEffect);
     SSGOpaqueTextureMaterial *oldTx = static_cast<SSGOpaqueTextureMaterial *>(oldEffect);
+
+    if (state.isOpacityDirty())
+        program()->setUniformValue(m_opacity_id, state.opacity());
 
     SSGTexture *t = tx->texture();
 
@@ -143,37 +146,4 @@ int SSGOpaqueTextureMaterial::compare(const QSGMaterial *o) const
     if (diff)
         return diff;
     return int(m_mag_filtering) - int(other->m_mag_filtering);
-}
-
-QSGMaterialType SSGTextureMaterialShader::type;
-
-QSGMaterialType *SSGTextureMaterial::type() const
-{
-    return &SSGTextureMaterialShader::type;
-}
-
-QSGMaterialShader *SSGTextureMaterial::createShader() const
-{
-    return new SSGTextureMaterialShader;
-}
-
-SSGTextureMaterialShader::SSGTextureMaterialShader()
-    : SSGOpaqueTextureMaterialShader()
-{
-    setShaderSourceFile(QOpenGLShader::Fragment, QStringLiteral(":/scenegraph/shaders/texture.frag"));
-}
-
-void SSGTextureMaterialShader::updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect)
-{
-    Q_ASSERT(oldEffect == 0 || newEffect->type() == oldEffect->type());
-    if (state.isOpacityDirty())
-        program()->setUniformValue(m_opacity_id, state.opacity());
-
-    SSGOpaqueTextureMaterialShader::updateState(state, newEffect, oldEffect);
-}
-
-void SSGTextureMaterialShader::initialize()
-{
-    SSGOpaqueTextureMaterialShader::initialize();
-    m_opacity_id = program()->uniformLocation("opacity");
 }

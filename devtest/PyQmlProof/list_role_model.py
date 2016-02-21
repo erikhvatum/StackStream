@@ -108,7 +108,7 @@ class ListRoleModel(Qt.QAbstractListModel):
                 for property_name in self.property_names:
                     property_role = self.property_nameroles[property_name]
                     try:
-                        l = lambda element, property_role=property_role: self._on_property_changed(element, property_role)
+                        l = lambda value, element=element, property_name=property_name, property_role=property_role: self._on_property_changed(value, element, property_name, property_role)
                         setattr(element, '_{}LAMBDA_'.format(property_name), l)
                         getattr(element, property_name + 'Changed').connect(l)
                     except AttributeError:
@@ -121,15 +121,15 @@ class ListRoleModel(Qt.QAbstractListModel):
             if instance_count == 0:
                 for property_name in self.property_names:
                     property_role = self.property_nameroles[property_name]
-                    try:
-                        getattr(element, property_name + 'Changed').disconnect(getattr(element, '_{}LAMBDA_'.format(property_name)))
-                    except AttributeError:
-                        pass
+                    # try:
+                    getattr(element, property_name + 'Changed').disconnect(getattr(element, '_{}LAMBDA_'.format(property_name)))
+                    # except AttributeError:
+                    #     pass
                 del self._instance_counts[element]
             else:
                 self._instance_counts[element] = instance_count
 
-    def _on_property_changed(self, element, property_role):
+    def _on_property_changed(self, value, element, property_name, property_role):
         sl = self.signaling_list
         next_row = 0
         instance_count = self._instance_counts[element]

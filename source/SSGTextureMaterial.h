@@ -36,7 +36,7 @@
 #include "common.h"
 #include "SSGTexture.h"
 
-class SSGOpaqueTextureMaterial
+class SSGTextureMaterial
     : public QSGMaterial
 {
 public:
@@ -104,6 +104,7 @@ protected:
     virtual void initialize();
 
     int m_matrix_id;
+    int m_opacity_id;
 };
 
 class SSGTextureMaterialShader : public SSGOpaqueTextureMaterialShader

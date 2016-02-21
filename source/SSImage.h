@@ -131,6 +131,8 @@ public:
     void setComponents(Components components);
     inline int componentCount() const { return smc_componentsCounts[m_components]; }
 
+    bool hasAlphaChannel() const;
+
     std::size_t byteCount() const;
 
     inline const QStringList& componentNames() const { return smc_componentNames[componentCount()]; }

@@ -22,31 +22,38 @@ Rectangle {
                         id: xSpinBox
                         minimumValue: -999999
                         maximumValue: 999999
-                        decimals: 3
+                        decimals: 5
                         value: x_
                         z: 11
                         onValueChanged: {
-                            x_ = value / image.scaleRel
+                            if(Math.abs(x_ - value) > 0.00001)
+                            {
+                                x_ = value
+                            }
 //                            var p = outlinePath.pointAt(index)
 //                            var r = image.sourceSize.height / image.height
 //                            outlinePath.setPointAt(index, Qt.point(value * r, p.y * r))
 //                            controlPointRepeater.itemAt(index).x = value / r
                         }
                     }
-//                    SpinBox {
-//                        id: ySpinBox
-//                        minimumValue: -999999
-//                        maximumValue: 999999
-//                        decimals: 3
-//                        value: outlinePath.pointAt(index).y
-//                        z: 11
-//                        onValueChanged: {
+                    SpinBox {
+                        id: ySpinBox
+                        minimumValue: -999999
+                        maximumValue: 999999
+                        decimals: 5
+                        value: y_
+                        z: 11
+                        onValueChanged: {
+                            if(Math.abs(y_ - value) > 0.00001)
+                            {
+                                y_ = value
+                            }
 //                            var p = outlinePath.pointAt(index)
 //                            var r = image.sourceSize.height / image.height
 //                            outlinePath.setPointAt(index, Qt.point(p.x * r, value * r))
 //                            controlPointRepeater.itemAt(index).y = value / r
-//                        }
-//                    }
+                        }
+                    }
                 }
             }
         }

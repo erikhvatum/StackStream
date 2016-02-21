@@ -22,8 +22,29 @@
 //
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
+import QtQuick 2.5
+import QtQuick.Controls 1.3
+import QtQuick.Dialogs 1.2
+import QtQuick.Extras 1.4
+import QtQuick.Layouts 1.2
+import QtQuick.Window 2.2
+
 import StackStream 1.0
 
-StackStreamMainWindow {
-    objectName: "stackStreamMainWindow"
+ApplicationWindow {
+    visible: false
+    width: 1024
+    height: 768
+    title: qsTr("StackStream")
+
+    Item{
+
+    }
+
+    SSImageItem {
+        id: imageItem
+        anchors.left: parent.left
+        anchors.top: parent.top
+        co
+    }
 }
