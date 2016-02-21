@@ -2,17 +2,17 @@ import QtQuick 2.5
 import QtQuick.Controls 1.4
 
 Rectangle {
-    implicitWidth: 100
-    implicitHeight: 100
-    Image {
-        id: image
-        layer.enabled: true
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        height: parent.height
-        source: "file:///mnt/bulkdata/SDO/2011/04/13/20110413_004253_4096_0335.jpg"
-        width: (sourceSize.width / sourceSize.height) * height
-        property real scaleRel: sourceSize.height / height
+    id: containerRect
+    implicitWidth: 1024
+    implicitHeight: 768
+    GroupBox {
+        id: pointsGroupBox
+        title: "Points"
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.margins: 5
+        implicitWidth: 350
         Column {
             z: 1
             Repeater {
@@ -49,35 +49,81 @@ Rectangle {
                 }
             }
         }
-        Repeater {
-            id: controlPointRepeater
-            model: pointListModel
-            delegate: Rectangle {
-                id: rect
-                transformOrigin: Item.Center
-                x: x_ / image.scaleRel
-                y: y_ / image.scaleRel
-                z: 2
-                width: 11
-                height: 11
-                color: activeFocus ? "red" : "yellow"
-                Drag.active: dragArea.drag.active
-                Keys.onDeletePressed: pointListModel.delAtIndex(index)
-                onXChanged: x_ = x * image.scaleRel
-                onYChanged: y_ = y * image.scaleRel
-                MouseArea {
-                    id: dragArea
-                    anchors.fill: parent
-                    drag.target: parent
-                    onPressed: parent.focus = true
-                    drag.threshold: 0
+    }
+    Item {
+        id: imageContainer
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.left: pointsGroupBox.right
+        anchors.right: parent.right
+        clip: true
+        ShaderEffect {
+            id: tileBackground
+            anchors.fill: parent
+            layer.enabled: true
+
+            property real tileSize: 16
+            property color color1: Qt.rgba(0.9, 0.9, 0.9, 1);
+            property color color2: Qt.rgba(0.85, 0.85, 0.85, 1);
+
+            property size pixelSize: Qt.size(width / tileSize, height / tileSize);
+
+            fragmentShader:
+                "
+                uniform lowp vec4 color1;
+                uniform lowp vec4 color2;
+                uniform highp vec2 pixelSize;
+                varying highp vec2 qt_TexCoord0;
+                void main() {
+                    highp vec2 tc = sign(sin(3.14152 * qt_TexCoord0 * pixelSize));
+                    if (tc.x != tc.y)
+                        gl_FragColor = color1;
+                    else
+                        gl_FragColor = color2;
+                }
+                "
+        }
+        Image {
+            id: image
+            anchors.top: parent.top
+            anchors.bottom: parent.bottom
+            anchors.horizontalCenter: imageContainer.horizontalCenter
+            source: "file:///mnt/bulkdata/SDO/2011/04/13/20110413_004253_4096_0335.jpg"
+            property real scaleRel: sourceSize.height / height
+            width: (sourceSize.width / sourceSize.height) * height
+            Repeater {
+                id: controlPointRepeater
+                model: pointListModel
+                delegate: Rectangle {
+                    id: rect
+                    x: x_ / image.scaleRel
+                    y: y_ / image.scaleRel
+                    z: 2
+                    width: 11
+                    height: 11
+                    color: activeFocus ? "red" : "yellow"
+                    Drag.active: dragArea.drag.active
+                    Keys.onDeletePressed: pointListModel.delAtIndex(index)
+                    onXChanged: x_ = x * image.scaleRel
+                    onYChanged: y_ = y * image.scaleRel
+                    MouseArea {
+                        id: dragArea
+                        anchors.fill: parent
+                        drag.target: parent
+                        onPressed: parent.focus = true
+                        drag.threshold: 0
+                    }
+                    transform: Translate {
+                        x: -5
+                        y: -5
+                    }
                 }
             }
-        }
-        MouseArea {
-            anchors.fill: parent
-            onClicked: {
-                pointListModel.append(mouseX * image.scaleRel, mouseY * image.scaleRel)
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    pointListModel.append(mouseX * image.scaleRel, mouseY * image.scaleRel)
+                }
             }
         }
     }
