@@ -29,6 +29,14 @@
 
 static QSurfaceFormat fmt;
 
+class MakeImage
+  : public QObject
+{
+    Q_OBJECT
+public:
+    Q_INVOKABLE SSImage* makeImage() { return new SSImage(); }
+};
+
 static void onStackStreamWindowCreated(QObject* object, const QUrl&)
 {
     QQuickWindow* stackStreamMainWindow{qobject_cast<QQuickWindow*>(object)};

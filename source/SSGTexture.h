@@ -34,20 +34,12 @@
 
 #pragma once
 #include "common.h"
-#include "SSImage.h"
 
 class SSGTexture
   : public QObject
 {
     Q_OBJECT
 public:
-    struct ComponentCountFormats {
-        QOpenGLTexture::TextureFormat texFormat;
-        QOpenGLTexture::PixelFormat srcPixelFormat;
-    };
-    static const ComponentCountFormats sm_componentCountFormats[];
-    static const QOpenGLTexture::PixelType sm_componentPixelTypes[];
-
     enum WrapMode {
         Repeat,
         ClampToEdge
@@ -72,11 +64,17 @@ public:
     bool hasAlphaChannel() const { return m_has_alpha; }
     bool hasMipmaps() const { return minMipmapFiltering() != SSGTexture::None || magMipmapFiltering() != SSGTexture::None; }
 
-    void setImage(SSImage* image);
-    SSImage* image() { return m_image.data(); }
+    virtual QRectF normalizedTextureSubRect() const;
+
+    virtual bool isAtlasTexture() const;
+
+    virtual SSGTexture* removedFromAtlas() const;
+
+    virtual void setImage(const QImage &image);
+    virtual const QImage &image() { return m_image; }
 
     virtual void bind();
-    virtual void updateBindOptions(bool force=false);
+    virtual void updateBindOptions(bool force = false);
 
     void setMinMipmapFiltering(Filtering filter);
     SSGTexture::Filtering minMipmapFiltering() const;
@@ -96,14 +94,27 @@ public:
     void setVerticalWrapMode(WrapMode vwrap);
     SSGTexture::WrapMode verticalWrapMode() const;
 
-    static SSGTexture *fromImage(SSImage* image) {
+    inline QRectF convertToNormalizedSourceRect(const QRectF &rect) const {
+        QSize s = textureSize();
+        QRectF r = normalizedTextureSubRect();
+
+        qreal sx = r.width() / s.width();
+        qreal sy = r.height() / s.height();
+
+        return QRectF(r.x() + rect.x() * sx,
+                      r.y() + rect.y() * sy,
+                      rect.width() * sx,
+                      rect.height() * sy);
+    }
+
+    static SSGTexture *fromImage(const QImage &image) {
         SSGTexture *t = new SSGTexture();
         t->setImage(image);
         return t;
     }
 
 protected:
-    QSharedPointer<SSImage> m_image;
+    QImage m_image;
 
     uint m_wrapChanged : 1;
     uint m_filteringChanged : 1;
@@ -126,3 +137,5 @@ protected:
     uint m_mipmaps_generated : 1;
     uint m_retain_image: 1;
 };
+
+bool ssg_safeguard_texture(SSGTexture *);

@@ -76,16 +76,13 @@ public:
     void setOwnsTexture(bool owns);
     bool ownsTexture() const;
 
-protected:
+private:
     QSGGeometry m_geometry;
     SSGOpaqueTextureMaterial m_opaque_material;
     SSGTextureMaterial m_material;
-    bool m_ownsTexture;
-    TextureCoordinatesTransformMode m_texCoordMode;
-    QRectF m_rect;
-    QRectF m_sourceRect;
 
-private:
+    QRectF m_rect;
+
     Q_DECLARE_PRIVATE(SSGSimpleTextureNode)
 };
 

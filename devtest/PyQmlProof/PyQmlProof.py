@@ -1,68 +1,44 @@
 from pathlib import Path
 from PyQt5 import Qt
 import sys
-from ris_widget import om
-from list_role_model import ListRoleModel
 
-class OutlinePoint(Qt.QObject):
-    x_Changed = Qt.pyqtSignal(float)
-    y_Changed = Qt.pyqtSignal(float)
+class OutlinePath(Qt.QObject):
+    pointCountChanged = Qt.pyqtSignal()
 
-    def __init__(self, x=0, y=0, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self._x = x
-        self._y = y
+        self._points = []
 
-    @Qt.pyqtProperty(float, notify=x_Changed)
-    def x_(self):
-        return self._x
+    @Qt.pyqtProperty(int, notify=pointCountChanged)
+    def pointCount(self):
+        return len(self._points)
 
-    @x_.setter
-    def setX_(self, x):
-        x = float(x)
-        if x != self._x:
-            self._x = x
-            self.x_Changed.emit(x)
+    @Qt.pyqtSlot(Qt.QPoint)
+    def appendPoint(self, point):
+        self._points.append(point)
+        self.pointCountChanged.emit()
+        print(self._points)
 
-    @Qt.pyqtProperty(float, notify=y_Changed)
-    def y_(self):
-        return self._y
+    @Qt.pyqtSlot(int, result=Qt.QPoint)
+    def pointAt(self, idx):
+        return self._points[idx]
 
-    @y_.setter
-    def setY_(self, y):
-        y = float(y)
-        if y != self._y:
-            self._y = y
-            self.y_Changed.emit(y)
-
-class OutlinePointList(om.UniformSignalingList):
-    def take_input_element(self, obj):
-        if isinstance(obj, OutlinePoint):
-            return obj
-        elif isinstance(obj, (Qt.QPointF, Qt.QPoint)):
-            return OutlinePoint(obj.x(), obj.y())
-        else:
-            i = iter(obj)
-            return OutlinePoint(next(i), next(i))
-
-class PointListModel(ListRoleModel):
-    @Qt.pyqtSlot(float, float)
-    def append(self, x, y):
-        self.signaling_list.append(OutlinePoint(x, y))
+    @Qt.pyqtSlot(int, Qt.QPoint)
+    def setPointAt(self, idx, p):
+        self._points[idx] = p
 
     @Qt.pyqtSlot(int)
-    def delAtIndex(self, idx):
-        del self.signaling_list[idx]
+    def delPointAt(self, idx):
+        del self._points[idx]
+        self.pointCountChanged.emit()
 
 if __name__ == "__main__":
     app = Qt.QApplication(sys.argv)
-    Qt.qmlRegisterType(OutlinePoint)
-    Qt.qmlRegisterType(ListRoleModel)
-    point_list = OutlinePointList()
-    point_list_model = PointListModel(('x_', 'y_'), point_list)
+    Qt.qmlRegisterType(OutlinePath)
     quick_widget = Qt.QQuickWidget()
     quick_widget.setResizeMode(Qt.QQuickWidget.SizeRootObjectToView)
-    quick_widget.rootContext().setContextProperty("pointListModel", point_list_model)
+    outlinePath = OutlinePath()
+    quick_widget.rootContext().setContextProperty("outlinePath", outlinePath)
     Path(__file__).parent / 'PyQmlProof.py'
     url = Qt.QUrl(str(Path(__file__).parent / 'PyQmlProof.qml'))
     quick_widget.setSource(url)

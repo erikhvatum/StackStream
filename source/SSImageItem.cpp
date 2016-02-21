@@ -23,7 +23,6 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #include "SSImageItem.h"
-#include "SSGSimpleTextureNode.h"
 
 SSImageItem::SSImageItem(QQuickItem* parent)
   : QQuickItem(parent)
@@ -52,5 +51,4 @@ void SSImageItem::setImage(SSImage* image)
 
 QSGNode* SSImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData)
 {
-
 }
