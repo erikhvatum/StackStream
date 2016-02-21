@@ -21,17 +21,12 @@ Rectangle {
                 delegate: Row {
                     SpinBox {
                         id: xSpinBox
-                        activeFocusOnPress: true
-                        activeFocusOnTab: true
                         minimumValue: -999999
                         maximumValue: 999999
                         decimals: 5
                         value: x_
                         onValueChanged: {
-                            if(Math.abs(x_ - value) > 0.00001)
-                            {
-                                x_ = value
-                            }
+                            if(Math.abs(x_ - value) > 0.00001) x_ = value
                         }
                     }
                     SpinBox {
@@ -41,10 +36,14 @@ Rectangle {
                         decimals: 5
                         value: y_
                         onValueChanged: {
-                            if(Math.abs(y_ - value) > 0.00001)
-                            {
-                                y_ = value
-                            }
+                            if(Math.abs(y_ - value) > 0.00001) y_ = value
+                        }
+                    }
+                    Button {
+                        id: delButton
+                        text: 'X'
+                        onClicked: {
+                            pointListModel.delAtIndex(index)
                         }
                     }
                 }
