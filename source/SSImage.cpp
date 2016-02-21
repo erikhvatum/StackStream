@@ -367,6 +367,19 @@ void SSImage::setComponents(Components components)
     else reconcile();
 }
 
+bool SSImage::hasAlphaChannel() const
+{
+    bool r{false};
+    switch(m_components)
+    {
+    case ComponentsGrA:
+    case ComponentsRGBA:
+        r = true;
+        break;
+    }
+    return r;
+}
+
 std::size_t SSImage::byteCount() const
 {
     return m_byteCount;

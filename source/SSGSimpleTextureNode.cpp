@@ -41,13 +41,11 @@ public:
     SSGSimpleTextureNodePrivate()
         : QSGGeometryNodePrivate()
         , texCoordMode(SSGSimpleTextureNode::NoTransform)
-        , isAtlasTexture(false)
         , ownsTexture(false)
     {}
 
     QRectF sourceRect;
     SSGSimpleTextureNode::TextureCoordinatesTransformMode texCoordMode;
-    uint isAtlasTexture : 1;
     uint ownsTexture : 1;
 };
 
@@ -81,8 +79,10 @@ static void SSGSimpleTextureNode_update(QSGGeometry *g,
 }
 
 SSGSimpleTextureNode::SSGSimpleTextureNode()
-    : QSGGeometryNode(*new SSGSimpleTextureNodePrivate)
-    , m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4)
+  : QSGGeometryNode(*new SSGSimpleTextureNodePrivate),
+    m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4),
+    m_ownsTexture(false),
+    m_texCoordMode(NoTransform)
 {
     setGeometry(&m_geometry);
     setMaterial(&m_material);
@@ -98,9 +98,7 @@ SSGSimpleTextureNode::SSGSimpleTextureNode()
 
 SSGSimpleTextureNode::~SSGSimpleTextureNode()
 {
-    Q_D(SSGSimpleTextureNode);
-    if (d->ownsTexture)
-        delete m_material.texture();
+    if(m_ownsTexture) delete m_material.texture();
 }
 
 void SSGSimpleTextureNode::setMinFiltering(SSGTexture::Filtering filtering)
