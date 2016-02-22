@@ -256,6 +256,23 @@
             <F N="source/StackStreamMainWindow.qml"/>
             <F N="source/StackStreamPlugin.qrc"/>
         </Folder>
+        <Folder
+            Name="devtest"
+            Filters="">
+            <Folder
+                Name="PyQmlProof"
+                Filters="">
+                <F N="devtest/PyQmlProof/ImagePane.qml"/>
+                <F N="devtest/PyQmlProof/list_role_model.py"/>
+                <F N="devtest/PyQmlProof/PointTablePane.qml"/>
+                <F N="devtest/PyQmlProof/PyQmlProof.pro"/>
+                <F N="devtest/PyQmlProof/PyQmlProof.py"/>
+                <F N="devtest/PyQmlProof/PyQmlProof.qml"/>
+                <F N="devtest/PyQmlProof/Spline.qml"/>
+                <F N="devtest/PyQmlProof/SplinePoint.qml"/>
+                <F N="devtest/PyQmlProof/TiledBackground.qml"/>
+            </Folder>
+        </Folder>
         <F N="CMakeLists.txt"/>
         <F N="README.md"/>
     </Files>
