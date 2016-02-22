@@ -35,7 +35,48 @@ GroupBox {
     clip: true
 
     Column {
+        id: "column"
+        anchors.fill: parent
         z: 1
+
+        TableView {
+            id: tableView
+            anchors.margins: 5
+            anchors.left: parent.left
+            anchors.right: parent.right
+            model: pointListModel
+            selectionMode: SelectionMode.ExtendedSelection
+            activeFocusOnTab: true
+
+            TableViewColumn {
+                role: "x_"
+                title: "x"
+                width: column.width / 2 - 20
+                movable: false
+            }
+
+            TableViewColumn {
+                role: "y_"
+                title: "y"
+                width: column.width / 2 - 20
+                movable: false
+            }
+
+//            Keys.onPressed: {
+//                console.log("pressed")
+//                tableView.selection.forEach(function(row){console.log(row)})
+//            }
+
+//            onFocusChanged: {
+//                console.log(focus)
+//            }
+
+//            onClicked: {
+//                console.log("clicked")
+//                parent.parent.forceActiveFocus()
+//                parent.parent.focus = true
+//            }
+        }
 
         Repeater {
             id: spinBoxRepeater
