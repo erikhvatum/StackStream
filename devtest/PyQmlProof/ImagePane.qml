@@ -34,15 +34,15 @@ Item {
     DropArea {
         anchors.fill: parent
         onEntered: {
-            console.log('drop area entered');
+//            console.log('drop area entered');
             drag.accept(Qt.CopyAction);
         }
         onDropped: {
             image.source = drop.urls[0]
         }
-        onExited: {
-            console.log('drop area exited');
-        }
+//        onExited: {
+//            console.log('drop area exited');
+//        }
     }
 
     TiledBackground {}
@@ -52,7 +52,6 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: imageContainer.horizontalCenter
-//        source: "file:///mnt/bulkdata/SDO/2011/04/13/20110413_004253_4096_0335.jpg"
         property real scaleRel: sourceSize.height / height
         width: (sourceSize.width / sourceSize.height) * height
 
@@ -83,6 +82,39 @@ Item {
                 transform: Translate {
                     x: -5
                     y: -5
+                }
+            }
+        }
+
+        Canvas {
+            anchors.fill: parent
+//            renderStrategy: Canvas.Threaded
+//            renderTarget: Canvas.FramebufferObject
+            antialiasing: true
+            smooth: true
+            Component.onCompleted: {
+                pointListModel.dataChanged.connect(requestPaint)
+                pointListModel.rowsInserted.connect(requestPaint)
+                pointListModel.rowsRemoved.connect(requestPaint)
+                pointListModel.modelReset.connect(requestPaint)
+                pointListModel.rowsMoved.connect(requestPaint)
+            }
+            onPaint: {
+                var rowCount = pointListModel.rowCount()
+                if(rowCount >= 2) {
+                    var ctx = getContext("2d")
+                    ctx.reset()
+                    ctx.strokeStyle = Qt.rgba(0,1,0,1)
+                    ctx.lineWidth = 2
+                    ctx.beginPath()
+                    var p = pointListModel.data(pointListModel.index(0, 0), 0)
+                    ctx.moveTo(p.x_/image.scaleRel, p.y_/image.scaleRel)
+                    var idx_=1
+                    for(; idx_ < rowCount; idx_++) {
+                        p = pointListModel.data(pointListModel.index(idx_, 0), 0)
+                        ctx.lineTo(p.x_/image.scaleRel, p.y_/image.scaleRel)
+                    }
+                    ctx.stroke()
                 }
             }
         }

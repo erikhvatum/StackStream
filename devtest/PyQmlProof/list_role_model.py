@@ -51,6 +51,8 @@ class ListRoleModel(Qt.QAbstractListModel):
         return f
 
     def get_row_value_for_role(self, row, property_role):
+        if property_role == Qt.Qt.DisplayRole:
+            return self.signaling_list[row]
         try:
             property_name = self.property_rolenames[property_role]
             return getattr(self.signaling_list[row], property_name, None)
@@ -59,7 +61,10 @@ class ListRoleModel(Qt.QAbstractListModel):
 
     def data(self, midx, role=Qt.Qt.DisplayRole):
         if midx.isValid():
-            return Qt.QVariant(self.get_row_value_for_role(midx.row(), role))
+            try:
+                return Qt.QVariant(self.get_row_value_for_role(midx.row(), role))
+            except TypeError:
+                pass
         return Qt.QVariant()
 
     def set_row_value_for_role(self, row, property_role, v):
