@@ -78,7 +78,6 @@ public:
 
 protected:
     QSGGeometry m_geometry;
-    SSGOpaqueTextureMaterial m_opaque_material;
     SSGTextureMaterial m_material;
     bool m_ownsTexture;
     TextureCoordinatesTransformMode m_texCoordMode;

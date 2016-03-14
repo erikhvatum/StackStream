@@ -39,7 +39,7 @@
 #include <QtQuick/private/qsgmaterialshader_p.h>
 #include <QtQuick/private/qsgtexture_p.h>
 
-const SSLayerRenderer::componentCountFormats SSLayerRenderer::sm_componentCountFormats[] = {
+const SSGTexture::ComponentCountFormats SSGTexture::sm_componentCountFormats[] = {
     {QOpenGLTexture::NoFormat, QOpenGLTexture::NoSourceFormat},
     {QOpenGLTexture::R32F, QOpenGLTexture::Red},
     {QOpenGLTexture::RG32F, QOpenGLTexture::RG},
@@ -47,7 +47,7 @@ const SSLayerRenderer::componentCountFormats SSLayerRenderer::sm_componentCountF
     {QOpenGLTexture::RGBA32F, QOpenGLTexture::RGBA}
 };
 
-const QOpenGLTexture::PixelType SSLayerRenderer::sm_componentPixelTypes[] = {
+const QOpenGLTexture::PixelType SSGTexture::sm_componentPixelTypes[] = {
     QOpenGLTexture::NoPixelType,
     QOpenGLTexture::UInt8,
     QOpenGLTexture::UInt16,
@@ -86,9 +86,9 @@ SSGTexture::~SSGTexture()
 void SSGTexture::setImage(SSImage* image)
 {
     qDebug() << "SSGTexture::setImage(SSImage* image)";
-    m_image = image;
-    m_texture_size = image.size();
-    m_has_alpha = image.hasAlphaChannel();
+    m_image.reset(image);
+    m_texture_size = image->size();
+    m_has_alpha = image->hasAlphaChannel();
     m_dirty_texture = true;
     m_dirty_bind_options = true;
     m_mipmaps_generated = false;
@@ -154,7 +154,7 @@ void SSGTexture::bind()
 
     m_dirty_texture = false;
 
-    if (m_image) {
+    if (!m_image || !m_image->isValid()) {
         if (m_texture_id && m_owns_texture) {
             funcs->glDeleteTextures(1, &m_texture_id);
         }
@@ -169,16 +169,9 @@ void SSGTexture::bind()
         funcs->glGenTextures(1, &m_texture_id);
     funcs->glBindTexture(GL_TEXTURE_2D, m_texture_id);
 
-    QImage tmp = (m_image.format() == QImage::Format_RGB30 || m_image.format() == QImage::Format_A2RGB30_Premultiplied)
-                ? m_image
-                : m_image.convertToFormat(QImage::Format_A2RGB30_Premultiplied);
-
-    if (tmp.width() * 4 != tmp.bytesPerLine())
-        tmp = tmp.copy();
-
     updateBindOptions(m_dirty_bind_options);
 
-    funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_texture_size.width(), m_texture_size.height(), 0, GL_BGRA, GL_UNSIGNED_INT_2_10_10_10_REV, tmp.constBits());
+    funcs->glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_texture_size.width(), m_texture_size.height(), 0, GL_RGBA, GL_UNSIGNED_SHORT, m_image->rawData().get());
 
     if (minMipmapFiltering() != SSGTexture::None || magMipmapFiltering() != SSGTexture::None) {
         funcs->glGenerateMipmap(GL_TEXTURE_2D);
@@ -188,14 +181,19 @@ void SSGTexture::bind()
     m_texture_rect = QRectF(0, 0, 1, 1);
 
     m_dirty_bind_options = false;
-    if (!m_retain_image)
-        m_image.reset();
+//    if (!m_retain_image)
+//        m_image.reset();
+}
+
+inline static bool isPowerOfTwo(int x)
+{
+    // Assumption: x >= 1
+    return x == (x & -x);
 }
 
 void SSGTexture::updateBindOptions(bool force)
 {
     QOpenGLFunctions *funcs = QOpenGLContext::currentContext()->functions();
-    force |= isAtlasTexture();
 
     if (force || m_filteringChanged) {
         bool minLinear{m_minFilterMode == Linear};
@@ -319,13 +317,13 @@ Q_GLOBAL_STATIC(QMutex, ssg_valid_texture_mutex)
 
 bool ssg_safeguard_texture(SSGTexture *texture)
 {
-    QMutexLocker locker(ssg_valid_texture_mutex());
-    if (!ssg_valid_texture_set()->contains(texture)) {
-        qWarning() << "Invalid texture accessed:" << (void *) texture;
-//        qsg_set_material_failure();
-        QOpenGLContext::currentContext()->functions()->glBindTexture(GL_TEXTURE_2D, 0);
-        return false;
-    }
+//    QMutexLocker locker(ssg_valid_texture_mutex());
+//    if (!ssg_valid_texture_set()->contains(texture)) {
+//        qWarning() << "Invalid texture accessed:" << (void *) texture;
+////        qsg_set_material_failure();
+//        QOpenGLContext::currentContext()->functions()->glBindTexture(GL_TEXTURE_2D, 0);
+//        return false;
+//    }
     return true;
 }
 #endif

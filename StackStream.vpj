@@ -253,7 +253,6 @@
             <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>
             <F N="source/SSView.h"/>
-            <F N="source/StackStreamMainWindow.qml"/>
             <F N="source/StackStreamPlugin.qrc"/>
         </Folder>
         <Folder

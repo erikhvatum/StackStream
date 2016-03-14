@@ -27,8 +27,6 @@ set(SOURCE_FILES
     GilLocker.cpp
     GilLocker.h
     qmldir
-    SSGFramebufferObjectNode.cpp
-    SSGFramebufferObjectNode.h
     SSGSimpleTextureNode.cpp
     SSGSimpleTextureNode.h
     SSGTexture.cpp
@@ -39,15 +37,8 @@ set(SOURCE_FILES
     SSImage.h
     SSImageItem.cpp
     SSImageItem.h
-    SSLayer.cpp
-    SSLayer.h
-    SSLayerRenderer.cpp
-    SSLayerRenderer.frag
-    SSLayerRenderer.h
     SSQmlPlugin.cpp
     SSQmlPlugin.h
-    SSQuickFramebufferObject.cpp
-    SSQuickFramebufferObject.h
     SSView.cpp
     SSView.h)
 set(LIBRARIES

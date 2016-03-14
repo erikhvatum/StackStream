@@ -26,8 +26,10 @@
 #include "SSGSimpleTextureNode.h"
 
 SSImageItem::SSImageItem(QQuickItem* parent)
-  : QQuickItem(parent)
+  : QQuickItem(parent),
+    m_imageSerialSet(false)
 {
+    setFlag(ItemHasContents);
 }
 
 SSImage* SSImageItem::image()
@@ -40,17 +42,51 @@ const SSImage* SSImageItem::image() const
     return m_image.data();
 }
 
+static void noopDeleter(SSImage*) {}
+
 void SSImageItem::setImage(SSImage* image)
 {
     if(image != m_image.data())
     {
-        if(image) m_image = image->sharedFromThis();
-        else m_image.reset();
+        if(image)
+        {
+            m_image = image->sharedFromThis();
+            if(!m_image) m_image = QSharedPointer<SSImage>(image, noopDeleter);
+            setImplicitSize(m_image->size().width(), m_image->size().height());
+        }
+        else
+        {
+            m_image.reset();
+            setImplicitSize(0,0);
+        }
         imageChanged();
+        update();
     }
 }
 
 QSGNode* SSImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData)
 {
-
+    SSGSimpleTextureNode* n{static_cast<SSGSimpleTextureNode*>(oldNode)};
+    if(m_image)
+    {
+        if(!n) n = new SSGSimpleTextureNode();
+        if(!m_imageSerialSet || m_imageSerial != m_image->serial())
+        {
+            m_imageSerialSet = true;
+            m_imageSerial = m_image->serial();
+            SSGTexture* t = SSGTexture::fromImage(m_image.data());
+            n->setTexture(t);
+        }
+        n->setRect(0,0,implicitWidth(),implicitHeight());
+    }
+    else
+    {
+        if(n)
+        {
+            delete n;
+            n = nullptr;
+        }
+        m_imageSerialSet = false;
+    }
+    return n;
 }

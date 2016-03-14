@@ -43,6 +43,8 @@ signals:
 
 protected:
     QSharedPointer<SSImage> m_image;
+    bool m_imageSerialSet;
+    std::size_t m_imageSerial;
 
     QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* updatePaintNodeData) override;
 };

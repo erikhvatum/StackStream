@@ -25,7 +25,6 @@
 #include "SSQmlPlugin.h"
 #include "SSImage.h"
 #include "SSImageItem.h"
-#include "SSLayer.h"
 #include "SSView.h"
 
 SSQmlPlugin::SSQmlPlugin(QObject* parent)
@@ -42,9 +41,7 @@ void SSQmlPlugin::registerTypes(const char* uri)
     const char ss[] = "StackStream";
     const int ver[] = {1, 0};
     qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImage");
-    qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImageItem");
-    qmlRegisterType<SSLayer>(ss, ver[0], ver[1], "SSLayer");
-    qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
+    qmlRegisterType<SSImageItem>(ss, ver[0], ver[1], "SSImageItem");
     qRegisterMetaType<SSImage::DType>("DType");
     qRegisterMetaType<SSImage::Components>("Components");
     qRegisterMetaType<std::size_t>("std::size_t");

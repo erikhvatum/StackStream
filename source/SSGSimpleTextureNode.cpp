@@ -86,11 +86,8 @@ SSGSimpleTextureNode::SSGSimpleTextureNode()
 {
     setGeometry(&m_geometry);
     setMaterial(&m_material);
-    setOpaqueMaterial(&m_opaque_material);
     m_material.setMinMipmapFiltering(SSGTexture::None);
     m_material.setMagMipmapFiltering(SSGTexture::None);
-    m_opaque_material.setMinMipmapFiltering(SSGTexture::None);
-    m_opaque_material.setMagMipmapFiltering(SSGTexture::None);
 #ifdef QSG_RUNTIME_DESCRIPTION
     qsgnode_set_description(this, QLatin1String("SSsimpletexture"));
 #endif
@@ -107,7 +104,6 @@ void SSGSimpleTextureNode::setMinFiltering(SSGTexture::Filtering filtering)
         return;
 
     m_material.setMinFiltering(filtering);
-    m_opaque_material.setMinFiltering(filtering);
     markDirty(DirtyMaterial);
 }
 
@@ -122,7 +118,6 @@ void SSGSimpleTextureNode::setMagFiltering(SSGTexture::Filtering filtering)
         return;
 
     m_material.setMagFiltering(filtering);
-    m_opaque_material.setMagFiltering(filtering);
     markDirty(DirtyMaterial);
 }
 
@@ -169,7 +164,6 @@ void SSGSimpleTextureNode::setTexture(SSGTexture *texture)
     if (d->ownsTexture)
         delete m_material.texture();
     m_material.setTexture(texture);
-    m_opaque_material.setTexture(texture);
     SSGSimpleTextureNode_update(&m_geometry, texture, m_rect, d->sourceRect, d->texCoordMode);
     markDirty(DirtyMaterial);
 }

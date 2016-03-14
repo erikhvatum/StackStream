@@ -23,7 +23,7 @@
 // Authors: Erik Hvatum <ice.rikh@gmail.com>
 
 #include "../common.h"
-#include "../SSImage.h"
+#include "../SSImageItem.h"
 #include <QApplication>
 #include <cstdio>
 
@@ -67,10 +67,10 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated, onStackStreamWindowCreated);
-    engine.load(QUrl(QStringLiteral("qrc:/Application.qml")));
-    MakeImage ssimageFactory;
-    engine.rootContext()->setContextProperty("ssimageFactory", &ssimageFactory);
-    engine.setObjectOwnership(&ssimageFactory, QQmlEngine::CppOwnership);
+    engine.load(QUrl(QStringLiteral("qrc:/StackStreamMainWindow.qml")));
+//    MakeImage ssimageFactory;
+//    engine.rootContext()->setContextProperty("ssimageFactory", &ssimageFactory);
+//    engine.setObjectOwnership(&ssimageFactory, QQmlEngine::CppOwnership);
 
     int ret{app.exec()};
 #ifdef ENABLE_GL_DEBUG_LOGGING

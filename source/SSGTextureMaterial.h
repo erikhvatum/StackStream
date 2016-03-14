@@ -40,7 +40,7 @@ class SSGTextureMaterial
     : public QSGMaterial
 {
 public:
-    SSGOpaqueTextureMaterial();
+    SSGTextureMaterial();
 
     virtual QSGMaterialType *type() const;
     virtual QSGMaterialShader *createShader() const;
@@ -80,43 +80,3 @@ protected:
     uint m_reserved : 26;
 };
 
-
-class Q_QUICK_EXPORT SSGTextureMaterial : public SSGOpaqueTextureMaterial
-{
-public:
-    virtual QSGMaterialType *type() const;
-    virtual QSGMaterialShader *createShader() const;
-};
-
-#include <private/qtquickglobal_p.h>
-
-class SSGOpaqueTextureMaterialShader : public QSGMaterialShader
-{
-public:
-    SSGOpaqueTextureMaterialShader();
-
-    virtual void updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect);
-    virtual char const *const *attributeNames() const;
-
-    static QSGMaterialType type;
-
-protected:
-    virtual void initialize();
-
-    int m_matrix_id;
-    int m_opacity_id;
-};
-
-class SSGTextureMaterialShader : public SSGOpaqueTextureMaterialShader
-{
-public:
-    SSGTextureMaterialShader();
-
-    virtual void updateState(const RenderState &state, QSGMaterial *newEffect, QSGMaterial *oldEffect);
-    virtual void initialize();
-
-    static QSGMaterialType type;
-
-protected:
-    int m_opacity_id;
-};
