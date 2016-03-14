@@ -2,5 +2,7 @@ DISTFILES += \
     list_role_model.py \
     PyQmlProof.py \
     PyQmlProof.qml \
-    Spline.qml \
-    SplinePoint.qml
+    SplinePoint.qml \
+    ImagePane.qml \
+    PointTablePane.qml \
+    TiledBackground.qml

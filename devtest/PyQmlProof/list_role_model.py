@@ -52,7 +52,10 @@ class ListRoleModel(Qt.QAbstractListModel):
 
     def get_row_value_for_role(self, row, property_role):
         if property_role == Qt.Qt.DisplayRole:
-            return self.signaling_list[row]
+            element = self.signaling_list[row]
+            if isinstance(element, Qt.QObject):
+                Qt.QQmlEngine.setObjectOwnership(element, Qt.QQmlEngine.CppOwnership)
+            return element
         try:
             property_name = self.property_rolenames[property_role]
             return getattr(self.signaling_list[row], property_name, None)
