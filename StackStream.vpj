@@ -226,12 +226,9 @@
             </Folder>
             <F N="source/CMakeLists.txt"/>
             <F N="source/common.h"/>
-            <F N="source/DraggableLayer.qml"/>
             <F N="source/GilLocker.cpp"/>
             <F N="source/GilLocker.h"/>
             <F N="source/qmldir"/>
-            <F N="source/SSGFramebufferObjectNode.cpp"/>
-            <F N="source/SSGFramebufferObjectNode.h"/>
             <F N="source/SSGSimpleTextureNode.cpp"/>
             <F N="source/SSGSimpleTextureNode.h"/>
             <F N="source/SSGTexture.cpp"/>
@@ -242,15 +239,8 @@
             <F N="source/SSImage.h"/>
             <F N="source/SSImageItem.cpp"/>
             <F N="source/SSImageItem.h"/>
-            <F N="source/SSLayer.cpp"/>
-            <F N="source/SSLayer.h"/>
-            <F N="source/SSLayerRenderer.cpp"/>
-            <F N="source/SSLayerRenderer.frag"/>
-            <F N="source/SSLayerRenderer.h"/>
             <F N="source/SSQmlPlugin.cpp"/>
             <F N="source/SSQmlPlugin.h"/>
-            <F N="source/SSQuickFramebufferObject.cpp"/>
-            <F N="source/SSQuickFramebufferObject.h"/>
             <F N="source/SSView.cpp"/>
             <F N="source/SSView.h"/>
             <F N="source/StackStreamPlugin.qrc"/>

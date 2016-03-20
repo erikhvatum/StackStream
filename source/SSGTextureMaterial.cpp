@@ -73,7 +73,7 @@ SSGTextureMaterialShader::SSGTextureMaterialShader()
 
 char const *const *SSGTextureMaterialShader::attributeNames() const
 {
-    static char const *const attr[] = { "qt_VertexPosition", "qt_VertexTexCoord", "opacity", 0 };
+    static char const *const attr[] = { "qt_VertexPosition", "qt_VertexTexCoord", 0 };
     return attr;
 }
 
@@ -145,7 +145,7 @@ QSGMaterialType *SSGTextureMaterial::type() const
 
 QSGMaterialShader *SSGTextureMaterial::createShader() const
 {
-    return new SSGTextureMaterialShader;
+    return new SSGTextureMaterialShader();
 }
 
 void SSGTextureMaterial::setTexture(SSGTexture *texture)
@@ -157,6 +157,7 @@ void SSGTextureMaterial::setTexture(SSGTexture *texture)
 int SSGTextureMaterial::compare(const QSGMaterial *o) const
 {
     Q_ASSERT(o && type() == o->type());
+    qDebug() << "int SSGTextureMaterial::compare(const QSGMaterial *o) const";
     const SSGTextureMaterial *other = static_cast<const SSGTextureMaterial *>(o);
     int diff = m_texture->textureId() - other->texture()->textureId();
     if (diff)

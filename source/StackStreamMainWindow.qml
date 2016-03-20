@@ -57,5 +57,6 @@ ApplicationWindow {
     SSImageItem {
         id: imageItem
         anchors.fill: parent
+//        layer.enabled: true
     }
 }

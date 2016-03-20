@@ -369,9 +369,12 @@ void SSImage::setComponents(Components components)
 
 bool SSImage::hasAlphaChannel() const
 {
-    bool r{false};
+    bool r;
     switch(m_components)
     {
+    default:
+        r = false;
+        break;
     case ComponentsGrA:
     case ComponentsRGBA:
         r = true;

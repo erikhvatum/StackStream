@@ -166,9 +166,9 @@ void SSGSimpleTextureNode::setTexture(SSGTexture *texture)
     m_material.setTexture(texture);
     SSGSimpleTextureNode_update(&m_geometry, texture, m_rect, d->sourceRect, d->texCoordMode);
     markDirty(DirtyMaterial);
+//    SSGSimpleTextureNode_update(&m_geometry, texture, QRect(0, 0, texture->image()->size().width(), texture->image()->size().height()), d->sourceRect, d->texCoordMode);
+//    markDirty(DirtyMaterial | DirtyGeometry);
 }
-
-
 
 SSGTexture *SSGSimpleTextureNode::texture() const
 {
