@@ -39,24 +39,81 @@ ApplicationWindow {
     objectName: "stackStreamMainWindow"
     property SSImage image: SSImage{}
 
-    DropArea {
+    SSView {
+        id: mainView
+//        anchors.left: parent.left
+//        anchors.top: parent.top
+//        anchors.bottom: parent.bottom
+//        width: parent.width - layerPropertiesGroupBox.width - 20
         anchors.fill: parent
-        onEntered: {
-//            console.log('drop area entered');
-            drag.accept(Qt.CopyAction);
-        }
-        onDropped: {
-            image.read(drop.urls[0])
-            imageItem.image = image
-        }
-//        onExited: {
-//            console.log('drop area exited');
-//        }
-    }
+        z: -1
 
-    SSImageItem {
-        id: imageItem
-        anchors.fill: parent
-//        layer.enabled: true
+        TileBackground {
+            anchors.fill: parent
+        }
+
+        SSImageItem {
+            id: imageItem
+            y: 0
+            x: 0
+            layer.enabled: true
+            Drag.active: mouseArea.drag.active
+            Drag.hotSpot.x: 10
+            Drag.hotSpot.y: 10
+
+            transform: Scale {
+                id: scale
+                property real factor: 1.0
+                xScale: factor
+                yScale: factor
+            }
+
+            MouseArea {
+                id: mouseArea
+                anchors.fill: parent
+                drag.target: parent
+                property var factors: [ 4.0       ,  3.8       ,  3.6       ,  3.4       ,  3.2       ,
+                                        3.0       ,  2.8       ,  2.6       ,  2.4       ,  2.2       ,
+                                        2.0       ,  1.8       ,  1.6       ,  1.4       ,  1.2       ,
+                                        1.0       ,  0.91700404,  0.84089642,  0.77110541,  0.70710678,
+                                        0.64841978,  0.59460356,  0.54525387,  0.5       ,  0.45850202,
+                                        0.42044821,  0.38555271,  0.35355339,  0.32420989,  0.29730178,
+                                        0.27262693,  0.25      ]
+                property int factorIdx: 15
+                onWheel: {
+                    factorIdx = (factorIdx + (wheel.angleDelta.y / 120)) | 0
+                    if(factorIdx < 0) factorIdx = 0
+                    else if (factorIdx >= factors.length) factorIdx = factors.length - 1
+                    scale.factor = factors[factorIdx]
+                }
+            }
+        }
+
+//        Rectangle {
+//            x: 0
+//            y: 0
+//            width: 100
+//            height: 200
+//            anchors.fill: imageItem
+//            anchors.margins: 5
+//            color: 'blue'
+//            opacity: 0.5
+//            layer.enabled: true
+//        }
+
+        DropArea {
+            anchors.fill: parent
+            onEntered: {
+    //            console.log('drop area entered');
+                drag.accept(Qt.CopyAction);
+            }
+            onDropped: {
+                image.read(drop.urls[0])
+                imageItem.image = image
+            }
+    //        onExited: {
+    //            console.log('drop area exited');
+    //        }
+        }
     }
 }

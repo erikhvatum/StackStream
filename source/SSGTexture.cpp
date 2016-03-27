@@ -58,6 +58,13 @@ const QOpenGLTexture::PixelType SSGTexture::sm_componentPixelTypes[] = {
     QOpenGLTexture::NoPixelType  // TODO: add support; may require abandoning QOpenGLTexture
 };
 
+SSGTexture* SSGTexture::fromImage(SSImage* image)
+{
+   SSGTexture *t = new SSGTexture();
+   t->setImage(image);
+   return t;
+}
+
 SSGTexture::SSGTexture()
   : m_wrapChanged(false),
     m_filteringChanged(false),
@@ -138,7 +145,6 @@ QRectF SSGTexture::convertToNormalizedSourceRect(const QRectF &rect) const
 
 void SSGTexture::bind()
 {
-    qDebug() << "SSGTexture::bind()";
     QOpenGLContext *context = QOpenGLContext::currentContext();
     QOpenGLFunctions *funcs = context->functions();
     if (!m_dirty_texture) {

@@ -41,8 +41,9 @@ void SSQmlPlugin::registerTypes(const char* uri)
     const char ss[] = "StackStream";
     const int ver[] = {1, 0};
     qmlRegisterType<SSImage>(ss, ver[0], ver[1], "SSImage");
-    qmlRegisterType<SSImageItem>(ss, ver[0], ver[1], "SSImageItem");
     qRegisterMetaType<SSImage::DType>("DType");
     qRegisterMetaType<SSImage::Components>("Components");
     qRegisterMetaType<std::size_t>("std::size_t");
+    qmlRegisterType<SSImageItem>(ss, ver[0], ver[1], "SSImageItem");
+    qmlRegisterType<SSView>(ss, ver[0], ver[1], "SSView");
 }

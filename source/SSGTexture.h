@@ -98,11 +98,7 @@ public:
     void setVerticalWrapMode(WrapMode vwrap);
     SSGTexture::WrapMode verticalWrapMode() const;
 
-    static SSGTexture *fromImage(SSImage* image) {
-        SSGTexture *t = new SSGTexture();
-        t->setImage(image);
-        return t;
-    }
+    static SSGTexture *fromImage(SSImage* image);
 
 protected:
     QSharedPointer<SSImage> m_image;

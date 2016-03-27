@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>StackStreamMainWindow.qml</file>
+        <file>TileBackground.qml</file>
     </qresource>
 </RCC>

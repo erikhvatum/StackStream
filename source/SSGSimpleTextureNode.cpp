@@ -75,6 +75,7 @@ static void SSGSimpleTextureNode_update(QSGGeometry *g,
         sourceRect.setBottom(tmp);
     }
 
+    qDebug() << rect;
     QSGGeometry::updateTexturedRectGeometry(g, rect, texture->convertToNormalizedSourceRect(sourceRect));
 }
 

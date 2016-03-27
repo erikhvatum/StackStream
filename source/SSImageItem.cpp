@@ -69,7 +69,11 @@ QSGNode* SSImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* upd
     SSGSimpleTextureNode* n{static_cast<SSGSimpleTextureNode*>(oldNode)};
     if(m_image)
     {
-        if(!n) n = new SSGSimpleTextureNode();
+        if(!n)
+        {
+            n = new SSGSimpleTextureNode();
+            n->setTextureCoordinatesTransform(SSGSimpleTextureNode::MirrorVertically);
+        }
         if(!m_imageSerialSet || m_imageSerial != m_image->serial())
         {
             m_imageSerialSet = true;
@@ -77,7 +81,7 @@ QSGNode* SSImageItem::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData* upd
             SSGTexture* t = SSGTexture::fromImage(m_image.data());
             n->setTexture(t);
         }
-        n->setRect(0,0,implicitWidth(),implicitHeight());
+        n->setRect(x(), y(), width(), height());
     }
     else
     {
