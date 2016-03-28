@@ -30,6 +30,7 @@ import QtQuick.Layouts 1.2
 import QtQuick.Window 2.2
 
 import StackStream 1.0
+import QtQmlTricks 1.0
 
 ApplicationWindow {
     visible: false
@@ -86,6 +87,16 @@ ApplicationWindow {
                     else if (factorIdx >= factors.length) factorIdx = factors.length - 1
                     scale.factor = factors[factorIdx]
                 }
+            }
+
+            Text {
+                smooth: true
+                text: 'hello world'
+                color: 'red'
+                x: 400
+                y: 300
+                width: 100
+                height: 20
             }
         }
 

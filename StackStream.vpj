@@ -224,6 +224,71 @@
                 <F N="source/SSGContextPlugin/SSGQuickLayer.cpp"/>
                 <F N="source/SSGContextPlugin/SSGQuickLayer.h"/>
             </Folder>
+            <Folder
+                Name="QtQmlTricks"
+                Filters="">
+                <Folder
+                    Name="examples"
+                    Filters=""/>
+                <Folder
+                    Name="import"
+                    Filters="">
+                    <Folder
+                        Name="QtQmlTricks"
+                        Filters="">
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/ComboList.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/components.qrc"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/GridContainer.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/IconTextButton.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/qmldir"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/QtCoreApi.js"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/RowContainer.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/ScrollContainer.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/SingleLineEditBox.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/Style.js"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/TextBox.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/TextButton.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/TextLabel.qml"/>
+                        <F N="source/QtQmlTricks/import/QtQmlTricks/WrapLeftRightContainer.qml"/>
+                    </Folder>
+                </Folder>
+                <Folder
+                    Name="include"
+                    Filters="">
+                    <F N="source/QtQmlTricks/include/QQmlHelpers"/>
+                    <F N="source/QtQmlTricks/include/QQmlObjectListModel"/>
+                    <F N="source/QtQmlTricks/include/QQmlSvgIconHelper"/>
+                    <F N="source/QtQmlTricks/include/QQmlVariantListModel"/>
+                    <F N="source/QtQmlTricks/include/QQuickPolygon"/>
+                    <F N="source/QtQmlTricks/include/QtQmlTricks"/>
+                </Folder>
+                <Folder
+                    Name="src"
+                    Filters="">
+                    <F N="source/QtQmlTricks/src/qmlplugin.cpp"/>
+                    <F N="source/QtQmlTricks/src/qmlplugin.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlgadgetlistmodel.cpp"/>
+                    <F N="source/QtQmlTricks/src/qqmlgadgetlistmodel.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlhelpers.cpp"/>
+                    <F N="source/QtQmlTricks/src/qqmlhelpers.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlmodels.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlobjectlistmodel.cpp"/>
+                    <F N="source/QtQmlTricks/src/qqmlobjectlistmodel.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlsvgiconhelper.cpp"/>
+                    <F N="source/QtQmlTricks/src/qqmlsvgiconhelper.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlvariantlistmodel.cpp"/>
+                    <F N="source/QtQmlTricks/src/qqmlvariantlistmodel.h"/>
+                    <F N="source/QtQmlTricks/src/qqmlvariantlistmodel_p.h"/>
+                    <F N="source/QtQmlTricks/src/qquickpolygon.cpp"/>
+                    <F N="source/QtQmlTricks/src/qquickpolygon.h"/>
+                    <F N="source/QtQmlTricks/src/qtbitstream.h"/>
+                    <F N="source/QtQmlTricks/src/qtcobs.h"/>
+                    <F N="source/QtQmlTricks/src/qtjsonpath.h"/>
+                </Folder>
+                <F N="source/QtQmlTricks/CMakeLists.txt"/>
+                <F N="source/QtQmlTricks/qtqmltricks.svg"/>
+                <F N="source/QtQmlTricks/README.md"/>
+            </Folder>
             <F N="source/CMakeLists.txt"/>
             <F N="source/common.h"/>
             <F N="source/GilLocker.cpp"/>

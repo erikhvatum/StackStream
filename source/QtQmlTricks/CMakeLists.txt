@@ -22,41 +22,42 @@
 #
 # Authors: Erik Hvatum <ice.rikh@gmail.com>
 
+project(QtQmlTricksPlugin)
+
 set(SOURCE_FILES
-    common.h
-    GilLocker.cpp
-    GilLocker.h
-    qmldir
-    SSGSimpleTextureNode.cpp
-    SSGSimpleTextureNode.h
-    SSGTexture.cpp
-    SSGTexture.h
-    SSGTextureMaterial.cpp
-    SSGTextureMaterial.h
-    SSImage.cpp
-    SSImage.h
-    SSImageItem.cpp
-    SSImageItem.h
-    SSQmlPlugin.cpp
-    SSQmlPlugin.h
-    SSView.cpp
-    SSView.h)
-set(LIBRARIES
-    ${OPENGL_LIBRARIES}
-    ${FREEIMAGE_LIBRARY}
-    ${FREEIMAGEPLUS_LIBRARY})
+#    src/qqmlgadgetlistmodel.cpp
+#    src/qqmlgadgetlistmodel.h
+    src/qmlplugin.cpp
+    src/qmlplugin.h
+    src/qqmlhelpers.cpp
+    src/qqmlhelpers.h
+    src/qqmlmodels.h
+    src/qqmlobjectlistmodel.cpp
+    src/qqmlobjectlistmodel.h
+    src/qqmlsvgiconhelper.cpp
+    src/qqmlsvgiconhelper.h
+    src/qqmlvariantlistmodel.cpp
+    src/qqmlvariantlistmodel.h
+    src/qqmlvariantlistmodel_p.h
+    src/qquickpolygon.cpp
+    src/qquickpolygon.h
+    src/qtbitstream.h
+    src/qtcobs.h
+    src/qtjsonpath.h
+    import/QtQmlTricks/qmldir
+    include/QQmlGadgetListModel
+    include/QQmlHelpers
+    include/QQmlObjectListModel
+    include/QQmlSvgIconHelper
+    include/QQmlVariantListModel
+    include/QQuickPolygon
+    include/QtBitStream
+    include/QtCOBS
+    include/QtJsonPath
+    include/QtQmlTricks
+    )
 
-qt5_add_resources(RESOURCES StackStreamPlugin.qrc)
-add_library(StackStreamPlugin SHARED ${SOURCE_FILES} ${RESOURCES})
-qt5_use_modules(StackStreamPlugin Core Gui Qml OpenGL Quick Widgets)
-target_link_libraries(StackStreamPlugin ${LIBRARIES})
-set_target_properties(StackStreamPlugin PROPERTIES COMPILE_OPTIONS "-DSTACKSTREAM")
-#set_target_properties(StackStreamPlugin PROPERTIES COMPILE_OPTIONS "-DENABLE_GL_DEBUG_LOGGING")
-
-add_subdirectory(QtQmlTricks)
-add_subdirectory(SSGContextPlugin)
-add_subdirectory(Application)
-if(BUILD_STACKSTREAM_PYTHON_MODULE)
-    add_subdirectory(PythonModule)
-endif()
-
+unset(RESOURCES)
+qt5_add_resources(RESOURCES import/QtQmlTricks/components.qrc)
+add_library(QtQmlTricksPlugin SHARED ${SOURCE_FILES} ${RESOURCES})
+qt5_use_modules(QtQmlTricksPlugin Core Gui Qml OpenGL Quick Svg Widgets)
