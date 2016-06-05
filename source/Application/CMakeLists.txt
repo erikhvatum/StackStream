@@ -94,7 +94,7 @@ if(WIN32)
     add_custom_command(
         TARGET StackStreamApplication
         POST_BUILD
-        COMMAND copy /Y ${_CMAKE_SOURCE_DIR}\\source\\QtQmlTricks\\import\\QtQmlTricks\\qmldir ${_QTQMLTRICKS_PLUGIN_DEST_DPATH})
+        COMMAND copy /Y ${_CMAKE_SOURCE_DIR}\\source\\QtQmlTricks\\import\\QtQmlTricks\\*.* ${_QTQMLTRICKS_PLUGIN_DEST_DPATH})
 
 else()
     add_custom_command(
@@ -124,7 +124,7 @@ else()
     add_custom_command(
         TARGET StackStreamApplication
         POST_BUILD
-        COMMAND cp -fv ${CMAKE_SOURCE_DIR}/source/QtQmlTricks/import/QtQmlTricks/*.qml ${_QTQMLTRICKS_PLUGIN_DEST_DPATH})
+        COMMAND cp -fv ${CMAKE_SOURCE_DIR}/source/QtQmlTricks/import/QtQmlTricks/*.* ${_QTQMLTRICKS_PLUGIN_DEST_DPATH})
 endif()
 
 
